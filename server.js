@@ -12,8 +12,7 @@ const API_KEY = process.env.YOUTUBE_API_KEY;
 // YOUTUBE LIVE VIDEO ID
 // =====================================================
 
-const VIDEO_ID = "4EfO7tb-GiU";
-
+const VIDEO_ID = process.env.YOUTUBE_VIDEO_ID || "iGU1VUXCWvs";
 
 // =====================================================
 // YOUTUBE API
@@ -23,7 +22,6 @@ const youtube = google.youtube({
   version: "v3",
   auth: API_KEY
 });
-
 
 // =====================================================
 // 195 COUNTRIES
@@ -258,7 +256,6 @@ const info = {
   Zimbabwe: ["🇿🇼", "Zimbabwe"]
 };
 
-
 // =====================================================
 // COUNTRY ALIASES
 // =====================================================
@@ -326,9 +323,7 @@ const aliases = {
     "vatican city",
     "holy see"
   ]
-
 };
-
 
 // =====================================================
 // NORMALIZE TEXT
@@ -346,7 +341,6 @@ function normalize(text) {
     .trim();
 
 }
-
 
 // =====================================================
 // BUILD COUNTRY SEARCH LIST
@@ -378,7 +372,6 @@ for (const country of Object.keys(aliases)) {
 
 }
 
-
 const countrySearchList = [];
 
 for (const country of Object.keys(countries)) {
@@ -401,7 +394,6 @@ countrySearchList.sort(
     b.alias.length - a.alias.length
 );
 
-
 // =====================================================
 // GAME STATE
 // =====================================================
@@ -423,7 +415,6 @@ for (const country of Object.keys(info)) {
   };
 
 }
-
 
 // =====================================================
 // FIND COUNTRY IN COMMENT
@@ -461,7 +452,6 @@ function findCountryInText(message) {
 
 }
 
-
 // =====================================================
 // LAST EVENT
 // =====================================================
@@ -484,7 +474,6 @@ let lastEvent = {
 
 };
 
-
 // =====================================================
 // YOUTUBE LIVE CHAT
 // =====================================================
@@ -496,7 +485,6 @@ let nextPageToken = null;
 let pollingTimer = null;
 
 const seenMessageIds = new Set();
-
 
 // =====================================================
 // GET LIVE CHAT ID
@@ -556,7 +544,7 @@ async function getLiveChatId() {
     nextPageToken = null;
 
     console.log(
-      "✅ LIVE CHAT CONNECTED:",
+      "LIVE CHAT CONNECTED:",
       liveChatId
     );
 
@@ -565,7 +553,7 @@ async function getLiveChatId() {
     liveChatId = null;
 
     console.error(
-      "❌ GET LIVE CHAT ERROR:",
+      "GET LIVE CHAT ERROR:",
       error.response?.data || error.message
     );
 
@@ -574,7 +562,6 @@ async function getLiveChatId() {
   }
 
 }
-
 
 // =====================================================
 // PROCESS YOUTUBE MESSAGE
@@ -621,7 +608,6 @@ function processMessage(item) {
 
     let message = "";
 
-
     // =================================================
     // NORMAL COMMENT
     // =================================================
@@ -638,7 +624,6 @@ function processMessage(item) {
 
     }
 
-
     // =================================================
     // SUPER CHAT
     // =================================================
@@ -654,7 +639,6 @@ function processMessage(item) {
 
     }
 
-
     if (!message) {
 
       console.log(
@@ -666,14 +650,12 @@ function processMessage(item) {
 
     }
 
-
     console.log(
-      "💬 YOUTUBE:",
+      "YOUTUBE:",
       displayName,
       "=>",
       message
     );
-
 
     // =================================================
     // NORMAL COMMENT = +1
@@ -702,7 +684,6 @@ function processMessage(item) {
       state[country].latestCommenter =
         displayName;
 
-
       lastEvent = {
 
         id: item.id,
@@ -721,15 +702,13 @@ function processMessage(item) {
 
       };
 
-
       console.log(
-        `💬 COMMENT +1 | ${displayName} | ${country}`
+        `COMMENT +1 | ${displayName} | ${country}`
       );
 
       return;
 
     }
-
 
     // =================================================
     // SUPER CHAT = +10
@@ -758,7 +737,6 @@ function processMessage(item) {
       state[country].latestCommenter =
         displayName;
 
-
       lastEvent = {
 
         id: item.id,
@@ -777,9 +755,8 @@ function processMessage(item) {
 
       };
 
-
       console.log(
-        `💰 SUPER CHAT +10 | ${displayName} | ${country}`
+        `SUPER CHAT +10 | ${displayName} | ${country}`
       );
 
     }
@@ -787,14 +764,13 @@ function processMessage(item) {
   } catch (error) {
 
     console.error(
-      "❌ PROCESS MESSAGE ERROR:",
+      "PROCESS MESSAGE ERROR:",
       error.message
     );
 
   }
 
 }
-
 
 // =====================================================
 // POLL YOUTUBE CHAT
@@ -810,7 +786,6 @@ async function pollChat() {
 
     }
 
-
     const params = {
 
       liveChatId: liveChatId,
@@ -824,7 +799,6 @@ async function pollChat() {
 
     };
 
-
     if (nextPageToken) {
 
       params.pageToken =
@@ -832,27 +806,22 @@ async function pollChat() {
 
     }
 
-
     const response =
       await youtube
         .liveChatMessages
         .list(params);
 
-
     nextPageToken =
       response.data.nextPageToken ||
       null;
 
-
     const messages =
       response.data.items || [];
 
-
     console.log(
-      "📩 YouTube messages:",
+      "YouTube messages:",
       messages.length
     );
-
 
     for (const item of messages) {
 
@@ -860,34 +829,29 @@ async function pollChat() {
 
     }
 
-
     const wait =
       response.data.pollingIntervalMillis ||
       5000;
-
 
     schedulePoll(wait);
 
   } catch (error) {
 
     console.error(
-      "❌ YOUTUBE CHAT ERROR:",
+      "YOUTUBE CHAT ERROR:",
       error.response?.data ||
       error.message
     );
 
-
     liveChatId = null;
 
     nextPageToken = null;
-
 
     schedulePoll(10000);
 
   }
 
 }
-
 
 // =====================================================
 // SCHEDULE POLL
@@ -914,7 +878,6 @@ function schedulePoll(milliseconds) {
 
 }
 
-
 // =====================================================
 // API STATE
 // =====================================================
@@ -940,7 +903,6 @@ app.get(
 
         };
 
-
       result[country] = {
 
         key: country,
@@ -964,7 +926,6 @@ app.get(
 
     }
 
-
     const activeCountries =
       Object.entries(result)
         .filter(
@@ -977,19 +938,26 @@ app.get(
         )
         .map(
           ([country, item]) => ({
+
             country: country,
+
             name: item.name,
+
             flag: item.flag,
+
             score: item.score,
+
             commentCount:
               item.commentCount,
+
             superChats:
               item.superChats,
+
             latestCommenter:
               item.latestCommenter
+
           })
         );
-
 
     const totalComments =
       Object.values(state)
@@ -1000,7 +968,6 @@ app.get(
           0
         );
 
-
     const totalSuperChats =
       Object.values(state)
         .reduce(
@@ -1009,7 +976,6 @@ app.get(
             (item.superChats || 0),
           0
         );
-
 
     res.json({
 
@@ -1034,7 +1000,6 @@ app.get(
 
   }
 );
-
 
 // =====================================================
 // HEALTH CHECK
@@ -1062,7 +1027,6 @@ app.get(
   }
 );
 
-
 // =====================================================
 // SERVE FRONTEND
 // =====================================================
@@ -1075,7 +1039,6 @@ app.use(
     )
   )
 );
-
 
 // =====================================================
 // FALLBACK FOR FRONTEND
@@ -1096,7 +1059,6 @@ app.get(
   }
 );
 
-
 // =====================================================
 // START SERVER
 // =====================================================
@@ -1106,4 +1068,5 @@ app.listen(
   "0.0.0.0",
   () => {
 
-    console.l
+    console.log(
+      "===============
