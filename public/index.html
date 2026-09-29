@@ -1,205 +1,541 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-  <title>Country Battle</title>
+<title>Country Battle</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{
+  box-sizing:border-box;
+}
 
-    body {
-      margin: 0;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#050505;
+  color:#fff;
+}
 
-    .header {
-      text-align: center;
-      padding: 20px 10px;
-      background: #191919;
-    }
+body{
+  background:
+    radial-gradient(circle at 50% 10%,#332300 0%,#100b02 28%,#030303 70%);
+}
 
-    h1 {
-      margin: 0;
-      font-size: 30px;
-    }
+/* MAIN */
 
-    .rules {
-      margin-top: 8px;
-      color: #ccc;
-      font-size: 14px;
-    }
+.game{
+  width:100%;
+  height:100%;
+  padding:14px;
+  overflow:hidden;
+}
 
-    .board {
-      width: 100%;
-      max-width: 700px;
-      margin: auto;
-      padding: 10px;
-    }
+/* GOLD FRAME */
 
-    .row {
-      display: grid;
-      grid-template-columns: 50px 1fr 100px;
-      align-items: center;
-      gap: 8px;
+.frame{
+  border:2px solid #d6a83c;
+  border-radius:12px;
+  background:
+    linear-gradient(145deg,
+      rgba(255,215,100,.10),
+      rgba(0,0,0,.75));
+  box-shadow:
+    0 0 12px rgba(255,190,40,.22),
+    inset 0 0 18px rgba(255,190,40,.06);
+}
 
-      background: #202020;
-      margin-bottom: 8px;
-      padding: 12px;
+/* TITLE */
 
-      border-radius: 10px;
-    }
+.title{
+  height:8%;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  letter-spacing:4px;
+  font-size:clamp(20px,4vw,42px);
+  font-weight:900;
+  color:#ffe49a;
+  text-shadow:
+    0 0 8px #d79b24,
+    0 0 20px #8c5d08;
+}
 
-    .rank {
-      font-size: 22px;
-      font-weight: bold;
-      text-align: center;
-    }
+/* STATS */
 
-    .country {
-      font-size: 18px;
-      font-weight: bold;
-    }
+.stats{
+  height:9%;
+  min-height:48px;
+  margin-top:8px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
 
-    .commenter {
-      display: block;
-      font-size: 12px;
-      color: #aaa;
-      margin-top: 4px;
-    }
+.stat{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
 
-    .score {
-      text-align: right;
-      font-size: 24px;
-      font-weight: bold;
-    }
+.stat-label{
+  font-size:11px;
+  color:#aaa;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
 
-    .empty {
-      text-align: center;
-      color: #aaa;
-      padding: 30px;
-    }
-  </style>
+.stat-value{
+  margin-top:3px;
+  font-size:clamp(18px,4vw,32px);
+  color:#ffd45b;
+  font-weight:900;
+}
+
+/* TOP 3 */
+
+.top3{
+  height:32%;
+  margin-top:9px;
+  display:grid;
+  grid-template-columns:1fr 1.15fr 1fr;
+  gap:9px;
+  align-items:end;
+}
+
+.card{
+  position:relative;
+  height:82%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.card.first{
+  height:100%;
+  border-color:#f3c74c;
+}
+
+.crown{
+  position:absolute;
+  top:4px;
+  font-size:clamp(22px,5vw,42px);
+  filter:drop-shadow(0 0 7px #e4b638);
+}
+
+.rank{
+  position:absolute;
+  top:7px;
+  left:9px;
+  font-size:13px;
+  color:#888;
+  font-weight:bold;
+}
+
+.flag{
+  font-size:clamp(38px,8vw,80px);
+  line-height:1;
+  margin-top:15px;
+  filter:drop-shadow(0 4px 5px #000);
+}
+
+.country{
+  margin-top:7px;
+  font-size:clamp(13px,3vw,25px);
+  font-weight:900;
+  text-align:center;
+  color:#fff;
+}
+
+.score{
+  margin-top:4px;
+  font-size:clamp(24px,5vw,43px);
+  color:#ffd24e;
+  font-weight:900;
+}
+
+.points{
+  font-size:11px;
+  color:#aaa;
+}
+
+.commenter{
+  margin-top:5px;
+  max-width:90%;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  font-size:11px;
+  color:#bdbdbd;
+}
+
+/* DIVIDER */
+
+.divider{
+  height:2px;
+  margin:8px 0;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    #d5a832,
+    transparent
+  );
+}
+
+/* LEADERBOARD */
+
+.board{
+  height:48%;
+  overflow:hidden;
+  padding:8px;
+}
+
+.board-title{
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#ffd45b;
+  font-weight:900;
+  letter-spacing:2px;
+  font-size:14px;
+}
+
+.list{
+  height:calc(100% - 30px);
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:5px;
+}
+
+.row{
+  min-height:32px;
+  border:1px solid rgba(214,168,60,.25);
+  border-radius:6px;
+  background:rgba(255,255,255,.025);
+  display:grid;
+  grid-template-columns:28px 32px 1fr 48px;
+  align-items:center;
+  padding:3px 6px;
+}
+
+.row-rank{
+  color:#777;
+  font-size:10px;
+  text-align:center;
+}
+
+.row-flag{
+  font-size:20px;
+}
+
+.row-name{
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.row-score{
+  text-align:right;
+  color:#ffd45b;
+  font-size:12px;
+  font-weight:900;
+}
+
+/* SUPERCHAT */
+
+.superchat{
+  position:fixed;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  z-index:20;
+  min-width:230px;
+  max-width:90%;
+  padding:8px 14px;
+  border:1px solid #ffd45b;
+  border-radius:20px;
+  background:rgba(30,20,2,.94);
+  box-shadow:0 0 20px rgba(255,190,40,.25);
+  color:#ffd45b;
+  text-align:center;
+  font-size:12px;
+  font-weight:bold;
+  opacity:0;
+  transition:.3s;
+}
+
+.superchat.show{
+  opacity:1;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+  .game{
+    padding:8px;
+  }
+
+  .top3{
+    gap:5px;
+  }
+
+  .commenter{
+    font-size:8px;
+  }
+
+  .list{
+    gap:3px;
+  }
+
+  .row{
+    grid-template-columns:22px 26px 1fr 36px;
+    padding:2px 4px;
+  }
+
+  .row-name{
+    font-size:9px;
+  }
+
+  .row-flag{
+    font-size:16px;
+  }
+
+  .row-score{
+    font-size:10px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <div class="header">
-    <h1>🌎 COUNTRY BATTLE</h1>
+<div class="game">
 
-    <div class="rules">
-      Comment = +1 &nbsp; • &nbsp; Super Chat = +10
-    </div>
+  <div class="title frame">
+    TYPE YOUR COUNTRY
   </div>
 
-  <div class="board" id="board">
-    <div class="empty">
-      Waiting for country comments...
+  <div class="stats">
+
+    <div class="stat frame">
+      <div class="stat-label">COMMENTS</div>
+      <div id="comments" class="stat-value">0</div>
     </div>
+
+    <div class="stat frame">
+      <div class="stat-label">COUNTRIES</div>
+      <div id="activeCountries" class="stat-value">0</div>
+    </div>
+
+    <div class="stat frame">
+      <div class="stat-label">SUPER CHATS</div>
+      <div id="superChats" class="stat-value">0</div>
+    </div>
+
   </div>
 
-  <script>
-    const names = {
-      India: "🇮🇳 India",
-      Bangladesh: "🇧🇩 Bangladesh",
-      Pakistan: "🇵🇰 Pakistan",
-      Nepal: "🇳🇵 Nepal",
-      Bhutan: "🇧🇹 Bhutan",
-      SriLanka: "🇱🇰 Sri Lanka",
-      China: "🇨🇳 China",
-      Japan: "🇯🇵 Japan",
-      SouthKorea: "🇰🇷 South Korea",
-      Indonesia: "🇮🇩 Indonesia",
-      Malaysia: "🇲🇾 Malaysia",
-      Singapore: "🇸🇬 Singapore",
-      Thailand: "🇹🇭 Thailand",
-      Vietnam: "🇻🇳 Vietnam",
-      Philippines: "🇵🇭 Philippines",
-      Australia: "🇦🇺 Australia",
-      Canada: "🇨🇦 Canada",
-      USA: "🇺🇸 USA",
-      Mexico: "🇲🇽 Mexico",
-      Brazil: "🇧🇷 Brazil",
-      Argentina: "🇦🇷 Argentina",
-      UK: "🇬🇧 UK",
-      France: "🇫🇷 France",
-      Germany: "🇩🇪 Germany",
-      Italy: "🇮🇹 Italy",
-      Spain: "🇪🇸 Spain",
-      Portugal: "🇵🇹 Portugal",
-      Netherlands: "🇳🇱 Netherlands",
-      Russia: "🇷🇺 Russia",
-      Turkey: "🇹🇷 Turkey",
-      SaudiArabia: "🇸🇦 Saudi Arabia",
-      SouthAfrica: "🇿🇦 South Africa",
-      Nigeria: "🇳🇬 Nigeria",
-      Egypt: "🇪🇬 Egypt"
-    };
+  <div class="top3">
 
-    async function updateBoard() {
-      try {
-        const response = await fetch("/api/state");
-        const data = await response.json();
+    <div id="second" class="card frame"></div>
 
-        const board = document.getElementById("board");
+    <div id="first" class="card frame first"></div>
 
-        if (!data.leaderboard.length) {
-          board.innerHTML =
-            '<div class="empty">Waiting for country comments...</div>';
-          return;
-        }
+    <div id="third" class="card frame"></div>
 
-        board.innerHTML = data.leaderboard
-          .map((item, index) => `
-            <div class="row">
+  </div>
 
-              <div class="rank">
-                ${index + 1}
-              </div>
+  <div class="divider"></div>
 
-              <div>
-                <div class="country">
-                  ${names[item.country] || item.country}
-                </div>
+  <div class="board frame">
 
-                <span class="commenter">
-                  ${item.latestCommenter
-                    ? "Latest: " + escapeHtml(item.latestCommenter)
-                    : ""}
-                </span>
-              </div>
+    <div class="board-title">
+      COUNTRY LEADERBOARD
+    </div>
 
-              <div class="score">
-                ${item.score}
-              </div>
+    <div id="list" class="list"></div>
 
-            </div>
-          `)
-          .join("");
+  </div>
 
-      } catch (error) {
-        console.error(error);
-      }
+</div>
+
+<div id="superchat" class="superchat"></div>
+
+<script>
+
+let lastState = null;
+let lastVoiceCountry = "";
+
+function escapeHTML(text){
+  return String(text ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function cardHTML(item,position){
+
+  if(!item){
+    return `
+      <div class="crown">👑</div>
+      <div class="flag">🌍</div>
+      <div class="country">WAITING</div>
+      <div class="score">0</div>
+      <div class="commenter">Waiting for comments...</div>
+    `;
+  }
+
+  return `
+    <div class="crown">👑</div>
+    <div class="rank">#${position}</div>
+    <div class="flag">${item.flag}</div>
+    <div class="country">${escapeHTML(item.name)}</div>
+    <div class="score">${item.score}</div>
+    <div class="points">POINTS</div>
+    <div class="commenter">
+      ${escapeHTML(item.latestCommenter || "No comments yet")}
+    </div>
+  `;
+}
+
+function render(data){
+
+  document.getElementById("comments").textContent =
+    data.totalComments ?? 0;
+
+  document.getElementById("activeCountries").textContent =
+    data.activeCountries ?? 0;
+
+  document.getElementById("superChats").textContent =
+    data.totalSuperChats ?? 0;
+
+  const countries = Object.values(data.countries || {});
+
+  countries.sort((a,b)=>{
+
+    if(b.score !== a.score){
+      return b.score - a.score;
     }
 
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
+    return a.name.localeCompare(b.name);
+  });
 
-    updateBoard();
+  const first = countries[0];
+  const second = countries[1];
+  const third = countries[2];
 
-    setInterval(updateBoard, 1000);
-  </script>
+  document.getElementById("first").innerHTML =
+    cardHTML(first,1);
+
+  document.getElementById("second").innerHTML =
+    cardHTML(second,2);
+
+  document.getElementById("third").innerHTML =
+    cardHTML(third,3);
+
+  const list = document.getElementById("list");
+
+  list.innerHTML = countries
+    .slice(3)
+    .map((item,index)=>`
+
+      <div class="row">
+
+        <div class="row-rank">
+          #${index+4}
+        </div>
+
+        <div class="row-flag">
+          ${item.flag}
+        </div>
+
+        <div class="row-name">
+          ${escapeHTML(item.name)}
+        </div>
+
+        <div class="row-score">
+          ${item.score}
+        </div>
+
+      </div>
+
+    `)
+    .join("");
+
+  /*
+    VOICE
+  */
+
+  const newTop = first?.name || "";
+
+  if(
+    newTop &&
+    newTop !== lastVoiceCountry &&
+    first.score > 0
+  ){
+
+    lastVoiceCountry = newTop;
+
+    try{
+
+      speechSynthesis.cancel();
+
+      const voice =
+        new SpeechSynthesisUtterance(newTop);
+
+      voice.rate = 0.9;
+      voice.pitch = 1;
+      voice.volume = 1;
+
+      speechSynthesis.speak(voice);
+
+    }catch(e){}
+
+  }
+
+  lastState = data;
+}
+
+async function load(){
+
+  try{
+
+    const response =
+      await fetch("/api/state?t="+Date.now());
+
+    const data =
+      await response.json();
+
+    render(data);
+
+  }catch(error){
+
+    console.log(error);
+
+  }
+
+}
+
+load();
+
+setInterval(load,1500);
+
+</script>
 
 </body>
 </html>
