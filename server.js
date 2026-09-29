@@ -19,6 +19,12 @@ const youtube = google.youtube({
 // 195 COUNTRIES
 // =====================================================
 
+/*
+  KEEP YOUR EXISTING FULL 195-COUNTRY "info" OBJECT HERE.
+
+  Use the exact info object from the server.js you just sent.
+*/
+
 const info = {
 
   Afghanistan: ["🇦🇫", "Afghanistan"],
@@ -317,7 +323,7 @@ const aliases = {
 
 
 // =====================================================
-// TEXT NORMALIZER
+// NORMALIZE TEXT
 // =====================================================
 
 function normalize(text) {
@@ -335,7 +341,7 @@ function normalize(text) {
 
 
 // =====================================================
-// BUILD COUNTRY LIST
+// BUILD COUNTRY ALIASES
 // =====================================================
 
 const countries = {};
@@ -348,8 +354,6 @@ for (const country of Object.keys(info)) {
 
 }
 
-
-// Add aliases
 
 for (const country of Object.keys(aliases)) {
 
@@ -366,6 +370,38 @@ for (const country of Object.keys(aliases)) {
   }
 
 }
+
+
+// =====================================================
+// SORT ALIASES
+// IMPORTANT:
+// LONGER COUNTRY NAMES FIRST
+// =====================================================
+
+const countrySearchList = [];
+
+for (const country of Object.keys(countries)) {
+
+  for (const alias of countries[country]) {
+
+    if (!alias) continue;
+
+    countrySearchList.push({
+
+      country,
+      alias
+
+    });
+
+  }
+
+}
+
+countrySearchList.sort(
+  (a,b) =>
+    b.alias.length -
+    a.alias.length
+);
 
 
 // =====================================================
@@ -392,70 +428,37 @@ for (const country of Object.keys(info)) {
 
 
 // =====================================================
-// FIND EXACT COUNTRY FROM NORMAL COMMENT
-// =====================================================
-
-function findExactCountry(message) {
-
-  const text = normalize(message);
-
-  if (!text) {
-    return null;
-  }
-
-  for (const country of Object.keys(countries)) {
-
-    for (const alias of countries[country]) {
-
-      if (text === alias) {
-
-        return country;
-
-      }
-
-    }
-
-  }
-
-  return null;
-
-}
-
-
-// =====================================================
-// FIND COUNTRY INSIDE SUPER CHAT MESSAGE
+// FIND COUNTRY ANYWHERE IN COMMENT
 // =====================================================
 
 function findCountryInText(message) {
 
-  const text = normalize(message);
+  const text =
+    normalize(message);
 
   if (!text) {
     return null;
   }
 
-  const list = [];
 
-  for (const country of Object.keys(countries)) {
+  for (
+    const item of countrySearchList
+  ) {
 
-    for (const alias of countries[country]) {
+    /*
+      Match the complete country name
+      inside the message.
 
-      list.push({
-        country,
-        alias
-      });
+      Examples:
 
-    }
+      "I love India"
 
-  }
+      "India is best"
 
-  // Longer country names first
-  list.sort(
-    (a, b) =>
-      b.alias.length - a.alias.length
-  );
+      "Support India"
 
-  for (const item of list) {
+      "India ❤️"
+    */
 
     const escaped =
       item.alias.replace(
@@ -463,12 +466,15 @@ function findCountryInText(message) {
         "\\$&"
       );
 
+
     const regex =
       new RegExp(
         "(^|\\s)" +
         escaped +
-        "(?=\\s|$)"
+        "(?=\\s|$)",
+        "i"
       );
+
 
     if (regex.test(text)) {
 
@@ -477,6 +483,7 @@ function findCountryInText(message) {
     }
 
   }
+
 
   return null;
 
@@ -496,6 +503,10 @@ let lastEvent = {
   type: "",
 
   displayName: "",
+
+  points: 0,
+
+  message: "",
 
   time: 0
 
@@ -524,15 +535,21 @@ async function getLiveChatId() {
   const response =
     await youtube.videos.list({
 
-      part: ["liveStreamingDetails"],
+      part: [
+        "liveStreamingDetails"
+      ],
 
-      id: [VIDEO_ID]
+      id: [
+        VIDEO_ID
+      ]
 
     });
+
 
   const item =
     response.data.items &&
     response.data.items[0];
+
 
   if (!item) {
 
@@ -542,8 +559,10 @@ async function getLiveChatId() {
 
   }
 
+
   const details =
     item.liveStreamingDetails;
+
 
   if (!details) {
 
@@ -553,21 +572,26 @@ async function getLiveChatId() {
 
   }
 
+
   liveChatId =
-    details.activeLiveChatId || null;
+    details.activeLiveChatId ||
+    null;
+
 
   if (!liveChatId) {
 
     throw new Error(
-      "Live chat is not active yet."
+      "Live chat is not active."
     );
 
   }
 
+
   nextPageToken = null;
 
+
   console.log(
-    "Live Chat ID found:",
+    "LIVE CHAT CONNECTED:",
     liveChatId
   );
 
@@ -575,7 +599,7 @@ async function getLiveChatId() {
 
 
 // =====================================================
-// PROCESS MESSAGE
+// PROCESS YOUTUBE MESSAGE
 // =====================================================
 
 function processMessage(item) {
@@ -584,20 +608,40 @@ function processMessage(item) {
     return;
   }
 
-  // Prevent duplicate messages
-  if (seenMessageIds.has(item.id)) {
+
+  /*
+    Prevent duplicate messages.
+  */
+
+  if (
+    seenMessageIds.has(item.id)
+  ) {
+
     return;
+
   }
+
 
   seenMessageIds.add(item.id);
 
-  // Keep memory small
-  if (seenMessageIds.size > 5000) {
 
-    const first =
-      seenMessageIds.values().next().value;
+  /*
+    Keep memory under control.
+  */
 
-    seenMessageIds.delete(first);
+  if (
+    seenMessageIds.size > 5000
+  ) {
+
+    const firstId =
+      seenMessageIds
+        .values()
+        .next()
+        .value;
+
+    seenMessageIds.delete(
+      firstId
+    );
 
   }
 
@@ -605,12 +649,19 @@ function processMessage(item) {
   const snippet =
     item.snippet || {};
 
+
   const author =
     item.authorDetails || {};
+
+
+  /*
+    THIS IS THE YOUTUBE COMMENTER NAME
+  */
 
   const displayName =
     author.displayName ||
     "Anonymous";
+
 
   const type =
     snippet.type || "";
@@ -619,7 +670,9 @@ function processMessage(item) {
   let message = "";
 
 
-  // Normal text comment
+  // ===================================================
+  // NORMAL COMMENT
+  // ===================================================
 
   if (
     type === "textMessageEvent"
@@ -636,7 +689,9 @@ function processMessage(item) {
   }
 
 
-  // Super Chat
+  // ===================================================
+  // SUPER CHAT
+  // ===================================================
 
   if (
     type === "superChatEvent"
@@ -653,12 +708,27 @@ function processMessage(item) {
 
 
   if (!message) {
+
+    console.log(
+      "MESSAGE WITHOUT TEXT:",
+      displayName
+    );
+
     return;
+
   }
 
 
+  console.log(
+    "YOUTUBE MESSAGE:",
+    displayName,
+    "=>",
+    message
+  );
+
+
   // ===================================================
-  // NORMAL COMMENT
+  // NORMAL COMMENT = +1
   // ===================================================
 
   if (
@@ -666,12 +736,26 @@ function processMessage(item) {
   ) {
 
     const country =
-      findExactCountry(message);
+      findCountryInText(
+        message
+      );
+
 
     if (!country) {
+
+      console.log(
+        "NO COUNTRY FOUND:",
+        message
+      );
+
       return;
+
     }
 
+
+    /*
+      +1 POINT
+    */
 
     state[country].score += 1;
 
@@ -680,6 +764,10 @@ function processMessage(item) {
     state[country].latestCommenter =
       displayName;
 
+
+    /*
+      SEND EVENT TO FRONTEND
+    */
 
     lastEvent = {
 
@@ -691,14 +779,19 @@ function processMessage(item) {
 
       displayName: displayName,
 
+      points: 1,
+
+      message: message,
+
       time: Date.now()
 
     };
 
 
     console.log(
-      `COMMENT +1 | ${country} | ${displayName}`
+      `COMMENT +1 | ${displayName} | ${country}`
     );
+
 
     return;
 
@@ -706,7 +799,7 @@ function processMessage(item) {
 
 
   // ===================================================
-  // SUPER CHAT
+  // SUPER CHAT = +10
   // ===================================================
 
   if (
@@ -714,12 +807,26 @@ function processMessage(item) {
   ) {
 
     const country =
-      findCountryInText(message);
+      findCountryInText(
+        message
+      );
+
 
     if (!country) {
+
+      console.log(
+        "NO COUNTRY FOUND IN SUPER CHAT:",
+        message
+      );
+
       return;
+
     }
 
+
+    /*
+      +10 POINTS
+    */
 
     state[country].score += 10;
 
@@ -728,6 +835,10 @@ function processMessage(item) {
     state[country].latestCommenter =
       displayName;
 
+
+    /*
+      SEND EVENT TO FRONTEND
+    */
 
     lastEvent = {
 
@@ -739,13 +850,17 @@ function processMessage(item) {
 
       displayName: displayName,
 
+      points: 10,
+
+      message: message,
+
       time: Date.now()
 
     };
 
 
     console.log(
-      `SUPER CHAT +10 | ${country} | ${displayName}`
+      `SUPER CHAT +10 | ${displayName} | ${country}`
     );
 
   }
@@ -761,6 +876,11 @@ async function pollChat() {
 
   try {
 
+    /*
+      If chat isn't connected,
+      find it again.
+    */
+
     if (!liveChatId) {
 
       await getLiveChatId();
@@ -770,11 +890,16 @@ async function pollChat() {
 
     const params = {
 
-      liveChatId: liveChatId,
+      liveChatId:
+
+        liveChatId,
 
       part: [
+
         "snippet",
+
         "authorDetails"
+
       ],
 
       maxResults: 200
@@ -791,9 +916,9 @@ async function pollChat() {
 
 
     const response =
-      await youtube.liveChatMessages.list(
-        params
-      );
+      await youtube
+        .liveChatMessages
+        .list(params);
 
 
     nextPageToken =
@@ -805,15 +930,28 @@ async function pollChat() {
       response.data.items || [];
 
 
-    for (const item of messages) {
+    console.log(
+      "YouTube messages received:",
+      messages.length
+    );
+
+
+    for (
+      const item of messages
+    ) {
 
       processMessage(item);
 
     }
 
 
+    /*
+      YouTube tells us when to poll again.
+    */
+
     const wait =
-      response.data.pollingIntervalMillis ||
+      response.data
+        .pollingIntervalMillis ||
       5000;
 
 
@@ -823,13 +961,15 @@ async function pollChat() {
   } catch (error) {
 
     console.error(
-      "YouTube Chat Error:",
+      "YOUTUBE CHAT ERROR:",
       error.message
     );
 
 
-    // Reset chat when the current
-    // live chat is no longer available
+    /*
+      If the live chat ended or
+      permission changed, reconnect.
+    */
 
     if (
       error.code === 403 ||
@@ -854,18 +994,26 @@ async function pollChat() {
 // SCHEDULE NEXT POLL
 // =====================================================
 
-function schedulePoll(milliseconds) {
+function schedulePoll(
+  milliseconds
+) {
 
   if (pollingTimer) {
 
-    clearTimeout(pollingTimer);
+    clearTimeout(
+      pollingTimer
+    );
 
   }
+
 
   pollingTimer =
     setTimeout(
       pollChat,
-      Math.max(milliseconds, 1000)
+      Math.max(
+        milliseconds,
+        1000
+      )
     );
 
 }
@@ -877,13 +1025,14 @@ function schedulePoll(milliseconds) {
 
 app.get(
   "/api/state",
-  (req, res) => {
+  (req,res) => {
 
     const result = {};
 
 
     for (
-      const country of Object.keys(countries)
+      const country of
+      Object.keys(countries)
     ) {
 
       const item =
@@ -902,7 +1051,10 @@ app.get(
 
       const meta =
         info[country] ||
-        ["🌍", country];
+        [
+          "🌍",
+          country
+        ];
 
 
       result[country] = {
@@ -913,7 +1065,8 @@ app.get(
 
         flag: meta[0],
 
-        score: item.score || 0,
+        score:
+          item.score || 0,
 
         latestCommenter:
           item.latestCommenter || ""
@@ -923,37 +1076,57 @@ app.get(
     }
 
 
+    /*
+      Number of countries
+      that currently have points.
+    */
+
     const activeCountries =
       Object.values(result)
         .filter(
-          x => x.score > 0
+          item =>
+            item.score > 0
         )
         .length;
 
 
+    /*
+      Total normal comments
+    */
+
     const totalComments =
       Object.values(state)
         .reduce(
-          (sum, x) =>
+          (sum,item) =>
             sum +
-            (x.commentCount || 0),
+            (
+              item.commentCount || 0
+            ),
           0
         );
 
 
+    /*
+      Total Super Chats
+    */
+
     const totalSuperChats =
       Object.values(state)
         .reduce(
-          (sum, x) =>
+          (sum,item) =>
             sum +
-            (x.superChats || 0),
+            (
+              item.superChats || 0
+            ),
           0
         );
 
 
     res.json({
 
-      countries: result,
+      countries:
+
+        result,
 
       activeCountries:
 
@@ -969,7 +1142,11 @@ app.get(
 
       lastEvent:
 
-        lastEvent
+        lastEvent,
+
+      liveChatConnected:
+
+        !!liveChatId
 
     });
 
@@ -983,13 +1160,14 @@ app.get(
 
 app.get(
   "/health",
-  (req, res) => {
+  (req,res) => {
 
     res.json({
 
       ok: true,
 
-      videoId: VIDEO_ID,
+      videoId:
+        VIDEO_ID,
 
       liveChatConnected:
         !!liveChatId,
@@ -1004,7 +1182,7 @@ app.get(
 
 
 // =====================================================
-// FRONTEND
+// SERVE FRONTEND
 // =====================================================
 
 app.use(
@@ -1027,33 +1205,13 @@ app.listen(
   () => {
 
     console.log(
-      "Country Battle server running on port",
-      PORT
+      "================================="
     );
 
     console.log(
-      "Video ID:",
-      VIDEO_ID
+      "COUNTRY BATTLE SERVER STARTED"
     );
 
     console.log(
-      "Countries loaded:",
-      Object.keys(info).length
-    );
-
-
-    if (!API_KEY) {
-
-      console.error(
-        "WARNING: YOUTUBE_API_KEY is missing!"
-      );
-
-    }
-
-
-    // Start YouTube chat polling
-
-    pollChat();
-
-  }
-);
+      "PORT:",
+      
