@@ -24,7 +24,12 @@ html,body{
 
 body{
   background:
-    radial-gradient(circle at 50% 10%,#332300 0%,#100b02 28%,#030303 70%);
+    radial-gradient(
+      circle at 50% 10%,
+      #332300 0%,
+      #100b02 28%,
+      #030303 70%
+    );
 }
 
 /* MAIN */
@@ -42,9 +47,12 @@ body{
   border:2px solid #d6a83c;
   border-radius:12px;
   background:
-    linear-gradient(145deg,
+    linear-gradient(
+      145deg,
       rgba(255,215,100,.10),
-      rgba(0,0,0,.75));
+      rgba(0,0,0,.75)
+    );
+
   box-shadow:
     0 0 12px rgba(255,190,40,.22),
     inset 0 0 18px rgba(255,190,40,.06);
@@ -55,13 +63,17 @@ body{
 .title{
   height:8%;
   min-height:48px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   letter-spacing:4px;
   font-size:clamp(20px,4vw,42px);
   font-weight:900;
+
   color:#ffe49a;
+
   text-shadow:
     0 0 8px #d79b24,
     0 0 20px #8c5d08;
@@ -72,7 +84,9 @@ body{
 .stats{
   height:9%;
   min-height:48px;
+
   margin-top:8px;
+
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:8px;
@@ -94,7 +108,9 @@ body{
 
 .stat-value{
   margin-top:3px;
+
   font-size:clamp(18px,4vw,32px);
+
   color:#ffd45b;
   font-weight:900;
 }
@@ -104,19 +120,24 @@ body{
 .top3{
   height:32%;
   margin-top:9px;
+
   display:grid;
   grid-template-columns:1fr 1.15fr 1fr;
+
   gap:9px;
   align-items:end;
 }
 
 .card{
   position:relative;
+
   height:82%;
+
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
+
   overflow:hidden;
 }
 
@@ -128,7 +149,9 @@ body{
 .crown{
   position:absolute;
   top:4px;
+
   font-size:clamp(22px,5vw,42px);
+
   filter:drop-shadow(0 0 7px #e4b638);
 }
 
@@ -136,30 +159,42 @@ body{
   position:absolute;
   top:7px;
   left:9px;
+
   font-size:13px;
+
   color:#888;
   font-weight:bold;
 }
 
 .flag{
   font-size:clamp(38px,8vw,80px);
+
   line-height:1;
+
   margin-top:15px;
+
   filter:drop-shadow(0 4px 5px #000);
 }
 
 .country{
   margin-top:7px;
+
   font-size:clamp(13px,3vw,25px);
+
   font-weight:900;
+
   text-align:center;
+
   color:#fff;
 }
 
 .score{
   margin-top:4px;
+
   font-size:clamp(24px,5vw,43px);
+
   color:#ffd24e;
+
   font-weight:900;
 }
 
@@ -170,11 +205,16 @@ body{
 
 .commenter{
   margin-top:5px;
+
   max-width:90%;
+
   overflow:hidden;
+
   white-space:nowrap;
   text-overflow:ellipsis;
+
   font-size:11px;
+
   color:#bdbdbd;
 }
 
@@ -182,56 +222,83 @@ body{
 
 .divider{
   height:2px;
+
   margin:8px 0;
-  background:linear-gradient(
-    90deg,
-    transparent,
-    #d5a832,
-    transparent
-  );
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #d5a832,
+      transparent
+    );
 }
 
 /* LEADERBOARD */
 
 .board{
   height:48%;
+
   overflow:hidden;
+
   padding:8px;
 }
 
 .board-title{
   height:30px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   color:#ffd45b;
+
   font-weight:900;
+
   letter-spacing:2px;
+
   font-size:14px;
 }
 
 .list{
   height:calc(100% - 30px);
+
   overflow:hidden;
+
   display:grid;
+
   grid-template-columns:repeat(2,1fr);
+
   gap:5px;
 }
 
 .row{
   min-height:32px;
+
   border:1px solid rgba(214,168,60,.25);
+
   border-radius:6px;
+
   background:rgba(255,255,255,.025);
+
   display:grid;
-  grid-template-columns:28px 32px 1fr 48px;
+
+  grid-template-columns:
+    28px
+    32px
+    1fr
+    48px;
+
   align-items:center;
+
   padding:3px 6px;
 }
 
 .row-rank{
   color:#777;
+
   font-size:10px;
+
   text-align:center;
 }
 
@@ -241,39 +308,62 @@ body{
 
 .row-name{
   overflow:hidden;
+
   white-space:nowrap;
+
   text-overflow:ellipsis;
+
   font-size:11px;
+
   font-weight:bold;
 }
 
 .row-score{
   text-align:right;
+
   color:#ffd45b;
+
   font-size:12px;
+
   font-weight:900;
 }
 
-/* SUPERCHAT */
+/* SUPER CHAT */
 
 .superchat{
   position:fixed;
+
   left:50%;
   bottom:8px;
+
   transform:translateX(-50%);
+
   z-index:20;
+
   min-width:230px;
   max-width:90%;
+
   padding:8px 14px;
+
   border:1px solid #ffd45b;
+
   border-radius:20px;
+
   background:rgba(30,20,2,.94);
-  box-shadow:0 0 20px rgba(255,190,40,.25);
+
+  box-shadow:
+    0 0 20px rgba(255,190,40,.25);
+
   color:#ffd45b;
+
   text-align:center;
+
   font-size:12px;
+
   font-weight:bold;
+
   opacity:0;
+
   transition:.3s;
 }
 
@@ -302,7 +392,12 @@ body{
   }
 
   .row{
-    grid-template-columns:22px 26px 1fr 36px;
+    grid-template-columns:
+      22px
+      26px
+      1fr
+      36px;
+
     padding:2px 4px;
   }
 
@@ -325,40 +420,90 @@ body{
 
 <div class="game">
 
+  <!-- TITLE -->
+
   <div class="title frame">
     TYPE YOUR COUNTRY
   </div>
 
+
+  <!-- LIVE STATS -->
+
   <div class="stats">
 
     <div class="stat frame">
-      <div class="stat-label">COMMENTS</div>
-      <div id="comments" class="stat-value">0</div>
+
+      <div class="stat-label">
+        COMMENTS
+      </div>
+
+      <div
+        id="comments"
+        class="stat-value">
+        0
+      </div>
+
     </div>
 
-    <div class="stat frame">
-      <div class="stat-label">COUNTRIES</div>
-      <div id="activeCountries" class="stat-value">0</div>
-    </div>
 
     <div class="stat frame">
-      <div class="stat-label">SUPER CHATS</div>
-      <div id="superChats" class="stat-value">0</div>
+
+      <div class="stat-label">
+        COUNTRIES
+      </div>
+
+      <div
+        id="activeCountries"
+        class="stat-value">
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat frame">
+
+      <div class="stat-label">
+        SUPER CHATS
+      </div>
+
+      <div
+        id="superChats"
+        class="stat-value">
+        0
+      </div>
+
     </div>
 
   </div>
+
+
+  <!-- TOP 3 COUNTRIES -->
 
   <div class="top3">
 
-    <div id="second" class="card frame"></div>
+    <div
+      id="second"
+      class="card frame">
+    </div>
 
-    <div id="first" class="card frame first"></div>
+    <div
+      id="first"
+      class="card frame first">
+    </div>
 
-    <div id="third" class="card frame"></div>
+    <div
+      id="third"
+      class="card frame">
+    </div>
 
   </div>
 
+
   <div class="divider"></div>
+
+
+  <!-- LEADERBOARD -->
 
   <div class="board frame">
 
@@ -366,174 +511,593 @@ body{
       COUNTRY LEADERBOARD
     </div>
 
-    <div id="list" class="list"></div>
+    <div
+      id="list"
+      class="list">
+    </div>
 
   </div>
 
 </div>
 
-<div id="superchat" class="superchat"></div>
+
+<!-- SUPER CHAT NOTIFICATION -->
+
+<div
+  id="superchat"
+  class="superchat">
+</div>
+
 
 <script>
 
+/* =========================================
+   GLOBAL VARIABLES
+========================================= */
+
 let lastState = null;
-let lastVoiceCountry = "";
+
+let lastEventId = null;
+
+let voiceReady = false;
+
+
+/* =========================================
+   HTML SECURITY
+========================================= */
 
 function escapeHTML(text){
+
   return String(text ?? "")
+
     .replaceAll("&","&amp;")
+
     .replaceAll("<","&lt;")
+
     .replaceAll(">","&gt;")
+
     .replaceAll('"',"&quot;")
+
     .replaceAll("'","&#039;");
+
 }
+
+
+/* =========================================
+   ENABLE BROWSER VOICE
+========================================= */
+
+function unlockVoice(){
+
+  if(voiceReady){
+    return;
+  }
+
+  try{
+
+    const testVoice =
+      new SpeechSynthesisUtterance("");
+
+    testVoice.volume = 0;
+
+    speechSynthesis.speak(testVoice);
+
+    voiceReady = true;
+
+    console.log("Voice enabled");
+
+  }catch(error){
+
+    console.log(
+      "Voice unlock error:",
+      error
+    );
+
+  }
+
+}
+
+
+/*
+  Browser requires user interaction
+  before allowing automatic speech.
+*/
+
+document.addEventListener(
+  "click",
+  unlockVoice,
+  {once:true}
+);
+
+document.addEventListener(
+  "touchstart",
+  unlockVoice,
+  {once:true}
+);
+
+
+/* =========================================
+   VOICE ANNOUNCEMENT
+========================================= */
+
+function speakEvent(event){
+
+  if(!event){
+    return;
+  }
+
+  /*
+    Ignore events without an ID
+  */
+
+  if(!event.id){
+    return;
+  }
+
+
+  /*
+    Prevent the same YouTube event
+    from being announced repeatedly.
+  */
+
+  if(event.id === lastEventId){
+    return;
+  }
+
+  lastEventId = event.id;
+
+
+  const commenter =
+    event.displayName ||
+    "Someone";
+
+
+  const country =
+    event.country ||
+    "";
+
+
+  const points =
+    Number(event.points || 0);
+
+
+  if(!country){
+    return;
+  }
+
+
+  if(points <= 0){
+    return;
+  }
+
+
+  /* POINT TEXT */
+
+  let pointText;
+
+
+  if(points === 1){
+
+    pointText =
+      "plus one point";
+
+  }else{
+
+    pointText =
+      "plus " +
+      points +
+      " points";
+
+  }
+
+
+  /*
+    Example:
+
+    Rahul, India, plus one point.
+
+    Rahul, India, plus ten points.
+  */
+
+  const announcement =
+    commenter +
+    ", " +
+    country +
+    ", " +
+    pointText;
+
+
+  try{
+
+    /*
+      Stop previous announcement
+      so new comments can be spoken.
+    */
+
+    speechSynthesis.cancel();
+
+
+    const utterance =
+      new SpeechSynthesisUtterance(
+        announcement
+      );
+
+
+    /*
+      English voice settings
+    */
+
+    utterance.rate = 0.92;
+
+    utterance.pitch = 1;
+
+    utterance.volume = 1;
+
+
+    /*
+      Try to select an English voice.
+    */
+
+    const voices =
+      speechSynthesis.getVoices();
+
+
+    const englishVoice =
+      voices.find(
+        voice =>
+          voice.lang &&
+          voice.lang
+            .toLowerCase()
+            .startsWith("en")
+      );
+
+
+    if(englishVoice){
+
+      utterance.voice =
+        englishVoice;
+
+    }
+
+
+    speechSynthesis.speak(
+      utterance
+    );
+
+
+    console.log(
+      "VOICE:",
+      announcement
+    );
+
+
+  }catch(error){
+
+    console.log(
+      "Speech error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   CARD HTML
+========================================= */
 
 function cardHTML(item,position){
 
   if(!item){
+
     return `
-      <div class="crown">👑</div>
-      <div class="flag">🌍</div>
-      <div class="country">WAITING</div>
-      <div class="score">0</div>
-      <div class="commenter">Waiting for comments...</div>
+
+      <div class="crown">
+        👑
+      </div>
+
+      <div class="flag">
+        🌍
+      </div>
+
+      <div class="country">
+        WAITING
+      </div>
+
+      <div class="score">
+        0
+      </div>
+
+      <div class="commenter">
+        Waiting for comments...
+      </div>
+
     `;
+
   }
 
+
   return `
-    <div class="crown">👑</div>
-    <div class="rank">#${position}</div>
-    <div class="flag">${item.flag}</div>
-    <div class="country">${escapeHTML(item.name)}</div>
-    <div class="score">${item.score}</div>
-    <div class="points">POINTS</div>
-    <div class="commenter">
-      ${escapeHTML(item.latestCommenter || "No comments yet")}
+
+    <div class="crown">
+      👑
     </div>
+
+    <div class="rank">
+      #${position}
+    </div>
+
+    <div class="flag">
+      ${item.flag}
+    </div>
+
+    <div class="country">
+      ${escapeHTML(item.name)}
+    </div>
+
+    <div class="score">
+      ${item.score}
+    </div>
+
+    <div class="points">
+      POINTS
+    </div>
+
+    <div class="commenter">
+      ${escapeHTML(
+        item.latestCommenter ||
+        "No comments yet"
+      )}
+    </div>
+
   `;
+
 }
+
+
+/* =========================================
+   RENDER GAME
+========================================= */
 
 function render(data){
 
-  document.getElementById("comments").textContent =
-    data.totalComments ?? 0;
-
-  document.getElementById("activeCountries").textContent =
-    data.activeCountries ?? 0;
-
-  document.getElementById("superChats").textContent =
-    data.totalSuperChats ?? 0;
-
-  const countries = Object.values(data.countries || {});
-
-  countries.sort((a,b)=>{
-
-    if(b.score !== a.score){
-      return b.score - a.score;
-    }
-
-    return a.name.localeCompare(b.name);
-  });
-
-  const first = countries[0];
-  const second = countries[1];
-  const third = countries[2];
-
-  document.getElementById("first").innerHTML =
-    cardHTML(first,1);
-
-  document.getElementById("second").innerHTML =
-    cardHTML(second,2);
-
-  document.getElementById("third").innerHTML =
-    cardHTML(third,3);
-
-  const list = document.getElementById("list");
-
-  list.innerHTML = countries
-    .slice(3)
-    .map((item,index)=>`
-
-      <div class="row">
-
-        <div class="row-rank">
-          #${index+4}
-        </div>
-
-        <div class="row-flag">
-          ${item.flag}
-        </div>
-
-        <div class="row-name">
-          ${escapeHTML(item.name)}
-        </div>
-
-        <div class="row-score">
-          ${item.score}
-        </div>
-
-      </div>
-
-    `)
-    .join("");
-
   /*
-    VOICE
+    COMMENTS
   */
 
-  const newTop = first?.name || "";
+  document
+    .getElementById("comments")
+    .textContent =
+      data.totalComments ?? 0;
 
-  if(
-    newTop &&
-    newTop !== lastVoiceCountry &&
-    first.score > 0
-  ){
 
-    lastVoiceCountry = newTop;
+  /*
+    ACTIVE COUNTRIES
+  */
 
-    try{
+  document
+    .getElementById("activeCountries")
+    .textContent =
+      data.activeCountries ?? 0;
 
-      speechSynthesis.cancel();
 
-      const voice =
-        new SpeechSynthesisUtterance(newTop);
+  /*
+    SUPER CHATS
+  */
 
-      voice.rate = 0.9;
-      voice.pitch = 1;
-      voice.volume = 1;
+  document
+    .getElementById("superChats")
+    .textContent =
+      data.totalSuperChats ?? 0;
 
-      speechSynthesis.speak(voice);
 
-    }catch(e){}
+  /*
+    GET COUNTRIES
+  */
+
+  const countries =
+    Object.values(
+      data.countries || {}
+    );
+
+
+  /*
+    SORT BY SCORE
+  */
+
+  countries.sort(
+    (a,b)=>{
+
+      if(
+        b.score !==
+        a.score
+      ){
+
+        return b.score -
+               a.score;
+
+      }
+
+      return a.name.localeCompare(
+        b.name
+      );
+
+    }
+  );
+
+
+  /*
+    TOP THREE
+  */
+
+  const first =
+    countries[0];
+
+  const second =
+    countries[1];
+
+  const third =
+    countries[2];
+
+
+  document
+    .getElementById("first")
+    .innerHTML =
+      cardHTML(first,1);
+
+
+  document
+    .getElementById("second")
+    .innerHTML =
+      cardHTML(second,2);
+
+
+  document
+    .getElementById("third")
+    .innerHTML =
+      cardHTML(third,3);
+
+
+  /*
+    LEADERBOARD
+  */
+
+  const list =
+    document.getElementById(
+      "list"
+    );
+
+
+  list.innerHTML =
+    countries
+      .slice(3)
+      .map(
+        (item,index)=>`
+
+          <div class="row">
+
+            <div class="row-rank">
+              #${index + 4}
+            </div>
+
+            <div class="row-flag">
+              ${item.flag}
+            </div>
+
+            <div class="row-name">
+              ${escapeHTML(
+                item.name
+              )}
+            </div>
+
+            <div class="row-score">
+              ${item.score}
+            </div>
+
+          </div>
+
+        `
+      )
+      .join("");
+
+
+  /*
+    CHECK FOR NEW LIVE EVENT
+  */
+
+  if(data.lastEvent){
+
+    speakEvent(
+      data.lastEvent
+    );
 
   }
 
+
   lastState = data;
+
 }
+
+
+/* =========================================
+   LOAD LIVE DATA
+========================================= */
 
 async function load(){
 
   try{
 
     const response =
-      await fetch("/api/state?t="+Date.now());
+      await fetch(
+        "/api/state?t=" +
+        Date.now()
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "API Error: " +
+        response.status
+      );
+
+    }
+
 
     const data =
       await response.json();
 
+
     render(data);
+
 
   }catch(error){
 
-    console.log(error);
+    console.log(
+      "State loading error:",
+      error
+    );
 
   }
 
 }
 
+
+/* =========================================
+   START LIVE GAME
+========================================= */
+
 load();
 
-setInterval(load,1500);
+
+/*
+  Refresh live data every 1.5 seconds
+*/
+
+setInterval(
+  load,
+  1500
+);
+
+
+/* =========================================
+   LOAD AVAILABLE VOICES
+========================================= */
+
+if(
+  "speechSynthesis" in window
+){
+
+  speechSynthesis.onvoiceschanged =
+    function(){
+
+      speechSynthesis
+        .getVoices();
+
+    };
+
+}
 
 </script>
 
