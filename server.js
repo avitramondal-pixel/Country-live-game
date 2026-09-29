@@ -243,4 +243,178 @@ const info = {
   UAE: ["🇦🇪", "United Arab Emirates"],
   UK: ["🇬🇧", "United Kingdom"],
   USA: ["🇺🇸", "United States"],
-  Uruguay: ["🇺🇾
+  Uruguay: ["🇺🇾", "Uruguay"],
+  Uzbekistan: ["🇺🇿", "Uzbekistan"],
+
+  Vanuatu: ["🇻🇺", "Vanuatu"],
+  Vatican: ["🇻🇦", "Holy See"],
+  Venezuela: ["🇻🇪", "Venezuela"],
+  Vietnam: ["🇻🇳", "Vietnam"],
+
+  Yemen: ["🇾🇪", "Yemen"],
+
+  Zambia: ["🇿🇲", "Zambia"],
+  Zimbabwe: ["🇿🇼", "Zimbabwe"]
+};
+
+// =====================================================
+// COUNTRY ALIASES
+// =====================================================
+
+const aliases = {
+
+  CoteDIvoire: [
+    "cote d ivoire",
+    "ivory coast"
+  ],
+
+  DemocraticRepublicCongo: [
+    "democratic republic of the congo",
+    "dr congo",
+    "drc"
+  ],
+
+  Congo: [
+    "republic of the congo"
+  ],
+
+  CapeVerde: [
+    "cabo verde"
+  ],
+
+  Czechia: [
+    "czech republic"
+  ],
+
+  Eswatini: [
+    "swaziland"
+  ],
+
+  Myanmar: [
+    "burma"
+  ],
+
+  TimorLeste: [
+    "east timor"
+  ],
+
+  Turkey: [
+    "turkey",
+    "türkiye"
+  ],
+
+  UAE: [
+    "uae"
+  ],
+
+  UK: [
+    "uk",
+    "great britain",
+    "britain"
+  ],
+
+  USA: [
+    "usa",
+    "us",
+    "united states of america"
+  ],
+
+  Vatican: [
+    "vatican",
+    "vatican city",
+    "holy see"
+  ]
+};
+
+// =====================================================
+// NORMALIZE TEXT
+// =====================================================
+
+function normalize(text) {
+
+  return String(text || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[’']/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+}
+
+// =====================================================
+// BUILD COUNTRY SEARCH LIST
+// =====================================================
+
+const countries = {};
+
+for (const country of Object.keys(info)) {
+
+  countries[country] = [
+    normalize(info[country][1])
+  ];
+
+}
+
+for (const country of Object.keys(aliases)) {
+
+  if (!countries[country]) {
+    countries[country] = [];
+  }
+
+  for (const alias of aliases[country]) {
+
+    countries[country].push(
+      normalize(alias)
+    );
+
+  }
+
+}
+
+const countrySearchList = [];
+
+for (const country of Object.keys(countries)) {
+
+  for (const alias of countries[country]) {
+
+    if (!alias) continue;
+
+    countrySearchList.push({
+      country,
+      alias
+    });
+
+  }
+
+}
+
+countrySearchList.sort(
+  (a, b) =>
+    b.alias.length - a.alias.length
+);
+
+// =====================================================
+// GAME STATE
+// =====================================================
+
+const state = {};
+
+for (const country of Object.keys(info)) {
+
+  state[country] = {
+
+    score: 0,
+
+    commentCount: 0,
+
+    superChats: 0,
+
+    latestCommenter: ""
+
+  };
+
+}
+
+// =================================================
