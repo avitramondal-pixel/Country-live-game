@@ -1,223 +1,294 @@
-const express = require("express");
-const { google } = require("googleapis");
-require("dotenv").config();
-
-const app = express();
-
-const PORT = process.env.PORT || 3000;
-const API_KEY = process.env.YOUTUBE_API_KEY;
-const VIDEO_ID = process.env.YOUTUBE_VIDEO_ID;
-
-const COMMENT_POINTS = 1;
-const SUPERCHAT_POINTS = 10;
-
-app.use(express.static("public"));
-
 const countries = {
-  India: ["india"],
-  Bangladesh: ["bangladesh"],
-  Pakistan: ["pakistan"],
-  Nepal: ["nepal"],
-  Bhutan: ["bhutan"],
-  SriLanka: ["sri lanka", "srilanka"],
-  China: ["china"],
-  Japan: ["japan"],
-  SouthKorea: ["south korea", "korea"],
-  Indonesia: ["indonesia"],
-  Malaysia: ["malaysia"],
-  Singapore: ["singapore"],
-  Thailand: ["thailand"],
-  Vietnam: ["vietnam"],
-  Philippines: ["philippines"],
-  Australia: ["australia"],
-  Canada: ["canada"],
-  USA: ["usa", "united states", "america"],
-  Mexico: ["mexico"],
-  Brazil: ["brazil"],
+  Afghanistan: ["afghanistan"],
+  Albania: ["albania"],
+  Algeria: ["algeria"],
+  Andorra: ["andorra"],
+  Angola: ["angola"],
+  AntiguaAndBarbuda: ["antigua and barbuda", "antigua", "barbuda"],
   Argentina: ["argentina"],
-  UK: ["uk", "united kingdom", "england"],
+  Armenia: ["armenia"],
+  Australia: ["australia"],
+  Austria: ["austria"],
+  Azerbaijan: ["azerbaijan"],
+
+  Bahamas: ["bahamas"],
+  Bahrain: ["bahrain"],
+  Bangladesh: ["bangladesh"],
+  Barbados: ["barbados"],
+  Belarus: ["belarus"],
+  Belgium: ["belgium"],
+  Belize: ["belize"],
+  Benin: ["benin"],
+  Bhutan: ["bhutan"],
+  Bolivia: ["bolivia"],
+  BosniaAndHerzegovina: ["bosnia and herzegovina", "bosnia"],
+  Botswana: ["botswana"],
+  Brazil: ["brazil"],
+  Brunei: ["brunei"],
+  Bulgaria: ["bulgaria"],
+  BurkinaFaso: ["burkina faso"],
+  Burundi: ["burundi"],
+
+  CaboVerde: ["cabo verde", "cape verde"],
+  Cambodia: ["cambodia"],
+  Cameroon: ["cameroon"],
+  Canada: ["canada"],
+  CentralAfricanRepublic: [
+    "central african republic",
+    "car"
+  ],
+  Chad: ["chad"],
+  Chile: ["chile"],
+  China: ["china"],
+  Colombia: ["colombia"],
+  Comoros: ["comoros"],
+  Congo: ["congo", "republic of the congo"],
+  CostaRica: ["costa rica"],
+  CoteDIvoire: [
+    "cote d'ivoire",
+    "côte d'ivoire",
+    "ivory coast"
+  ],
+  Croatia: ["croatia"],
+  Cuba: ["cuba"],
+  Cyprus: ["cyprus"],
+  Czechia: ["czechia", "czech republic"],
+
+  DemocraticRepublicOfTheCongo: [
+    "democratic republic of the congo",
+    "drc",
+    "dr congo"
+  ],
+  Denmark: ["denmark"],
+  Djibouti: ["djibouti"],
+  Dominica: ["dominica"],
+  DominicanRepublic: ["dominican republic"],
+
+  Ecuador: ["ecuador"],
+  Egypt: ["egypt"],
+  ElSalvador: ["el salvador"],
+  EquatorialGuinea: ["equatorial guinea"],
+  Eritrea: ["eritrea"],
+  Estonia: ["estonia"],
+  Eswatini: ["eswatini", "swaziland"],
+  Ethiopia: ["ethiopia"],
+
+  Fiji: ["fiji"],
+  Finland: ["finland"],
   France: ["france"],
+
+  Gabon: ["gabon"],
+  Gambia: ["gambia", "the gambia"],
+  Georgia: ["georgia"],
   Germany: ["germany"],
+  Ghana: ["ghana"],
+  Greece: ["greece"],
+  Grenada: ["grenada"],
+  Guatemala: ["guatemala"],
+  Guinea: ["guinea"],
+  GuineaBissau: ["guinea bissau"],
+  Guyana: ["guyana"],
+
+  Haiti: ["haiti"],
+  Honduras: ["honduras"],
+  Hungary: ["hungary"],
+
+  Iceland: ["iceland"],
+  India: ["india"],
+  Indonesia: ["indonesia"],
+  Iran: ["iran", "iranian"],
+  Iraq: ["iraq"],
+  Ireland: ["ireland"],
+  Israel: ["israel"],
   Italy: ["italy"],
-  Spain: ["spain"],
-  Portugal: ["portugal"],
+
+  Jamaica: ["jamaica"],
+  Japan: ["japan"],
+  Jordan: ["jordan"],
+
+  Kazakhstan: ["kazakhstan"],
+  Kenya: ["kenya"],
+  Kiribati: ["kiribati"],
+  Kuwait: ["kuwait"],
+  Kyrgyzstan: ["kyrgyzstan"],
+
+  Laos: ["laos"],
+  Latvia: ["latvia"],
+  Lebanon: ["lebanon"],
+  Lesotho: ["lesotho"],
+  Liberia: ["liberia"],
+  Libya: ["libya"],
+  Liechtenstein: ["liechtenstein"],
+  Lithuania: ["lithuania"],
+  Luxembourg: ["luxembourg"],
+
+  Madagascar: ["madagascar"],
+  Malawi: ["malawi"],
+  Malaysia: ["malaysia"],
+  Maldives: ["maldives"],
+  Mali: ["mali"],
+  Malta: ["malta"],
+  MarshallIslands: ["marshall islands"],
+  Mauritania: ["mauritania"],
+  Mauritius: ["mauritius"],
+  Mexico: ["mexico"],
+  Micronesia: [
+    "micronesia",
+    "federated states of micronesia"
+  ],
+  Moldova: ["moldova"],
+  Monaco: ["monaco"],
+  Mongolia: ["mongolia"],
+  Montenegro: ["montenegro"],
+  Morocco: ["morocco"],
+  Mozambique: ["mozambique"],
+  Myanmar: ["myanmar", "burma"],
+
+  Namibia: ["namibia"],
+  Nauru: ["nauru"],
+  Nepal: ["nepal"],
   Netherlands: ["netherlands", "holland"],
-  Russia: ["russia"],
-  Turkey: ["turkey"],
-  SaudiArabia: ["saudi arabia"],
-  SouthAfrica: ["south africa"],
+  NewZealand: ["new zealand"],
+  Nicaragua: ["nicaragua"],
+  Niger: ["niger"],
   Nigeria: ["nigeria"],
-  Egypt: ["egypt"]
+  NorthKorea: [
+    "north korea",
+    "dprk",
+    "democratic people's republic of korea"
+  ],
+  NorthMacedonia: [
+    "north macedonia",
+    "macedonia"
+  ],
+  Norway: ["norway"],
+
+  Oman: ["oman"],
+
+  Pakistan: ["pakistan"],
+  Palau: ["palau"],
+  Palestine: [
+    "palestine",
+    "state of palestine"
+  ],
+  Panama: ["panama"],
+  PapuaNewGuinea: ["papua new guinea"],
+  Paraguay: ["paraguay"],
+  Peru: ["peru"],
+  Philippines: ["philippines"],
+  Poland: ["poland"],
+  Portugal: ["portugal"],
+
+  Qatar: ["qatar"],
+
+  Romania: ["romania"],
+  Russia: [
+    "russia",
+    "russian federation"
+  ],
+  Rwanda: ["rwanda"],
+
+  SaintKittsAndNevis: [
+    "saint kitts and nevis",
+    "st kitts and nevis"
+  ],
+  SaintLucia: [
+    "saint lucia",
+    "st lucia"
+  ],
+  SaintVincentAndTheGrenadines: [
+    "saint vincent and the grenadines",
+    "st vincent and the grenadines"
+  ],
+  Samoa: ["samoa"],
+  SanMarino: ["san marino"],
+  SaoTomeAndPrincipe: [
+    "sao tome and principe",
+    "são tomé and príncipe"
+  ],
+  SaudiArabia: ["saudi arabia"],
+  Senegal: ["senegal"],
+  Serbia: ["serbia"],
+  Seychelles: ["seychelles"],
+  SierraLeone: ["sierra leone"],
+  Singapore: ["singapore"],
+  Slovakia: ["slovakia"],
+  Slovenia: ["slovenia"],
+  SolomonIslands: ["solomon islands"],
+  Somalia: ["somalia"],
+  SouthAfrica: ["south africa"],
+  SouthKorea: [
+    "south korea",
+    "korea",
+    "republic of korea"
+  ],
+  SouthSudan: ["south sudan"],
+  Spain: ["spain"],
+  SriLanka: ["sri lanka", "srilanka"],
+  Sudan: ["sudan"],
+  Suriname: ["suriname"],
+  Sweden: ["sweden"],
+  Switzerland: ["switzerland"],
+  Syria: ["syria"],
+
+  Tajikistan: ["tajikistan"],
+  Tanzania: [
+    "tanzania",
+    "united republic of tanzania"
+  ],
+  Thailand: ["thailand"],
+  TimorLeste: [
+    "timor leste",
+    "east timor"
+  ],
+  Togo: ["togo"],
+  Tonga: ["tonga"],
+  TrinidadAndTobago: [
+    "trinidad and tobago",
+    "trinidad"
+  ],
+  Tunisia: ["tunisia"],
+  Turkey: [
+    "turkey",
+    "türkiye"
+  ],
+  Turkmenistan: ["turkmenistan"],
+  Tuvalu: ["tuvalu"],
+
+  Uganda: ["uganda"],
+  Ukraine: ["ukraine"],
+  UnitedArabEmirates: [
+    "united arab emirates",
+    "uae"
+  ],
+  UnitedKingdom: [
+    "united kingdom",
+    "uk",
+    "great britain",
+    "britain",
+    "england"
+  ],
+  UnitedStates: [
+    "united states",
+    "usa",
+    "us",
+    "america",
+    "united states of america"
+  ],
+  Uruguay: ["uruguay"],
+  Uzbekistan: ["uzbekistan"],
+
+  Vanuatu: ["vanuatu"],
+  VaticanCity: [
+    "vatican city",
+    "vatican",
+    "holy see"
+  ],
+  Venezuela: ["venezuela"],
+  Vietnam: ["vietnam"],
+
+  Yemen: ["yemen"],
+
+  Zambia: ["zambia"],
+  Zimbabwe: ["zimbabwe"]
 };
-
-const state = {};
-
-for (const key of Object.keys(countries)) {
-  state[key] = {
-    score: 0,
-    latestCommenter: ""
-  };
-}
-
-const processedMessages = new Set();
-let liveChatId = null;
-let nextPageToken = null;
-
-function normalize(text) {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, " ");
-}
-
-function findCountry(text) {
-  const value = normalize(text);
-
-  for (const [country, aliases] of Object.entries(countries)) {
-    if (aliases.includes(value)) {
-      return country;
-    }
-  }
-
-  return null;
-}
-
-async function getLiveChatId() {
-  const youtube = google.youtube({
-    version: "v3",
-    auth: API_KEY
-  });
-
-  const response = await youtube.videos.list({
-    part: "liveStreamingDetails",
-    id: VIDEO_ID
-  });
-
-  const video = response.data.items?.[0];
-
-  if (!video) {
-    throw new Error("YouTube video not found.");
-  }
-
-  return video.liveStreamingDetails?.activeLiveChatId || null;
-}
-
-async function readChat() {
-  try {
-    if (!liveChatId) {
-      liveChatId = await getLiveChatId();
-
-      if (!liveChatId) {
-        console.log("Live chat is not active yet.");
-        return;
-      }
-
-      console.log("Live chat found:", liveChatId);
-    }
-
-    const youtube = google.youtube({
-      version: "v3",
-      auth: API_KEY
-    });
-
-    const response = await youtube.liveChatMessages.list({
-      liveChatId,
-      part: "id,snippet,authorDetails",
-      pageToken: nextPageToken || undefined,
-      maxResults: 200
-    });
-
-    nextPageToken = response.data.nextPageToken;
-
-    for (const message of response.data.items || []) {
-      if (processedMessages.has(message.id)) continue;
-
-      processedMessages.add(message.id);
-
-      const snippet = message.snippet || {};
-      const author = message.authorDetails?.displayName || "Unknown";
-
-      let country = null;
-      let points = 0;
-
-      if (snippet.type === "textMessageEvent") {
-        country = findCountry(
-          snippet.textMessageDetails?.messageText || ""
-        );
-
-        points = COMMENT_POINTS;
-      }
-
-      if (snippet.type === "superChatEvent") {
-        country = findCountry(
-          snippet.superChatDetails?.userComment || ""
-        );
-
-        points = SUPERCHAT_POINTS;
-      }
-
-      if (country) {
-        state[country].score += points;
-        state[country].latestCommenter = author;
-
-        console.log(
-          `${author} -> ${country} +${points}`
-        );
-      }
-    }
-
-    // Keep memory from growing forever
-    if (processedMessages.size > 10000) {
-      const arr = Array.from(processedMessages);
-      processedMessages.clear();
-
-      for (const id of arr.slice(-5000)) {
-        processedMessages.add(id);
-      }
-    }
-
-  } catch (error) {
-    console.error(
-      "YouTube error:",
-      error.response?.data?.error?.message || error.message
-    );
-
-    // Try finding the chat again later
-    liveChatId = null;
-    nextPageToken = null;
-  }
-}
-
-app.get("/api/state", (req, res) => {
-  const leaderboard = Object.entries(state)
-    .map(([country, data]) => ({
-      country,
-      score: data.score,
-      latestCommenter: data.latestCommenter
-    }))
-    .filter(item => item.score > 0)
-    .sort((a, b) => b.score - a.score);
-
-  res.json({
-    leaderboard,
-    commentPoints: COMMENT_POINTS,
-    superChatPoints: SUPERCHAT_POINTS
-  });
-});
-
-app.get("/health", (req, res) => {
-  res.json({ ok: true });
-});
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Country Battle running on port ${PORT}`);
-
-  if (!API_KEY || !VIDEO_ID) {
-    console.log(
-      "WARNING: YOUTUBE_API_KEY or YOUTUBE_VIDEO_ID is missing."
-    );
-  }
-
-  setInterval(readChat, 3000);
-  readChat();
-});
