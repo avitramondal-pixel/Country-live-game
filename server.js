@@ -13,7 +13,7 @@ const API_KEY = process.env.YOUTUBE_API_KEY;
 // =====================================================
 
 const VIDEO_ID =
-  process.env.YOUTUBE_VIDEO_ID || "iGU1VUXCWvs";
+  process.env.YOUTUBE_VIDEO_ID || "5cf-uUwfw1s";
 
 // =====================================================
 // YOUTUBE API
@@ -417,4 +417,669 @@ for (const country of Object.keys(info)) {
 
 }
 
-// =================================================
+// =====================================================
+// FIND COUNTRY IN COMMENT
+// =====================================================
+
+function findCountryInText(message) {
+
+  const text = normalize(message);
+
+  if (!text) {
+    return null;
+  }
+
+  for (const item of countrySearchList) {
+
+    const escaped = item.alias.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&"
+    );
+
+    const regex = new RegExp(
+      "(^|\\s)" +
+      escaped +
+      "(?=\\s|$)",
+      "i"
+    );
+
+    if (regex.test(text)) {
+      return item.country;
+    }
+
+  }
+
+  return null;
+
+}
+
+// =====================================================
+// LAST EVENT
+// =====================================================
+
+let lastEvent = {
+
+  id: "",
+
+  country: "",
+
+  type: "",
+
+  displayName: "",
+
+  points: 0,
+
+  message: "",
+
+  time: 0
+
+};
+
+// =====================================================
+// YOUTUBE LIVE CHAT
+// =====================================================
+
+let liveChatId = null;
+
+let nextPageToken = null;
+
+let pollingTimer = null;
+
+const seenMessageIds = new Set();
+
+// =====================================================
+// GET LIVE CHAT ID
+// =====================================================
+
+async function getLiveChatId() {
+
+  try {
+
+    const response =
+      await youtube.videos.list({
+
+        part: [
+          "liveStreamingDetails"
+        ],
+
+        id: [
+          VIDEO_ID
+        ]
+
+      });
+
+    const item =
+      response.data.items &&
+      response.data.items[0];
+
+    if (!item) {
+
+      throw new Error(
+        "YouTube video not found."
+      );
+
+    }
+
+    const details =
+      item.liveStreamingDetails;
+
+    if (!details) {
+
+      throw new Error(
+        "This video is not a live stream."
+      );
+
+    }
+
+    liveChatId =
+      details.activeLiveChatId || null;
+
+    if (!liveChatId) {
+
+      throw new Error(
+        "Live chat is not active."
+      );
+
+    }
+
+    nextPageToken = null;
+
+    console.log(
+      "LIVE CHAT CONNECTED:",
+      liveChatId
+    );
+
+  } catch (error) {
+
+    liveChatId = null;
+
+    console.error(
+      "GET LIVE CHAT ERROR:",
+      error.response?.data || error.message
+    );
+
+    throw error;
+
+  }
+
+}
+
+// =====================================================
+// PROCESS YOUTUBE MESSAGE
+// =====================================================
+
+function processMessage(item) {
+
+  try {
+
+    if (!item || !item.id) {
+      return;
+    }
+
+    if (seenMessageIds.has(item.id)) {
+      return;
+    }
+
+    seenMessageIds.add(item.id);
+
+    if (seenMessageIds.size > 5000) {
+
+      const firstId =
+        seenMessageIds
+          .values()
+          .next()
+          .value;
+
+      seenMessageIds.delete(firstId);
+
+    }
+
+    const snippet =
+      item.snippet || {};
+
+    const author =
+      item.authorDetails || {};
+
+    const displayName =
+      author.displayName ||
+      "Anonymous";
+
+    const type =
+      snippet.type || "";
+
+    let message = "";
+
+    if (type === "textMessageEvent") {
+
+      message =
+        snippet.displayMessage ||
+        (
+          snippet.textMessageDetails &&
+          snippet.textMessageDetails.messageText
+        ) ||
+        "";
+
+    }
+
+    if (type === "superChatEvent") {
+
+      message =
+        (
+          snippet.superChatDetails &&
+          snippet.superChatDetails.userComment
+        ) ||
+        "";
+
+    }
+
+    if (!message) {
+
+      console.log(
+        "MESSAGE WITHOUT TEXT:",
+        displayName
+      );
+
+      return;
+
+    }
+
+    console.log(
+      "YOUTUBE:",
+      displayName,
+      "=>",
+      message
+    );
+
+    // =================================================
+    // NORMAL COMMENT = +1
+    // =================================================
+
+    if (type === "textMessageEvent") {
+
+      const country =
+        findCountryInText(message);
+
+      if (!country) {
+
+        console.log(
+          "NO COUNTRY FOUND:",
+          message
+        );
+
+        return;
+
+      }
+
+      state[country].score += 1;
+
+      state[country].commentCount += 1;
+
+      state[country].latestCommenter =
+        displayName;
+
+      lastEvent = {
+
+        id: item.id,
+
+        country: country,
+
+        type: "comment",
+
+        displayName: displayName,
+
+        points: 1,
+
+        message: message,
+
+        time: Date.now()
+
+      };
+
+      console.log(
+        `COMMENT +1 | ${displayName} | ${country}`
+      );
+
+      return;
+
+    }
+
+    // =================================================
+    // SUPER CHAT = +10
+    // =================================================
+
+    if (type === "superChatEvent") {
+
+      const country =
+        findCountryInText(message);
+
+      if (!country) {
+
+        console.log(
+          "NO COUNTRY FOUND IN SUPER CHAT:",
+          message
+        );
+
+        return;
+
+      }
+
+      state[country].score += 10;
+
+      state[country].superChats += 1;
+
+      state[country].latestCommenter =
+        displayName;
+
+      lastEvent = {
+
+        id: item.id,
+
+        country: country,
+
+        type: "superchat",
+
+        displayName: displayName,
+
+        points: 10,
+
+        message: message,
+
+        time: Date.now()
+
+      };
+
+      console.log(
+        `SUPER CHAT +10 | ${displayName} | ${country}`
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "PROCESS MESSAGE ERROR:",
+      error.message
+    );
+
+  }
+
+}
+
+// =====================================================
+// POLL YOUTUBE CHAT
+// =====================================================
+
+async function pollChat() {
+
+  try {
+
+    if (!liveChatId) {
+
+      await getLiveChatId();
+
+    }
+
+    const params = {
+
+      liveChatId: liveChatId,
+
+      part: [
+        "snippet",
+        "authorDetails"
+      ],
+
+      maxResults: 200
+
+    };
+
+    if (nextPageToken) {
+
+      params.pageToken =
+        nextPageToken;
+
+    }
+
+    const response =
+      await youtube
+        .liveChatMessages
+        .list(params);
+
+    nextPageToken =
+      response.data.nextPageToken ||
+      null;
+
+    const messages =
+      response.data.items || [];
+
+    console.log(
+      "YouTube messages:",
+      messages.length
+    );
+
+    for (const item of messages) {
+
+      processMessage(item);
+
+    }
+
+    const wait =
+      response.data.pollingIntervalMillis ||
+      5000;
+
+    schedulePoll(wait);
+
+  } catch (error) {
+
+    console.error(
+      "YOUTUBE CHAT ERROR:",
+      error.response?.data ||
+      error.message
+    );
+
+    liveChatId = null;
+
+    nextPageToken = null;
+
+    schedulePoll(10000);
+
+  }
+
+}
+
+// =====================================================
+// SCHEDULE POLL
+// =====================================================
+
+function schedulePoll(milliseconds) {
+
+  if (pollingTimer) {
+
+    clearTimeout(
+      pollingTimer
+    );
+
+  }
+
+  pollingTimer =
+    setTimeout(
+      pollChat,
+      Math.max(
+        milliseconds || 5000,
+        1000
+      )
+    );
+
+}
+
+// =====================================================
+// API STATE
+// =====================================================
+
+app.get(
+  "/api/state",
+  (req, res) => {
+
+    const result = {};
+
+    for (const country of Object.keys(info)) {
+
+      const item =
+        state[country] || {
+
+          score: 0,
+
+          commentCount: 0,
+
+          superChats: 0,
+
+          latestCommenter: ""
+
+        };
+
+      result[country] = {
+
+        key: country,
+
+        name: info[country][1],
+
+        flag: info[country][0],
+
+        score: item.score || 0,
+
+        commentCount:
+          item.commentCount || 0,
+
+        superChats:
+          item.superChats || 0,
+
+        latestCommenter:
+          item.latestCommenter || ""
+
+      };
+
+    }
+
+    const activeCountries =
+      Object.entries(result)
+        .filter(
+          ([country, item]) =>
+            item.score > 0
+        )
+        .sort(
+          (a, b) =>
+            b[1].score - a[1].score
+        )
+        .map(
+          ([country, item]) => ({
+
+            country: country,
+
+            name: item.name,
+
+            flag: item.flag,
+
+            score: item.score,
+
+            commentCount:
+              item.commentCount,
+
+            superChats:
+              item.superChats,
+
+            latestCommenter:
+              item.latestCommenter
+
+          })
+        );
+
+    const totalComments =
+      Object.values(state)
+        .reduce(
+          (sum, item) =>
+            sum +
+            (item.commentCount || 0),
+          0
+        );
+
+    const totalSuperChats =
+      Object.values(state)
+        .reduce(
+          (sum, item) =>
+            sum +
+            (item.superChats || 0),
+          0
+        );
+
+    res.json({
+
+      countries: result,
+
+      activeCountries:
+        activeCountries,
+
+      totalComments:
+        totalComments,
+
+      totalSuperChats:
+        totalSuperChats,
+
+      lastEvent:
+        lastEvent,
+
+      liveChatConnected:
+        !!liveChatId
+
+    });
+
+  }
+);
+
+// =====================================================
+// HEALTH CHECK
+// =====================================================
+
+app.get(
+  "/health",
+  (req, res) => {
+
+    res.json({
+
+      ok: true,
+
+      videoId: VIDEO_ID,
+
+      liveChatConnected:
+        !!liveChatId,
+
+      countries:
+        Object.keys(info).length
+
+    });
+
+  }
+);
+
+// =====================================================
+// STATIC FRONTEND
+// =====================================================
+
+app.use(
+  express.static(
+    path.join(
+      __dirname,
+      "public"
+    )
+  )
+);
+
+// =====================================================
+// FRONTEND FALLBACK
+// =====================================================
+
+app.use(
+  (req, res, next) => {
+
+    if (req.method !== "GET") {
+      return next();
+    }
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "index.html"
+      )
+    );
+
+  }
+);
+
+// =====================================================
+// START SERVER
+// =====================================================
+
+app.listen(
+  PORT,
+  "0.0.0.0",
+  () => {
+
+    console.log(
+      "================================="
+    );
+
+    console.log(
+      "COUNTRY BATTLE SERVER STARTED"
+    );
+
+    console.log(
+      "PORT:",
+      PORT
+    );
+
+    console.log(
+      "VIDEO ID:",
+      VIDEO_ID
+    );
+
+    console.log(
+   
