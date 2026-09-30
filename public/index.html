@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -403,6 +405,9 @@ body{
 
 .flag{
   font-size:20px;
+  width:26px;
+  min-width:26px;
+  text-align:center;
 }
 
 .country-name{
@@ -577,12 +582,15 @@ body{
   .country-name{
     font-size:10px;
   }
+
 }
 
 </style>
+
 </head>
 
 <body>
+
 
 <!-- ================= START SCREEN ================= -->
 
@@ -614,8 +622,6 @@ body{
 
 <div class="app">
 
-  <!-- HEADER -->
-
   <header class="header">
 
     <div class="title">
@@ -633,7 +639,7 @@ body{
   </header>
 
 
-  <!-- RULES -->
+  <!-- ================= RULES ================= -->
 
   <div class="rules">
 
@@ -660,7 +666,7 @@ body{
   </div>
 
 
-  <!-- TOP 3 PLAYERS -->
+  <!-- ================= TOP 3 ================= -->
 
   <section class="top-section">
 
@@ -671,93 +677,12 @@ body{
     <div
       id="topThree"
       class="top-three">
-
-      <!-- #2 -->
-
-      <div class="top-card second">
-
-        <div class="crown">
-          ♛
-        </div>
-
-        <div class="avatar">
-          👤
-        </div>
-
-        <div class="player-name">
-          Waiting...
-        </div>
-
-        <div class="player-country">
-          —
-        </div>
-
-        <div class="player-points">
-          0
-        </div>
-
-      </div>
-
-
-      <!-- #1 -->
-
-      <div class="top-card first">
-
-        <div class="crown">
-          👑
-        </div>
-
-        <div class="avatar">
-          👤
-        </div>
-
-        <div class="player-name">
-          Waiting...
-        </div>
-
-        <div class="player-country">
-          —
-        </div>
-
-        <div class="player-points">
-          0
-        </div>
-
-      </div>
-
-
-      <!-- #3 -->
-
-      <div class="top-card third">
-
-        <div class="crown">
-          ♛
-        </div>
-
-        <div class="avatar">
-          👤
-        </div>
-
-        <div class="player-name">
-          Waiting...
-        </div>
-
-        <div class="player-country">
-          —
-        </div>
-
-        <div class="player-points">
-          0
-        </div>
-
-      </div>
-
     </div>
 
   </section>
 
 
-  <!-- LIVE EVENT -->
+  <!-- ================= LIVE EVENT ================= -->
 
   <div class="event-area">
 
@@ -772,23 +697,17 @@ body{
   </div>
 
 
-  <!-- COUNTRY LEADERBOARD -->
+  <!-- ================= COUNTRY LEADERBOARD ================= -->
 
   <section class="country-section">
 
     <div class="country-header">
 
-      <span>
-        #
-      </span>
+      <span>#</span>
 
-      <span>
-        COUNTRY
-      </span>
+      <span>COUNTRY</span>
 
-      <span>
-        POINTS
-      </span>
+      <span>POINTS</span>
 
     </div>
 
@@ -797,7 +716,7 @@ body{
       class="country-list">
 
       <div class="empty">
-        Waiting for countries...
+        Loading countries...
       </div>
 
     </div>
@@ -807,7 +726,7 @@ body{
 </div>
 
 
-<!-- ================= CONTROL BUTTONS ================= -->
+<!-- ================= CONTROLS ================= -->
 
 <div class="controls">
 
@@ -830,7 +749,7 @@ body{
 </div>
 
 
-<!-- ================= BACKGROUND MUSIC ================= -->
+<!-- ================= MUSIC ================= -->
 
 <audio
   id="backgroundMusic"
@@ -843,11 +762,12 @@ body{
 <script>
 
 /* =====================================================
-   CONFIGURATION
+   CONFIG
 ===================================================== */
 
-const API_URL =
-  "/api/state";
+const API_URL = "/api/state";
+
+const POLL_INTERVAL = 2000;
 
 
 /* =====================================================
@@ -855,42 +775,147 @@ const API_URL =
 ===================================================== */
 
 const music =
-  document.getElementById(
-    "backgroundMusic"
-  );
+  document.getElementById("backgroundMusic");
 
 const startScreen =
-  document.getElementById(
-    "startScreen"
-  );
+  document.getElementById("startScreen");
 
 const startButton =
-  document.getElementById(
-    "startButton"
-  );
+  document.getElementById("startButton");
 
 const musicButton =
-  document.getElementById(
-    "musicButton"
-  );
+  document.getElementById("musicButton");
 
 const voiceButton =
-  document.getElementById(
-    "voiceButton"
-  );
+  document.getElementById("voiceButton");
+
+const eventElement =
+  document.getElementById("event");
+
+const countryList =
+  document.getElementById("countryList");
+
+const topThree =
+  document.getElementById("topThree");
 
 
 /* =====================================================
-   VARIABLES
+   STATE
 ===================================================== */
 
-let musicEnabled = true;
+let musicEnabled = false;
 
 let voiceEnabled = true;
 
-let firstLoad = true;
+let pageReady = false;
 
 let lastEventId = "";
+
+let loading = false;
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   FORMAT NUMBER
+===================================================== */
+
+function formatNumber(value){
+
+  return Number(value || 0)
+    .toLocaleString("en-US");
+
+}
+
+
+/* =====================================================
+   COUNTRY NAME
+===================================================== */
+
+function getCountryName(country){
+
+  if(!country){
+    return "Unknown country";
+  }
+
+  return (
+    country.countryName ||
+    country.name ||
+    country.country ||
+    "Unknown country"
+  );
+
+}
+
+
+/* =====================================================
+   COUNTRY FLAG
+===================================================== */
+
+function getFlag(country){
+
+  if(!country){
+    return "🌍";
+  }
+
+  return (
+    country.flag ||
+    country.countryFlag ||
+    country.emoji ||
+    "🌍"
+  );
+
+}
+
+
+/* =====================================================
+   MUSIC START
+===================================================== */
+
+async function startMusic(){
+
+  music.volume = 0.12;
+
+  try{
+
+    await music.play();
+
+    musicEnabled = true;
+
+    musicButton.textContent =
+      "🎵 MUSIC ON";
+
+    musicButton.classList.add("on");
+
+  }catch(error){
+
+    musicEnabled = false;
+
+    console.error(
+      "BACKGROUND MUSIC ERROR:",
+      error
+    );
+
+    musicButton.textContent =
+      "🎵 MUSIC OFF";
+
+  }
+
+}
 
 
 /* =====================================================
@@ -901,63 +926,42 @@ startButton.addEventListener(
   "click",
   async () => {
 
-    startScreen.style.display =
-      "none";
+    startScreen.style.display = "none";
 
-    music.volume =
-      0.12;
+    await startMusic();
 
-    try {
-
-      await music.play();
-
-      musicButton.textContent =
-        "🎵 MUSIC ON";
-
-      musicButton.classList.add(
-        "on"
-      );
-
-    } catch(error) {
-
-      console.log(
-        "Music playback error:",
-        error
-      );
-
-    }
-
-
-    voiceEnabled =
-      true;
+    voiceEnabled = true;
 
     voiceButton.textContent =
       "🔊 VOICE ON";
 
-    voiceButton.classList.add(
-      "on"
-    );
+    voiceButton.classList.add("on");
 
 
     /*
-      Unlock speech synthesis
+      Unlock browser speech synthesis.
     */
 
-    if (
-      "speechSynthesis" in window
-    ) {
+    if("speechSynthesis" in window){
 
-      const unlock =
-        new SpeechSynthesisUtterance(
-          ""
+      try{
+
+        const unlock =
+          new SpeechSynthesisUtterance("");
+
+        unlock.volume = 0;
+
+        speechSynthesis.speak(unlock);
+
+      }catch(error){
+
+        console.error(
+          "VOICE UNLOCK ERROR:",
+          error
         );
 
-      unlock.volume =
-        0;
+      }
 
-      speechSynthesis.speak(
-        unlock
-      );
     }
 
   }
@@ -965,56 +969,27 @@ startButton.addEventListener(
 
 
 /* =====================================================
-   MUSIC TOGGLE
+   MUSIC BUTTON
 ===================================================== */
 
 musicButton.addEventListener(
   "click",
   async () => {
 
-    if (
-      music.paused
-    ) {
+    if(music.paused){
 
-      musicEnabled =
-        true;
+      await startMusic();
 
-      music.volume =
-        0.12;
-
-      try {
-
-        await music.play();
-
-      } catch(error) {
-
-        console.log(
-          "Music error:",
-          error
-        );
-
-      }
-
-      musicButton.textContent =
-        "🎵 MUSIC ON";
-
-      musicButton.classList.add(
-        "on"
-      );
-
-    } else {
-
-      musicEnabled =
-        false;
+    }else{
 
       music.pause();
+
+      musicEnabled = false;
 
       musicButton.textContent =
         "🎵 MUSIC OFF";
 
-      musicButton.classList.remove(
-        "on"
-      );
+      musicButton.classList.remove("on");
 
     }
 
@@ -1023,7 +998,7 @@ musicButton.addEventListener(
 
 
 /* =====================================================
-   VOICE TOGGLE
+   VOICE BUTTON
 ===================================================== */
 
 voiceButton.addEventListener(
@@ -1034,13 +1009,9 @@ voiceButton.addEventListener(
       !voiceEnabled;
 
 
-    if (
-      !voiceEnabled
-    ) {
+    if(!voiceEnabled){
 
-      if (
-        "speechSynthesis" in window
-      ) {
+      if("speechSynthesis" in window){
 
         speechSynthesis.cancel();
 
@@ -1049,18 +1020,14 @@ voiceButton.addEventListener(
       voiceButton.textContent =
         "🔇 VOICE OFF";
 
-      voiceButton.classList.remove(
-        "on"
-      );
+      voiceButton.classList.remove("on");
 
-    } else {
+    }else{
 
       voiceButton.textContent =
         "🔊 VOICE ON";
 
-      voiceButton.classList.add(
-        "on"
-      );
+      voiceButton.classList.add("on");
 
     }
 
@@ -1072,37 +1039,39 @@ voiceButton.addEventListener(
    SPEAK
 ===================================================== */
 
-function speak(text) {
+function speak(text){
 
-  if (
-    !voiceEnabled
-  ) {
+  if(!voiceEnabled){
     return;
   }
 
-  if (
-    !("speechSynthesis" in window)
-  ) {
+  if(!("speechSynthesis" in window)){
+    console.warn(
+      "Speech synthesis is not supported."
+    );
     return;
   }
 
 
   /*
-    Lower background music
-    while voice is speaking.
+    Stop previous announcement.
   */
 
-  if (
+  speechSynthesis.cancel();
+
+
+  /*
+    Lower music while speaking.
+  */
+
+  if(
     musicEnabled &&
     !music.paused
-  ) {
+  ){
 
-    music.volume =
-      0.035;
+    music.volume = 0.035;
+
   }
-
-
-  speechSynthesis.cancel();
 
 
   const utterance =
@@ -1127,10 +1096,31 @@ function speak(text) {
   utterance.onend =
     () => {
 
-      if (
+      if(
         musicEnabled &&
         !music.paused
-      ) {
+      ){
+
+        music.volume =
+          0.12;
+
+      }
+
+    };
+
+
+  utterance.onerror =
+    (error) => {
+
+      console.error(
+        "VOICE ERROR:",
+        error
+      );
+
+      if(
+        musicEnabled &&
+        !music.paused
+      ){
 
         music.volume =
           0.12;
@@ -1151,19 +1141,22 @@ function speak(text) {
    EVENT ANNOUNCER
 ===================================================== */
 
-function announceEvent(event) {
+function announceEvent(event){
 
-  if (
-    !event ||
-    !event.id
-  ) {
+  if(!event){
+    return;
+  }
+
+  if(!event.id){
     return;
   }
 
 
-  if (
-    event.id === lastEventId
-  ) {
+  /*
+    Ignore the same event.
+  */
+
+  if(event.id === lastEventId){
     return;
   }
 
@@ -1173,13 +1166,11 @@ function announceEvent(event) {
 
 
   /*
-    Do not announce the old event
-    when the page first loads.
+    Never announce the old event
+    when the page initially loads.
   */
 
-  if (
-    firstLoad
-  ) {
+  if(!pageReady){
     return;
   }
 
@@ -1196,17 +1187,12 @@ function announceEvent(event) {
 
 
   const points =
-    Number(
-      event.points || 0
-    );
+    Number(event.points || 0);
 
 
-  /* SUPER CHAT */
+  /* ================= SUPER CHAT ================= */
 
-  if (
-    event.type ===
-    "superchat"
-  ) {
+  if(event.type === "superchat"){
 
     const amount =
       Number(
@@ -1219,23 +1205,30 @@ function announceEvent(event) {
       "USD";
 
 
+    const amountText =
+      amount.toFixed(2);
+
+
     speak(
-      `Super Chat from ${name}. ${country}. ${amount.toFixed(2)} ${currency}. ${points} points.`
+      `Super Chat from ${name}. ` +
+      `${country}. ` +
+      `${amountText} ${currency}. ` +
+      `${formatNumber(points)} points.`
     );
 
     return;
+
   }
 
 
-  /* NORMAL COMMENT */
+  /* ================= NORMAL COMMENT ================= */
 
-  if (
-    event.type ===
-    "comment"
-  ) {
+  if(event.type === "comment"){
 
     speak(
-      `${name}. ${country}. One point.`
+      `${name}. ` +
+      `${country}. ` +
+      `One point.`
     );
 
   }
@@ -1244,29 +1237,21 @@ function announceEvent(event) {
 
 
 /* =====================================================
-   EVENT DISPLAY
+   RENDER EVENT
 ===================================================== */
 
-function renderEvent(event) {
+function renderEvent(event){
 
-  const element =
-    document.getElementById(
-      "event"
-    );
+  if(!event || !event.id){
 
-
-  if (
-    !event ||
-    !event.id
-  ) {
-
-    element.className =
+    eventElement.className =
       "event";
 
-    element.textContent =
+    eventElement.textContent =
       "Waiting for comments...";
 
     return;
+
   }
 
 
@@ -1278,21 +1263,16 @@ function renderEvent(event) {
   const country =
     event.countryName ||
     event.country ||
-    "";
+    "Unknown country";
 
 
   const points =
-    Number(
-      event.points || 0
-    );
+    Number(event.points || 0);
 
 
-  /* SUPER CHAT */
+  /* ================= SUPER CHAT ================= */
 
-  if (
-    event.type ===
-    "superchat"
-  ) {
+  if(event.type === "superchat"){
 
     const amount =
       Number(
@@ -1305,11 +1285,11 @@ function renderEvent(event) {
       "USD";
 
 
-    element.className =
+    eventElement.className =
       "event superchat";
 
 
-    element.innerHTML = `
+    eventElement.innerHTML = `
 
       💎
 
@@ -1336,16 +1316,17 @@ function renderEvent(event) {
     `;
 
     return;
+
   }
 
 
-  /* NORMAL COMMENT */
+  /* ================= COMMENT ================= */
 
-  element.className =
+  eventElement.className =
     "event comment";
 
 
-  element.innerHTML = `
+  eventElement.innerHTML = `
 
     💬
 
@@ -1370,29 +1351,32 @@ function renderEvent(event) {
 
 
 /* =====================================================
-   TOP 3 PLAYERS
+   RENDER TOP 3
 ===================================================== */
 
-function renderTop3(players) {
+function renderTop3(players){
 
-  const container =
-    document.getElementById(
-      "topThree"
-    );
-
-
-  const top =
+  const list =
     Array.isArray(players)
-      ? players.slice(0, 3)
+      ? players
       : [];
 
 
-  /*
-    Layout:
+  const sorted =
+    [...list]
+      .filter(Boolean)
+      .sort(
+        (a,b) =>
+          Number(b.score || 0) -
+          Number(a.score || 0)
+      )
+      .slice(0,3);
 
-    LEFT   = #2
+
+  /*
+    LEFT = #2
     CENTER = #1
-    RIGHT  = #3
+    RIGHT = #3
   */
 
   const positions = [
@@ -1419,25 +1403,21 @@ function renderTop3(players) {
   let html = "";
 
 
-  for (
+  for(
     let slot = 0;
     slot < 3;
     slot++
-  ) {
+  ){
 
     const player =
-      top[
-        positions[slot]
-      ];
+      sorted[positions[slot]];
 
 
-    if (!player) {
+    if(!player){
 
       html += `
 
-        <div
-          class="top-card ${classes[slot]}"
-        >
+        <div class="top-card ${classes[slot]}">
 
           <div class="crown">
             ${crowns[slot]}
@@ -1464,14 +1444,21 @@ function renderTop3(players) {
       `;
 
       continue;
+
     }
+
+
+    const flag =
+      getFlag(player);
+
+
+    const country =
+      getCountryName(player);
 
 
     html += `
 
-      <div
-        class="top-card ${classes[slot]}"
-      >
+      <div class="top-card ${classes[slot]}">
 
         <div class="rank">
           #${positions[slot] + 1}
@@ -1482,7 +1469,7 @@ function renderTop3(players) {
         </div>
 
         <div class="avatar">
-          ${player.flag || "🌍"}
+          ${escapeHtml(flag)}
         </div>
 
         <div class="player-name">
@@ -1494,20 +1481,18 @@ function renderTop3(players) {
 
         <div class="player-country">
 
-          ${player.flag || "🌍"}
+          ${escapeHtml(flag)}
 
-          ${escapeHtml(
-            player.countryName ||
-            player.country ||
-            ""
-          )}
+          ${escapeHtml(country)}
 
         </div>
 
         <div class="player-points">
+
           ${formatNumber(
             player.score
           )}
+
         </div>
 
       </div>
@@ -1517,30 +1502,55 @@ function renderTop3(players) {
   }
 
 
-  container.innerHTML =
+  topThree.innerHTML =
     html;
 
 }
 
 
 /* =====================================================
-   COUNTRY LEADERBOARD
+   RENDER COUNTRIES
 ===================================================== */
 
-function renderCountries(countries) {
+function renderCountries(countries){
 
-  const container =
-    document.getElementById(
-      "countryList"
-    );
+  let list =
+    Array.isArray(countries)
+      ? [...countries]
+      : [];
 
 
-  if (
-    !Array.isArray(countries) ||
-    countries.length === 0
-  ) {
+  /*
+    IMPORTANT:
+    Do NOT remove countries with 0 points.
 
-    container.innerHTML = `
+    Every country should remain visible
+    from the beginning with its flag and 0.
+  */
+
+  list =
+    list
+      .map(country => ({
+
+        ...country,
+
+        score:
+          Number(
+            country.score ??
+            country.points ??
+            0
+          )
+
+      }))
+      .sort(
+        (a,b) =>
+          b.score - a.score
+      );
+
+
+  if(list.length === 0){
+
+    countryList.innerHTML = `
 
       <div class="empty">
         Waiting for countries...
@@ -1549,92 +1559,211 @@ function renderCountries(countries) {
     `;
 
     return;
+
   }
 
 
-  let html = "";
+  countryList.innerHTML =
+    list
+      .map(
+        (country,index) => {
+
+          const flag =
+            getFlag(country);
 
 
-  countries.forEach(
-    (country, index) => {
-
-      const rank =
-        index + 1;
+          const name =
+            getCountryName(country);
 
 
-      html += `
+          const score =
+            Number(
+              country.score || 0
+            );
 
-        <div
-          class="
-            country-row
-            ${rank <= 3
+
+          const topClass =
+            score > 0 &&
+            index === 0
               ? "top-country"
-              : ""}
-          "
-        >
-
-          <div class="country-rank">
-            #${rank}
-          </div>
-
-          <div class="country-info">
-
-            <span class="flag">
-              ${country.flag || "🌍"}
-            </span>
-
-            <span class="country-name">
-              ${escapeHtml(
-                country.name
-              )}
-            </span>
-
-          </div>
-
-          <div class="country-points">
-            ${formatNumber(
-              country.score
-            )}
-          </div>
-
-        </div>
-
-      `;
-
-    }
-  );
+              : "";
 
 
-  container.innerHTML =
-    html;
+          return `
+
+            <div
+              class="country-row ${topClass}"
+            >
+
+              <div class="country-rank">
+                #${index + 1}
+              </div>
+
+              <div class="country-info">
+
+                <span class="flag">
+                  ${escapeHtml(flag)}
+                </span>
+
+                <span class="country-name">
+                  ${escapeHtml(name)}
+                </span>
+
+              </div>
+
+              <div class="country-points">
+                ${formatNumber(score)}
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      )
+      .join("");
 
 }
 
 
 /* =====================================================
-   LOAD STATE
+   NORMALIZE SERVER RESPONSE
 ===================================================== */
 
-async function loadState() {
+function normalizeState(data){
 
-  try {
+  const state =
+    data &&
+    data.state &&
+    typeof data.state === "object"
+      ? data.state
+      : data || {};
+
+
+  let countries =
+    state.countries ??
+    data?.countries ??
+    [];
+
+
+  /*
+    Server may return countries
+    as an object instead of an array.
+  */
+
+  if(
+    !Array.isArray(countries) &&
+    countries &&
+    typeof countries === "object"
+  ){
+
+    countries =
+      Object.entries(countries)
+        .map(
+          ([key,value]) => ({
+
+            ...(value || {}),
+
+            country:
+              value?.country ||
+              key,
+
+            countryName:
+              value?.countryName ||
+              key
+
+          })
+        );
+
+  }
+
+
+  let players =
+    state.players ??
+    data?.players ??
+    [];
+
+
+  if(
+    !Array.isArray(players) &&
+    players &&
+    typeof players === "object"
+  ){
+
+    players =
+      Object.values(players);
+
+  }
+
+
+  players =
+    players
+      .filter(Boolean)
+      .sort(
+        (a,b) =>
+          Number(b.score || 0) -
+          Number(a.score || 0)
+      );
+
+
+  const event =
+    state.lastEvent ||
+    data?.lastEvent ||
+    state.event ||
+    data?.event ||
+    null;
+
+
+  return {
+
+    countries,
+
+    players,
+
+    event
+
+  };
+
+}
+
+
+/* =====================================================
+   LOAD SERVER STATE
+===================================================== */
+
+async function loadState(){
+
+  if(loading){
+    return;
+  }
+
+
+  loading = true;
+
+
+  try{
 
     const response =
       await fetch(
-        API_URL,
+        API_URL +
+        "?t=" +
+        Date.now(),
         {
-          cache:"no-store"
+          cache:"no-store",
+          headers:{
+            "Cache-Control":
+              "no-cache"
+          }
         }
       );
 
 
-    if (
-      !response.ok
-    ) {
+    if(!response.ok){
 
       throw new Error(
-        "API request failed"
+        `HTTP ${response.status}`
       );
+
     }
 
 
@@ -1642,67 +1771,56 @@ async function loadState() {
       await response.json();
 
 
-    if (
-      !data ||
-      data.success !== true
-    ) {
-
-      throw new Error(
-        "Invalid server response"
-      );
-    }
+    const state =
+      normalizeState(data);
 
 
     /*
-      Country leaderboard
+      Update countries.
     */
 
     renderCountries(
-      data.countries || []
+      state.countries
     );
 
 
     /*
-      Top 3 players
+      Update top players.
     */
 
     renderTop3(
-      data.players || []
+      state.players
     );
 
 
     /*
-      Latest event
+      Update latest event.
     */
 
-    renderEvent(
-      data.event
-    );
+    if(state.event){
+
+      renderEvent(
+        state.event
+      );
 
 
-    /*
-      Voice announcement
-    */
+      announceEvent(
+        state.event
+      );
 
-    announceEvent(
-      data.event
-    );
+    }
 
 
-    /*
-      First successful load
-      is now complete.
-    */
+  }catch(error){
 
-    firstLoad = false;
-
-
-  } catch(error) {
-
-    console.log(
-      "State loading error:",
+    console.error(
+      "STATE FETCH ERROR:",
       error
     );
+
+  }finally{
+
+    loading = false;
 
   }
 
@@ -1710,86 +1828,36 @@ async function loadState() {
 
 
 /* =====================================================
-   NUMBER FORMAT
+   INITIALIZE
 ===================================================== */
 
-function formatNumber(number) {
-
-  const value =
-    Number(number || 0);
-
-
-  return value.toLocaleString(
-    "en-US"
-  );
-
-}
-
-
-/* =====================================================
-   HTML ESCAPE
-===================================================== */
-
-function escapeHtml(value) {
-
-  return String(
-    value || ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-/* =====================================================
-   START API POLLING
-===================================================== */
+renderTop3([]);
 
 loadState();
 
 
-setInterval(
-  loadState,
-  2000
+/*
+  Give the first API request time to load.
+  After this, new events can be announced.
+*/
+
+setTimeout(
+  () => {
+
+    pageReady = true;
+
+  },
+  1500
 );
 
 
 /* =====================================================
-   PAGE VISIBILITY
+   POLLING
 ===================================================== */
 
-document.addEventListener(
-  "visibilitychange",
-  () => {
-
-    if (
-      document.visibilityState ===
-      "visible"
-    ) {
-
-      loadState();
-
-    }
-
-  }
+setInterval(
+  loadState,
+  POLL_INTERVAL
 );
 
 </script>
