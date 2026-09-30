@@ -7,13 +7,19 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.YOUTUBE_API_KEY;
+const VIDEO_ID = process.env.YOUTUBE_VIDEO_ID || "5cf-uUwfw1s";
 
 // =====================================================
-// YOUTUBE LIVE VIDEO ID
+// SETTINGS
 // =====================================================
 
-const VIDEO_ID =
-  process.env.YOUTUBE_VIDEO_ID || "5cf-uUwfw1s";
+// Normal comment = 1 point
+const COMMENT_POINTS = 1;
+
+// Super Chat points.
+// Example: $1 = 1000 points
+const SUPERCHAT_POINTS_PER_USD =
+  Number(process.env.SUPERCHAT_POINTS_PER_USD || 1000);
 
 // =====================================================
 // YOUTUBE API
@@ -25,11 +31,10 @@ const youtube = google.youtube({
 });
 
 // =====================================================
-// 195 COUNTRIES
+// COUNTRIES
 // =====================================================
 
 const info = {
-
   Afghanistan: ["🇦🇫", "Afghanistan"],
   Albania: ["🇦🇱", "Albania"],
   Algeria: ["🇩🇿", "Algeria"],
@@ -262,76 +267,30 @@ const info = {
 // =====================================================
 
 const aliases = {
-
-  CoteDIvoire: [
-    "cote d ivoire",
-    "ivory coast"
-  ],
-
+  CoteDIvoire: ["cote d ivoire", "ivory coast"],
   DemocraticRepublicCongo: [
     "democratic republic of the congo",
     "dr congo",
     "drc"
   ],
-
-  Congo: [
-    "republic of the congo"
-  ],
-
-  CapeVerde: [
-    "cabo verde"
-  ],
-
-  Czechia: [
-    "czech republic"
-  ],
-
-  Eswatini: [
-    "swaziland"
-  ],
-
-  Myanmar: [
-    "burma"
-  ],
-
-  TimorLeste: [
-    "east timor"
-  ],
-
-  Turkey: [
-    "turkey",
-    "türkiye"
-  ],
-
-  UAE: [
-    "uae"
-  ],
-
-  UK: [
-    "uk",
-    "great britain",
-    "britain"
-  ],
-
-  USA: [
-    "usa",
-    "us",
-    "united states of america"
-  ],
-
-  Vatican: [
-    "vatican",
-    "vatican city",
-    "holy see"
-  ]
+  Congo: ["republic of the congo"],
+  CapeVerde: ["cabo verde"],
+  Czechia: ["czech republic"],
+  Eswatini: ["swaziland"],
+  Myanmar: ["burma"],
+  TimorLeste: ["east timor"],
+  Turkey: ["turkey", "türkiye"],
+  UAE: ["uae"],
+  UK: ["uk", "great britain", "britain"],
+  USA: ["usa", "us", "united states of america"],
+  Vatican: ["vatican", "vatican city", "holy see"]
 };
 
 // =====================================================
-// NORMALIZE TEXT
+// NORMALIZE
 // =====================================================
 
 function normalize(text) {
-
   return String(text || "")
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -340,59 +299,45 @@ function normalize(text) {
     .replace(/[^a-z0-9]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-
 }
 
 // =====================================================
-// BUILD COUNTRY SEARCH LIST
+// COUNTRY SEARCH
 // =====================================================
 
 const countries = {};
 
 for (const country of Object.keys(info)) {
-
   countries[country] = [
     normalize(info[country][1])
   ];
-
 }
 
 for (const country of Object.keys(aliases)) {
-
   if (!countries[country]) {
     countries[country] = [];
   }
 
   for (const alias of aliases[country]) {
-
-    countries[country].push(
-      normalize(alias)
-    );
-
+    countries[country].push(normalize(alias));
   }
-
 }
 
 const countrySearchList = [];
 
 for (const country of Object.keys(countries)) {
-
   for (const alias of countries[country]) {
-
     if (!alias) continue;
 
     countrySearchList.push({
       country,
       alias
     });
-
   }
-
 }
 
 countrySearchList.sort(
-  (a, b) =>
-    b.alias.length - a.alias.length
+  (a, b) => b.alias.length - a.alias.length
 );
 
 // =====================================================
@@ -402,35 +347,48 @@ countrySearchList.sort(
 const state = {};
 
 for (const country of Object.keys(info)) {
-
   state[country] = {
-
     score: 0,
-
     commentCount: 0,
-
     superChats: 0,
-
     latestCommenter: ""
-
   };
-
 }
 
 // =====================================================
-// FIND COUNTRY IN COMMENT
+// PLAYER STATE
+// =====================================================
+
+const players = {};
+
+// =====================================================
+// EVENT STATE
+// =====================================================
+
+let eventCounter = 0;
+
+let lastEvent = {
+  id: "",
+  country: "",
+  type: "",
+  displayName: "",
+  points: 0,
+  message: "",
+  amountMicros: 0,
+  currency: "",
+  time: 0
+};
+
+// =====================================================
+// FIND COUNTRY
 // =====================================================
 
 function findCountryInText(message) {
-
   const text = normalize(message);
 
-  if (!text) {
-    return null;
-  }
+  if (!text) return null;
 
   for (const item of countrySearchList) {
-
     const escaped = item.alias.replace(
       /[.*+?^${}()|[\]\\]/g,
       "\\$&"
@@ -446,43 +404,17 @@ function findCountryInText(message) {
     if (regex.test(text)) {
       return item.country;
     }
-
   }
 
   return null;
-
 }
-
-// =====================================================
-// LAST EVENT
-// =====================================================
-
-let lastEvent = {
-
-  id: "",
-
-  country: "",
-
-  type: "",
-
-  displayName: "",
-
-  points: 0,
-
-  message: "",
-
-  time: 0
-
-};
 
 // =====================================================
 // YOUTUBE LIVE CHAT
 // =====================================================
 
 let liveChatId = null;
-
 let nextPageToken = null;
-
 let pollingTimer = null;
 
 const seenMessageIds = new Set();
@@ -492,54 +424,35 @@ const seenMessageIds = new Set();
 // =====================================================
 
 async function getLiveChatId() {
-
   try {
-
-    const response =
-      await youtube.videos.list({
-
-        part: [
-          "liveStreamingDetails"
-        ],
-
-        id: [
-          VIDEO_ID
-        ]
-
-      });
+    const response = await youtube.videos.list({
+      part: ["liveStreamingDetails"],
+      id: [VIDEO_ID]
+    });
 
     const item =
       response.data.items &&
       response.data.items[0];
 
     if (!item) {
-
-      throw new Error(
-        "YouTube video not found."
-      );
-
+      throw new Error("YouTube video not found.");
     }
 
-    const details =
-      item.liveStreamingDetails;
+    const details = item.liveStreamingDetails;
 
     if (!details) {
-
       throw new Error(
         "This video is not a live stream."
       );
-
     }
 
     liveChatId =
       details.activeLiveChatId || null;
 
     if (!liveChatId) {
-
       throw new Error(
         "Live chat is not active."
       );
-
     }
 
     nextPageToken = null;
@@ -550,31 +463,49 @@ async function getLiveChatId() {
     );
 
   } catch (error) {
-
     liveChatId = null;
 
     console.error(
       "GET LIVE CHAT ERROR:",
-      error.response?.data || error.message
+      error.response?.data ||
+      error.message
     );
 
     throw error;
-
   }
-
 }
 
 // =====================================================
-// PROCESS YOUTUBE MESSAGE
+// CREATE PLAYER
+// =====================================================
+
+function getPlayer(displayName) {
+  const key = String(displayName || "Anonymous")
+    .trim()
+    .toLowerCase();
+
+  if (!players[key]) {
+    players[key] = {
+      key,
+      displayName:
+        displayName || "Anonymous",
+      country: "",
+      score: 0,
+      comments: 0,
+      superChats: 0
+    };
+  }
+
+  return players[key];
+}
+
+// =====================================================
+// PROCESS MESSAGE
 // =====================================================
 
 function processMessage(item) {
-
   try {
-
-    if (!item || !item.id) {
-      return;
-    }
+    if (!item || !item.id) return;
 
     if (seenMessageIds.has(item.id)) {
       return;
@@ -583,64 +514,56 @@ function processMessage(item) {
     seenMessageIds.add(item.id);
 
     if (seenMessageIds.size > 5000) {
-
       const firstId =
-        seenMessageIds
-          .values()
-          .next()
-          .value;
+        seenMessageIds.values().next().value;
 
       seenMessageIds.delete(firstId);
-
     }
 
-    const snippet =
-      item.snippet || {};
-
-    const author =
-      item.authorDetails || {};
+    const snippet = item.snippet || {};
+    const author = item.authorDetails || {};
 
     const displayName =
-      author.displayName ||
-      "Anonymous";
+      author.displayName || "Anonymous";
 
-    const type =
-      snippet.type || "";
+    const type = snippet.type || "";
 
     let message = "";
 
-    if (type === "textMessageEvent") {
+    let amountMicros = 0;
+    let currency = "";
 
+    // -----------------------------------------------
+    // NORMAL COMMENT
+    // -----------------------------------------------
+
+    if (type === "textMessageEvent") {
       message =
         snippet.displayMessage ||
-        (
-          snippet.textMessageDetails &&
-          snippet.textMessageDetails.messageText
-        ) ||
+        snippet.textMessageDetails?.messageText ||
         "";
-
     }
+
+    // -----------------------------------------------
+    // SUPER CHAT
+    // -----------------------------------------------
 
     if (type === "superChatEvent") {
+      const details =
+        snippet.superChatDetails || {};
 
       message =
-        (
-          snippet.superChatDetails &&
-          snippet.superChatDetails.userComment
-        ) ||
-        "";
+        details.userComment || "";
 
+      amountMicros =
+        Number(details.amountMicros || 0);
+
+      currency =
+        details.currency || "USD";
     }
 
-    if (!message) {
-
-      console.log(
-        "MESSAGE WITHOUT TEXT:",
-        displayName
-      );
-
+    if (!message && type !== "superChatEvent") {
       return;
-
     }
 
     console.log(
@@ -651,162 +574,155 @@ function processMessage(item) {
     );
 
     // =================================================
-    // NORMAL COMMENT = +1
+    // COUNTRY
     // =================================================
 
-    if (type === "textMessageEvent") {
+    const country =
+      findCountryInText(message);
 
-      const country =
-        findCountryInText(message);
-
-      if (!country) {
-
-        console.log(
-          "NO COUNTRY FOUND:",
-          message
-        );
-
-        return;
-
-      }
-
-      state[country].score += 1;
-
-      state[country].commentCount += 1;
-
-      state[country].latestCommenter =
-        displayName;
-
-      lastEvent = {
-
-        id: item.id,
-
-        country: country,
-
-        type: "comment",
-
-        displayName: displayName,
-
-        points: 1,
-
-        message: message,
-
-        time: Date.now()
-
-      };
-
+    if (!country) {
       console.log(
-        `COMMENT +1 | ${displayName} | ${country}`
+        "NO COUNTRY FOUND:",
+        message
       );
 
       return;
-
     }
 
     // =================================================
-    // SUPER CHAT = +10
+    // NORMAL COMMENT
     // =================================================
 
-    if (type === "superChatEvent") {
+    if (type === "textMessageEvent") {
+      const points = COMMENT_POINTS;
 
-      const country =
-        findCountryInText(message);
-
-      if (!country) {
-
-        console.log(
-          "NO COUNTRY FOUND IN SUPER CHAT:",
-          message
-        );
-
-        return;
-
-      }
-
-      state[country].score += 10;
-
-      state[country].superChats += 1;
-
+      state[country].score += points;
+      state[country].commentCount += 1;
       state[country].latestCommenter =
         displayName;
 
+      const player =
+        getPlayer(displayName);
+
+      player.country = country;
+      player.score += points;
+      player.comments += 1;
+
+      eventCounter++;
+
       lastEvent = {
-
-        id: item.id,
-
-        country: country,
-
-        type: "superchat",
-
-        displayName: displayName,
-
-        points: 10,
-
-        message: message,
-
+        id: `${item.id}-${eventCounter}`,
+        country,
+        type: "comment",
+        displayName,
+        points,
+        message,
+        amountMicros: 0,
+        currency: "",
         time: Date.now()
-
       };
 
       console.log(
-        `SUPER CHAT +10 | ${displayName} | ${country}`
+        `COMMENT +${points} | ${displayName} | ${country}`
       );
 
+      return;
+    }
+
+    // =================================================
+    // SUPER CHAT
+    // =================================================
+
+    if (type === "superChatEvent") {
+      let amountUSD = 0;
+
+      if (currency.toUpperCase() === "USD") {
+        amountUSD =
+          amountMicros / 1000000;
+      } else {
+        // For non-USD Super Chats, keep the
+        // configured conversion conservative.
+        amountUSD =
+          amountMicros / 1000000;
+      }
+
+      const points = Math.max(
+        1,
+        Math.round(
+          amountUSD *
+          SUPERCHAT_POINTS_PER_USD
+        )
+      );
+
+      state[country].score += points;
+      state[country].superChats += 1;
+      state[country].latestCommenter =
+        displayName;
+
+      const player =
+        getPlayer(displayName);
+
+      player.country = country;
+      player.score += points;
+      player.superChats += 1;
+
+      eventCounter++;
+
+      lastEvent = {
+        id: `${item.id}-${eventCounter}`,
+        country,
+        type: "superchat",
+        displayName,
+        points,
+        message,
+        amountMicros,
+        currency,
+        time: Date.now()
+      };
+
+      console.log(
+        `SUPER CHAT +${points} | ${displayName} | ${country} | ${amountUSD} ${currency}`
+      );
     }
 
   } catch (error) {
-
     console.error(
       "PROCESS MESSAGE ERROR:",
       error.message
     );
-
   }
-
 }
 
 // =====================================================
-// POLL YOUTUBE CHAT
+// POLL CHAT
 // =====================================================
 
 async function pollChat() {
-
   try {
-
     if (!liveChatId) {
-
       await getLiveChatId();
-
     }
 
     const params = {
-
-      liveChatId: liveChatId,
-
+      liveChatId,
       part: [
         "snippet",
         "authorDetails"
       ],
-
       maxResults: 200
-
     };
 
     if (nextPageToken) {
-
-      params.pageToken =
-        nextPageToken;
-
+      params.pageToken = nextPageToken;
     }
 
     const response =
-      await youtube
-        .liveChatMessages
-        .list(params);
+      await youtube.liveChatMessages.list(
+        params
+      );
 
     nextPageToken =
-      response.data.nextPageToken ||
-      null;
+      response.data.nextPageToken || null;
 
     const messages =
       response.data.items || [];
@@ -817,9 +733,7 @@ async function pollChat() {
     );
 
     for (const item of messages) {
-
       processMessage(item);
-
     }
 
     const wait =
@@ -829,7 +743,6 @@ async function pollChat() {
     schedulePoll(wait);
 
   } catch (error) {
-
     console.error(
       "YOUTUBE CHAT ERROR:",
       error.response?.data ||
@@ -837,249 +750,110 @@ async function pollChat() {
     );
 
     liveChatId = null;
-
     nextPageToken = null;
 
     schedulePoll(10000);
-
   }
-
 }
 
 // =====================================================
-// SCHEDULE POLL
+// SCHEDULE
 // =====================================================
 
 function schedulePoll(milliseconds) {
-
   if (pollingTimer) {
-
-    clearTimeout(
-      pollingTimer
-    );
-
+    clearTimeout(pollingTimer);
   }
 
-  pollingTimer =
-    setTimeout(
-      pollChat,
-      Math.max(
-        milliseconds || 5000,
-        1000
-      )
-    );
-
+  pollingTimer = setTimeout(
+    pollChat,
+    Math.max(
+      milliseconds || 5000,
+      1000
+    )
+  );
 }
 
 // =====================================================
 // API STATE
 // =====================================================
 
-app.get(
-  "/api/state",
-  (req, res) => {
+app.get("/api/state", (req, res) => {
+  const result = {};
 
-    const result = {};
-
-    for (const country of Object.keys(info)) {
-
-      const item =
-        state[country] || {
-
-          score: 0,
-
-          commentCount: 0,
-
-          superChats: 0,
-
-          latestCommenter: ""
-
-        };
-
-      result[country] = {
-
-        key: country,
-
-        name: info[country][1],
-
-        flag: info[country][0],
-
-        score: item.score || 0,
-
-        commentCount:
-          item.commentCount || 0,
-
-        superChats:
-          item.superChats || 0,
-
-        latestCommenter:
-          item.latestCommenter || ""
-
+  for (const country of Object.keys(info)) {
+    const item =
+      state[country] || {
+        score: 0,
+        commentCount: 0,
+        superChats: 0,
+        latestCommenter: ""
       };
 
-    }
-
-    const activeCountries =
-      Object.entries(result)
-        .filter(
-          ([country, item]) =>
-            item.score > 0
-        )
-        .sort(
-          (a, b) =>
-            b[1].score - a[1].score
-        )
-        .map(
-          ([country, item]) => ({
-
-            country: country,
-
-            name: item.name,
-
-            flag: item.flag,
-
-            score: item.score,
-
-            commentCount:
-              item.commentCount,
-
-            superChats:
-              item.superChats,
-
-            latestCommenter:
-              item.latestCommenter
-
-          })
-        );
-
-    const totalComments =
-      Object.values(state)
-        .reduce(
-          (sum, item) =>
-            sum +
-            (item.commentCount || 0),
-          0
-        );
-
-    const totalSuperChats =
-      Object.values(state)
-        .reduce(
-          (sum, item) =>
-            sum +
-            (item.superChats || 0),
-          0
-        );
-
-    res.json({
-
-      countries: result,
-
-      activeCountries:
-        activeCountries,
-
-      totalComments:
-        totalComments,
-
-      totalSuperChats:
-        totalSuperChats,
-
-      lastEvent:
-        lastEvent,
-
-      liveChatConnected:
-        !!liveChatId
-
-    });
-
+    result[country] = {
+      key: country,
+      name: info[country][1],
+      flag: info[country][0],
+      score: item.score || 0,
+      commentCount:
+        item.commentCount || 0,
+      superChats:
+        item.superChats || 0,
+      latestCommenter:
+        item.latestCommenter || ""
+    };
   }
-);
 
-// =====================================================
-// HEALTH CHECK
-// =====================================================
+  // ===================================================
+  // COUNTRY LEADERBOARD
+  // ===================================================
 
-app.get(
-  "/health",
-  (req, res) => {
-
-    res.json({
-
-      ok: true,
-
-      videoId: VIDEO_ID,
-
-      liveChatConnected:
-        !!liveChatId,
-
-      countries:
-        Object.keys(info).length
-
-    });
-
-  }
-);
-
-// =====================================================
-// STATIC FRONTEND
-// =====================================================
-
-app.use(
-  express.static(
-    path.join(
-      __dirname,
-      "public"
-    )
-  )
-);
-
-// =====================================================
-// FRONTEND FALLBACK
-// =====================================================
-
-app.use(
-  (req, res, next) => {
-
-    if (req.method !== "GET") {
-      return next();
-    }
-
-    res.sendFile(
-      path.join(
-        __dirname,
-        "public",
-        "index.html"
+  const activeCountries =
+    Object.entries(result)
+      .filter(
+        ([, item]) =>
+          item.score > 0
       )
-    );
+      .sort(
+        (a, b) =>
+          b[1].score -
+          a[1].score
+      )
+      .map(
+        ([country, item]) => ({
+          country,
+          name: item.name,
+          flag: item.flag,
+          score: item.score,
+          commentCount:
+            item.commentCount,
+          superChats:
+            item.superChats,
+          latestCommenter:
+            item.latestCommenter
+        })
+      );
 
-  }
-);
+  // ===================================================
+  // PLAYER LEADERBOARD
+  // ===================================================
 
-// =====================================================
-// START SERVER
-// =====================================================
-
-app.listen(
-  PORT,
-  "0.0.0.0",
-  () => {
-
-    console.log(
-      "================================="
-    );
-
-    console.log(
-      "COUNTRY BATTLE SERVER STARTED"
-    );
-
-    console.log(
-      "PORT:",
-      PORT
-    );
-
-    console.log(
-      "VIDEO ID:",
-      VIDEO_ID
-    );
-
-    console.log(
-   
+  const activePlayers =
+    Object.values(players)
+      .filter(
+        player =>
+          player.score > 0
+      )
+      .sort(
+        (a, b) =>
+          b.score - a.score
+      )
+      .map(
+        player => ({
+          key: player.key,
+          displayName:
+            player.displayName,
+          country:
+            player.country,
+          countryName:
+            
