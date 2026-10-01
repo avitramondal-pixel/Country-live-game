@@ -179,8 +179,6 @@ body{
   border:1px solid rgba(255,255,255,.12);
 
   box-shadow:0 7px 22px rgba(0,0,0,.4);
-
-  transition:.3s;
 }
 
 .top-card.first{
@@ -304,8 +302,6 @@ body{
 
   font-size:12px;
   font-weight:900;
-
-  animation:eventIn .35s ease;
 }
 
 .event.comment{
@@ -317,20 +313,6 @@ body{
 
   text-shadow:
     0 0 10px rgba(255,215,0,.35);
-}
-
-@keyframes eventIn{
-
-  from{
-    opacity:0;
-    transform:translateY(8px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-
 }
 
 /* ================= COUNTRY LIST ================= */
@@ -377,22 +359,6 @@ body{
     );
 
   border:1px solid rgba(255,255,255,.04);
-
-  animation:rowIn .3s ease;
-}
-
-@keyframes rowIn{
-
-  from{
-    opacity:.5;
-    transform:translateX(-5px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-
 }
 
 .country-rank{
@@ -487,6 +453,35 @@ body{
   background:#147b4d;
 }
 
+/* ================= CONNECTION ================= */
+
+.connection{
+  position:fixed;
+  left:12px;
+  bottom:12px;
+
+  z-index:999;
+
+  padding:8px 12px;
+
+  border-radius:20px;
+
+  background:#202337;
+
+  border:1px solid rgba(255,255,255,.15);
+
+  font-size:9px;
+  font-weight:900;
+}
+
+.connection.connected{
+  background:#147b4d;
+}
+
+.connection.error{
+  background:#8b2020;
+}
+
 /* ================= RESPONSIVE ================= */
 
 @media(max-width:380px){
@@ -527,6 +522,8 @@ body{
 
 <body>
 
+<!-- ================= MAIN APP ================= -->
+
 <div class="app">
 
   <header class="header">
@@ -546,7 +543,7 @@ body{
   </header>
 
 
-  <!-- ================= RULES ================= -->
+  <!-- RULES -->
 
   <div class="rules">
 
@@ -573,7 +570,7 @@ body{
   </div>
 
 
-  <!-- ================= TOP 3 ================= -->
+  <!-- TOP 3 -->
 
   <section class="top-section">
 
@@ -589,7 +586,7 @@ body{
   </section>
 
 
-  <!-- ================= LIVE EVENT ================= -->
+  <!-- EVENT -->
 
   <div class="event-area">
 
@@ -604,7 +601,7 @@ body{
   </div>
 
 
-  <!-- ================= COUNTRY LIST ================= -->
+  <!-- COUNTRY LIST -->
 
   <section class="country-section">
 
@@ -633,7 +630,7 @@ body{
 </div>
 
 
-<!-- ================= CONTROLS ================= -->
+<!-- CONTROLS -->
 
 <div class="controls">
 
@@ -656,14 +653,24 @@ body{
 </div>
 
 
-<!-- ================= BACKGROUND MUSIC ================= -->
+<!-- CONNECTION STATUS -->
+
+<div
+  id="connection"
+  class="connection">
+
+  🔄 CONNECTING...
+
+</div>
+
+
+<!-- MUSIC -->
 
 <audio
   id="backgroundMusic"
   src="/music/background.mp3"
   loop
-  preload="auto"
-  autoplay>
+  preload="auto">
 </audio>
 
 
@@ -712,6 +719,11 @@ const topThree =
     "topThree"
   );
 
+const connection =
+  document.getElementById(
+    "connection"
+  );
+
 
 /* =====================================================
    STATE
@@ -721,9 +733,9 @@ let musicEnabled = false;
 
 let voiceEnabled = true;
 
-let pageReady = false;
-
 let lastEventId = "";
+
+let firstStateLoaded = false;
 
 let loading = false;
 
@@ -777,7 +789,7 @@ function getCountryName(country){
 
 
 /* =====================================================
-   COUNTRY FLAG
+   FLAG
 ===================================================== */
 
 function getFlag(country){
@@ -797,7 +809,46 @@ function getFlag(country){
 
 
 /* =====================================================
-   START MUSIC
+   CONNECTION STATUS
+===================================================== */
+
+function setConnectionStatus(
+  connected
+){
+
+  if(connected){
+
+    connection.textContent =
+      "🟢 YOUTUBE CONNECTED";
+
+    connection.classList.add(
+      "connected"
+    );
+
+    connection.classList.remove(
+      "error"
+    );
+
+  }else{
+
+    connection.textContent =
+      "🔴 YOUTUBE DISCONNECTED";
+
+    connection.classList.remove(
+      "connected"
+    );
+
+    connection.classList.add(
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   MUSIC
 ===================================================== */
 
 async function startMusic(){
@@ -817,7 +868,14 @@ async function startMusic(){
       "on"
     );
 
+    return true;
+
   }catch(error){
+
+    console.log(
+      "Music autoplay blocked:",
+      error
+    );
 
     musicEnabled = false;
 
@@ -828,24 +886,35 @@ async function startMusic(){
       "on"
     );
 
-    console.log(
-      "Autoplay blocked. Press MUSIC OFF button to enable music."
-    );
+    return false;
 
   }
 
 }
 
 
-/* =====================================================
-   TRY MUSIC AUTOMATICALLY
-===================================================== */
+/*
+  Try music automatically when
+  Browser Source loads.
+
+  Some streaming apps allow this.
+  Normal mobile browsers may block
+  autoplay until the user touches
+  the page.
+*/
 
 window.addEventListener(
   "load",
-  () => {
+  async () => {
 
-    startMusic();
+    setTimeout(
+      async () => {
+
+        await startMusic();
+
+      },
+      500
+    );
 
   }
 );
@@ -860,7 +929,8 @@ musicButton.addEventListener(
   async () => {
 
     if(
-      music.paused
+      music.paused ||
+      !musicEnabled
     ){
 
       await startMusic();
@@ -895,9 +965,8 @@ voiceButton.addEventListener(
     voiceEnabled =
       !voiceEnabled;
 
-    if(
-      !voiceEnabled
-    ){
+
+    if(!voiceEnabled){
 
       if(
         "speechSynthesis"
@@ -949,79 +1018,90 @@ function speak(text){
   }
 
 
-  speechSynthesis.cancel();
+  try{
+
+    speechSynthesis.cancel();
 
 
-  if(
-    musicEnabled &&
-    !music.paused
-  ){
+    if(
+      musicEnabled &&
+      !music.paused
+    ){
 
-    music.volume = 0.035;
+      music.volume = 0.035;
 
-  }
+    }
 
 
-  const utterance =
-    new SpeechSynthesisUtterance(
-      text
+    const utterance =
+      new SpeechSynthesisUtterance(
+        text
+      );
+
+
+    utterance.lang =
+      "en-US";
+
+    utterance.rate =
+      0.92;
+
+    utterance.pitch =
+      1;
+
+    utterance.volume =
+      1;
+
+
+    utterance.onend =
+      () => {
+
+        if(
+          musicEnabled &&
+          !music.paused
+        ){
+
+          music.volume =
+            0.12;
+
+        }
+
+      };
+
+
+    utterance.onerror =
+      () => {
+
+        if(
+          musicEnabled &&
+          !music.paused
+        ){
+
+          music.volume =
+            0.12;
+
+        }
+
+      };
+
+
+    speechSynthesis.speak(
+      utterance
     );
 
+  }catch(error){
 
-  utterance.lang =
-    "en-US";
+    console.error(
+      "VOICE ERROR:",
+      error
+    );
 
-  utterance.rate =
-    0.92;
-
-  utterance.pitch =
-    1;
-
-  utterance.volume =
-    1;
-
-
-  utterance.onend =
-    () => {
-
-      if(
-        musicEnabled &&
-        !music.paused
-      ){
-
-        music.volume =
-          0.12;
-
-      }
-
-    };
-
-
-  utterance.onerror =
-    () => {
-
-      if(
-        musicEnabled &&
-        !music.paused
-      ){
-
-        music.volume =
-          0.12;
-
-      }
-
-    };
-
-
-  speechSynthesis.speak(
-    utterance
-  );
+  }
 
 }
 
 
 /* =====================================================
-   ANNOUNCE EVENT
+   EVENT ANNOUNCER
 ===================================================== */
 
 function announceEvent(event){
@@ -1033,6 +1113,26 @@ function announceEvent(event){
   if(!event.id){
     return;
   }
+
+
+  /*
+    IMPORTANT:
+
+    The first event received after page
+    loads is NOT spoken.
+
+    Only new comments are spoken.
+  */
+
+  if(!firstStateLoaded){
+
+    lastEventId =
+      event.id;
+
+    return;
+
+  }
+
 
   if(
     event.id ===
@@ -1046,11 +1146,6 @@ function announceEvent(event){
 
   lastEventId =
     event.id;
-
-
-  if(!pageReady){
-    return;
-  }
 
 
   const name =
@@ -1103,10 +1198,7 @@ function announceEvent(event){
     "comment"
   ){
 
-    if(
-      event.hasCountry &&
-      points > 0
-    ){
+    if(points > 0){
 
       speak(
         `${name}. ` +
@@ -1211,12 +1303,11 @@ function renderEvent(event){
   }
 
 
-  if(
-    !event.hasCountry
-  ){
+  eventElement.className =
+    "event comment";
 
-    eventElement.className =
-      "event comment";
+
+  if(points > 0){
 
     eventElement.innerHTML = `
 
@@ -1228,39 +1319,32 @@ function renderEvent(event){
 
       ·
 
-      Waiting for a country...
+      ${escapeHtml(country)}
+
+      ·
+
+      <strong>
+        +${formatNumber(points)}
+        POINT
+      </strong>
 
     `;
 
-    return;
+  }else{
+
+    eventElement.innerHTML = `
+
+      💬
+
+      <strong>
+        ${escapeHtml(name)}
+      </strong>
+
+      commented
+
+    `;
 
   }
-
-
-  eventElement.className =
-    "event comment";
-
-
-  eventElement.innerHTML = `
-
-    💬
-
-    <strong>
-      ${escapeHtml(name)}
-    </strong>
-
-    ·
-
-    ${escapeHtml(country)}
-
-    ·
-
-    <strong>
-      +${formatNumber(points)}
-      POINT
-    </strong>
-
-  `;
 
 }
 
@@ -1319,18 +1403,14 @@ function renderTop3(players){
   ){
 
     const player =
-      sorted[
-        positions[slot]
-      ];
+      sorted[positions[slot]];
 
 
     if(!player){
 
       html += `
 
-        <div
-          class="top-card ${classes[slot]}"
-        >
+        <div class="top-card ${classes[slot]}">
 
           <div class="crown">
             ${crowns[slot]}
@@ -1371,9 +1451,7 @@ function renderTop3(players){
 
     html += `
 
-      <div
-        class="top-card ${classes[slot]}"
-      >
+      <div class="top-card ${classes[slot]}">
 
         <div class="rank">
           #${positions[slot] + 1}
@@ -1554,102 +1632,6 @@ function renderCountries(countries){
 
 
 /* =====================================================
-   NORMALIZE SERVER RESPONSE
-===================================================== */
-
-function normalizeState(data){
-
-  const state =
-    data &&
-    data.state &&
-    typeof data.state === "object"
-      ? data.state
-      : data || {};
-
-
-  let countries =
-    state.countries ??
-    data?.countries ??
-    [];
-
-
-  if(
-    !Array.isArray(countries) &&
-    countries &&
-    typeof countries === "object"
-  ){
-
-    countries =
-      Object.entries(countries)
-        .map(
-          ([key,value]) => ({
-
-            ...(value || {}),
-
-            country:
-              value?.country ||
-              key,
-
-            countryName:
-              value?.countryName ||
-              key
-
-          })
-        );
-
-  }
-
-
-  let players =
-    state.players ??
-    data?.players ??
-    [];
-
-
-  if(
-    !Array.isArray(players) &&
-    players &&
-    typeof players === "object"
-  ){
-
-    players =
-      Object.values(players);
-
-  }
-
-
-  players =
-    players
-      .filter(Boolean)
-      .sort(
-        (a,b) =>
-          Number(b.score || 0) -
-          Number(a.score || 0)
-      );
-
-
-  const event =
-    state.lastEvent ||
-    data?.lastEvent ||
-    state.event ||
-    data?.event ||
-    null;
-
-
-  return {
-
-    countries,
-
-    players,
-
-    event
-
-  };
-
-}
-
-
-/* =====================================================
    LOAD STATE
 ===================================================== */
 
@@ -1671,7 +1653,14 @@ async function loadState(){
         "?t=" +
         Date.now(),
         {
-          cache:"no-store"
+          method:"GET",
+
+          cache:"no-store",
+
+          headers:{
+            "Cache-Control":
+              "no-cache"
+          }
         }
       );
 
@@ -1689,28 +1678,64 @@ async function loadState(){
       await response.json();
 
 
-    const state =
-      normalizeState(data);
+    if(
+      !data ||
+      data.success === false
+    ){
+
+      throw new Error(
+        data?.error ||
+        "Invalid server response"
+      );
+
+    }
 
 
     renderCountries(
-      state.countries
+      data.countries || []
     );
 
 
     renderTop3(
-      state.players
+      data.players || []
     );
 
 
-    if(state.event){
+    renderEvent(
+      data.lastEvent
+    );
 
-      renderEvent(
-        state.event
-      );
+
+    setConnectionStatus(
+      Boolean(
+        data.connected
+      )
+    );
+
+
+    /*
+      Prevent old event from being
+      announced when page first loads.
+    */
+
+    if(
+      !firstStateLoaded
+    ){
+
+      if(data.lastEvent?.id){
+
+        lastEventId =
+          data.lastEvent.id;
+
+      }
+
+      firstStateLoaded =
+        true;
+
+    }else{
 
       announceEvent(
-        state.event
+        data.lastEvent
       );
 
     }
@@ -1723,6 +1748,10 @@ async function loadState(){
       error
     );
 
+    setConnectionStatus(
+      false
+    );
+
   }finally{
 
     loading = false;
@@ -1733,7 +1762,7 @@ async function loadState(){
 
 
 /* =====================================================
-   INITIAL LOAD
+   START
 ===================================================== */
 
 renderTop3([]);
@@ -1741,28 +1770,37 @@ renderTop3([]);
 loadState();
 
 
-/*
-  Prevent the first existing event
-  from being announced as a new event.
-*/
-
-setTimeout(
-  () => {
-
-    pageReady = true;
-
-  },
-  1500
-);
-
-
-/* =====================================================
-   POLLING
-===================================================== */
-
 setInterval(
   loadState,
   POLL_INTERVAL
+);
+
+
+/*
+  If user taps anywhere on the page,
+  try music again.
+
+  This is useful when the browser blocks
+  autoplay on first load.
+*/
+
+document.addEventListener(
+  "click",
+  async () => {
+
+    if(
+      !musicEnabled &&
+      music.paused
+    ){
+
+      await startMusic();
+
+    }
+
+  },
+  {
+    passive:true
+  }
 );
 
 </script>
