@@ -8,18 +8,17 @@ const app = express();
 const PORT =
   Number(process.env.PORT) || 3000;
 
-
-/* =====================================================
-   CONFIG
-===================================================== */
-
 const API_KEY =
-  process.env.YOUTUBE_API_KEY || "";
+  process.env.YOUTUBE_API_KEY;
 
 const VIDEO_ID =
   process.env.YOUTUBE_VIDEO_ID ||
   "3PEzpCJjYFE";
 
+
+/* =====================================================
+   SETTINGS
+===================================================== */
 
 const COMMENT_POINTS = 1;
 
@@ -28,7 +27,6 @@ const SUPERCHAT_POINTS_PER_USD =
     process.env.SUPERCHAT_POINTS_PER_USD ||
     1000
   );
-
 
 const POLL_FALLBACK_MS = 10000;
 
@@ -67,11 +65,10 @@ if(!API_KEY){
 
 }
 
-
 const youtube =
   google.youtube({
-    version: "v3",
-    auth: API_KEY
+    version:"v3",
+    auth:API_KEY
   });
 
 
@@ -304,7 +301,7 @@ const countryData = [
 
 
 /* =====================================================
-   FLAG GENERATOR
+   FLAG
 ===================================================== */
 
 function countryCodeToFlag(
@@ -327,39 +324,21 @@ function countryCodeToFlag(
 
 
 /* =====================================================
-   COUNTRY KEY
-===================================================== */
-
-function makeCountryKey(
-  name
-){
-
-  return name
-    .replace(
-      /[^a-zA-Z0-9]+/g,
-      ""
-    );
-
-}
-
-
-/* =====================================================
-   COUNTRY INFORMATION
+   COUNTRY INFO
 ===================================================== */
 
 const info = {};
 
-
 for(
-  const [
-    code,
-    name
-  ]
+  const [code,name]
   of countryData
 ){
 
   const key =
-    makeCountryKey(name);
+    name.replace(
+      /[^a-zA-Z0-9]+/g,
+      ""
+    );
 
 
   info[key] = {
@@ -379,7 +358,123 @@ for(
 
 
 /* =====================================================
-   NORMALIZE TEXT
+   ALIASES
+===================================================== */
+
+const aliases = {
+
+  Afghanistan:[
+    "afghan"
+  ],
+
+  Bangladesh:[
+    "bangla"
+  ],
+
+  Bhutan:[
+    "bhutanese"
+  ],
+
+  BosniaandHerzegovina:[
+    "bosnia",
+    "bosnia herzegovina",
+    "bosnia and herzegovina"
+  ],
+
+  Brunei:[
+    "brunei darussalam"
+  ],
+
+  CapeVerde:[
+    "cabo verde"
+  ],
+
+  Congo:[
+    "republic of congo",
+    "republic of the congo"
+  ],
+
+  CoteDIvoire:[
+    "ivory coast",
+    "cote d ivoire"
+  ],
+
+  DemocraticRepublicoftheCongo:[
+    "dr congo",
+    "drc",
+    "democratic republic of congo",
+    "democratic republic of the congo"
+  ],
+
+  Czechia:[
+    "czech republic"
+  ],
+
+  Eswatini:[
+    "swaziland"
+  ],
+
+  Iran:[
+    "persia"
+  ],
+
+  Laos:[
+    "lao"
+  ],
+
+  Myanmar:[
+    "burma"
+  ],
+
+  Palestine:[
+    "palestinian"
+  ],
+
+  SouthKorea:[
+    "korea",
+    "south korea",
+    "republic of korea"
+  ],
+
+  TimorLeste:[
+    "east timor"
+  ],
+
+  Turkiye:[
+    "turkey",
+    "turkiye",
+    "türkiye"
+  ],
+
+  UnitedArabEmirates:[
+    "uae",
+    "dubai"
+  ],
+
+  UnitedKingdom:[
+    "uk",
+    "britain",
+    "great britain",
+    "england"
+  ],
+
+  UnitedStates:[
+    "usa",
+    "united states of america",
+    "america"
+  ],
+
+  HolySee:[
+    "vatican",
+    "vatican city",
+    "holy see"
+  ]
+
+};
+
+
+/* =====================================================
+   NORMALIZE
 ===================================================== */
 
 function normalize(
@@ -413,143 +508,21 @@ function normalize(
 
 
 /* =====================================================
-   COUNTRY ALIASES
-===================================================== */
-
-const aliases = {
-
-  Afghanistan: [
-    "afghan"
-  ],
-
-  Bangladesh: [
-    "bangla",
-    "bangladesh"
-  ],
-
-  Bhutan: [
-    "bhutanese"
-  ],
-
-  BosniaandHerzegovina: [
-    "bosnia",
-    "bosnia herzegovina",
-    "bosnia and herzegovina"
-  ],
-
-  Brunei: [
-    "brunei darussalam"
-  ],
-
-  CapeVerde: [
-    "cabo verde"
-  ],
-
-  Congo: [
-    "republic of congo",
-    "republic of the congo"
-  ],
-
-  CotedIvoire: [
-    "ivory coast",
-    "cote d ivoire",
-    "cote divoire"
-  ],
-
-  DemocraticRepublicoftheCongo: [
-    "dr congo",
-    "drc",
-    "democratic republic of congo",
-    "democratic republic of the congo"
-  ],
-
-  Czechia: [
-    "czech republic"
-  ],
-
-  Eswatini: [
-    "swaziland"
-  ],
-
-  Iran: [
-    "persia"
-  ],
-
-  Laos: [
-    "lao"
-  ],
-
-  Myanmar: [
-    "burma"
-  ],
-
-  Palestine: [
-    "palestinian"
-  ],
-
-  SouthKorea: [
-    "korea",
-    "south korea",
-    "republic of korea"
-  ],
-
-  TimorLeste: [
-    "east timor"
-  ],
-
-  Turkiye: [
-    "turkey",
-    "turkiye",
-    "türkiye"
-  ],
-
-  UnitedArabEmirates: [
-    "uae",
-    "emirates",
-    "united arab emirates",
-    "dubai"
-  ],
-
-  UnitedKingdom: [
-    "uk",
-    "britain",
-    "great britain",
-    "england"
-  ],
-
-  UnitedStates: [
-    "usa",
-    "us",
-    "america",
-    "united states of america"
-  ],
-
-  HolySee: [
-    "vatican",
-    "vatican city",
-    "holy see"
-  ]
-
-};
-
-
-/* =====================================================
    COUNTRY SEARCH LIST
 ===================================================== */
 
 const countrySearchList = [];
 
-
 for(
-  const [
-    code,
-    name
-  ]
+  const [code,name]
   of countryData
 ){
 
   const key =
-    makeCountryKey(name);
+    name.replace(
+      /[^a-zA-Z0-9]+/g,
+      ""
+    );
 
 
   const searchTerms = [
@@ -598,10 +571,6 @@ for(
 }
 
 
-/*
-  Longer country names first.
-*/
-
 countrySearchList.sort(
   (a,b) =>
     b.length -
@@ -615,17 +584,16 @@ countrySearchList.sort(
 
 const state = {};
 
-
 for(
-  const [
-    code,
-    name
-  ]
+  const [code,name]
   of countryData
 ){
 
   const key =
-    makeCountryKey(name);
+    name.replace(
+      /[^a-zA-Z0-9]+/g,
+      ""
+    );
 
 
   state[key] = {
@@ -657,7 +625,6 @@ const players = {};
 const eventQueue = [];
 
 let eventCounter = 0;
-
 
 let lastEvent = {
 
@@ -846,7 +813,7 @@ function addEvent(
 
 
 /* =====================================================
-   YOUTUBE LIVE CHAT STATE
+   YOUTUBE CHAT
 ===================================================== */
 
 let liveChatId = null;
@@ -854,7 +821,6 @@ let liveChatId = null;
 let nextPageToken = null;
 
 let pollingTimer = null;
-
 
 const seenMessageIds =
   new Set();
@@ -873,11 +839,6 @@ async function getLiveChatId(){
     );
 
   }
-
-
-  console.log(
-    `Checking YouTube video: ${VIDEO_ID}`
-  );
 
 
   const response =
@@ -951,7 +912,7 @@ async function getLiveChatId(){
 
 
 /* =====================================================
-   PROCESS YOUTUBE MESSAGE
+   PROCESS MESSAGE
 ===================================================== */
 
 function processMessage(
@@ -1032,9 +993,7 @@ function processMessage(
     let currency = "";
 
 
-    /* ================================================
-       NORMAL COMMENT
-    ================================================ */
+    /* NORMAL COMMENT */
 
     if(
       type ===
@@ -1043,15 +1002,15 @@ function processMessage(
 
       message =
         snippet.displayMessage ||
-        snippet.textMessageDetails?.messageText ||
+        snippet
+          .textMessageDetails
+          ?.messageText ||
         "";
 
     }
 
 
-    /* ================================================
-       SUPER CHAT
-    ================================================ */
+    /* SUPER CHAT */
 
     else if(
       type ===
@@ -1095,9 +1054,9 @@ function processMessage(
       );
 
 
-    /* ================================================
+    /* =================================================
        NO COUNTRY
-    ================================================ */
+    ================================================= */
 
     if(!country){
 
@@ -1152,15 +1111,13 @@ function processMessage(
 
 
     if(!countryInfo){
-
       return;
-
     }
 
 
-    /* ================================================
-       NORMAL COMMENT
-    ================================================ */
+    /* =================================================
+       COMMENT
+    ================================================= */
 
     if(
       type ===
@@ -1175,11 +1132,13 @@ function processMessage(
         points;
 
 
-      state[country].commentCount +=
+      state[country]
+        .commentCount +=
         1;
 
 
-      state[country].latestCommenter =
+      state[country]
+        .latestCommenter =
         displayName;
 
 
@@ -1211,8 +1170,7 @@ function processMessage(
         flag:
           countryInfo.flag,
 
-        type:
-          "comment",
+        type:"comment",
 
         displayName,
 
@@ -1241,9 +1199,9 @@ function processMessage(
     }
 
 
-    /* ================================================
+    /* =================================================
        SUPER CHAT
-    ================================================ */
+    ================================================= */
 
     if(
       type ===
@@ -1273,11 +1231,13 @@ function processMessage(
         points;
 
 
-      state[country].superChats +=
+      state[country]
+        .superChats +=
         1;
 
 
-      state[country].latestCommenter =
+      state[country]
+        .latestCommenter =
         displayName;
 
 
@@ -1309,8 +1269,7 @@ function processMessage(
         flag:
           countryInfo.flag,
 
-        type:
-          "superchat",
+        type:"superchat",
 
         displayName,
 
@@ -1348,7 +1307,7 @@ function processMessage(
 
 
 /* =====================================================
-   POLL YOUTUBE LIVE CHAT
+   POLL CHAT
 ===================================================== */
 
 async function pollChat(){
@@ -1391,7 +1350,8 @@ async function pollChat(){
 
 
     nextPageToken =
-      response.data.nextPageToken ||
+      response.data
+        .nextPageToken ||
       null;
 
 
@@ -1418,7 +1378,8 @@ async function pollChat(){
 
 
     const wait =
-      response.data.pollingIntervalMillis ||
+      response.data
+        .pollingIntervalMillis ||
       5000;
 
 
@@ -1453,7 +1414,7 @@ async function pollChat(){
 
 
 /* =====================================================
-   SCHEDULE POLLING
+   SCHEDULE
 ===================================================== */
 
 function schedulePoll(
@@ -1476,8 +1437,7 @@ function schedulePoll(
       pollChat,
       Math.max(
         1000,
-        Number(delay) ||
-        5000
+        Number(delay) || 5000
       )
     );
 
@@ -1485,7 +1445,7 @@ function schedulePoll(
 
 
 /* =====================================================
-   BUILD COUNTRY LIST
+   COUNTRY LIST
 ===================================================== */
 
 function buildCountryList(){
@@ -1495,8 +1455,9 @@ function buildCountryList(){
       ([code,name]) => {
 
         const key =
-          makeCountryKey(
-            name
+          name.replace(
+            /[^a-zA-Z0-9]+/g,
+            ""
           );
 
 
@@ -1512,20 +1473,20 @@ function buildCountryList(){
             ),
 
           score:
-            state[key]?.score ||
-            0,
+            state[key]
+              ?.score || 0,
 
           commentCount:
-            state[key]?.commentCount ||
-            0,
+            state[key]
+              ?.commentCount || 0,
 
           superChats:
-            state[key]?.superChats ||
-            0,
+            state[key]
+              ?.superChats || 0,
 
           latestCommenter:
-            state[key]?.latestCommenter ||
-            ""
+            state[key]
+              ?.latestCommenter || ""
 
         };
 
@@ -1559,7 +1520,7 @@ function buildCountryList(){
 
 
 /* =====================================================
-   BUILD PLAYER LIST
+   PLAYER LIST
 ===================================================== */
 
 function buildPlayerList(){
@@ -1590,16 +1551,15 @@ function buildPlayerList(){
             player.displayName,
 
           country:
-            country ||
-            "",
+            country || "",
 
           countryName:
-            countryInfo?.name ||
-            "",
+            countryInfo
+              ?.name || "",
 
           flag:
-            countryInfo?.flag ||
-            "🌍",
+            countryInfo
+              ?.flag || "🌍",
 
           score:
             player.score,
@@ -1619,7 +1579,7 @@ function buildPlayerList(){
 
 
 /* =====================================================
-   API: GAME STATE
+   API STATE
 ===================================================== */
 
 app.get(
@@ -1709,7 +1669,7 @@ app.get(
 
 
 /* =====================================================
-   API: FULL EVENT QUEUE
+   EVENTS
 ===================================================== */
 
 app.get(
@@ -1736,12 +1696,18 @@ app.get(
 
 
 /* =====================================================
-   API: HEALTH CHECK
+   HEALTH
 ===================================================== */
 
 app.get(
   "/api/health",
   (req,res) => {
+
+    res.setHeader(
+      "Cache-Control",
+      "no-store"
+    );
+
 
     res.json({
 
@@ -1772,6 +1738,26 @@ app.get(
 
 
 /* =====================================================
+   ROOT
+===================================================== */
+
+app.get(
+  "/",
+  (req,res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "index.html"
+      )
+    );
+
+  }
+);
+
+
+/* =====================================================
    START SERVER
 ===================================================== */
 
@@ -1784,7 +1770,7 @@ app.listen(
     );
 
     console.log(
-      "       COUNTRY BATTLE LIVE SERVER"
+      " COUNTRY BATTLE LIVE SERVER"
     );
 
     console.log(
@@ -1815,10 +1801,14 @@ app.listen(
     if(!API_KEY){
 
       console.error(
-        "WARNING: YouTube API key is not configured."
+        "WARNING: YOUTUBE_API_KEY is not configured."
       );
 
     }else{
+
+      /*
+        Start YouTube polling immediately.
+      */
 
       pollChat();
 
@@ -1829,7 +1819,7 @@ app.listen(
 
 
 /* =====================================================
-   GRACEFUL SHUTDOWN
+   SHUTDOWN
 ===================================================== */
 
 function shutdown(){
@@ -1850,9 +1840,7 @@ function shutdown(){
   }
 
 
-  process.exit(
-    0
-  );
+  process.exit(0);
 
 }
 
