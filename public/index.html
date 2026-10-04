@@ -56,10 +56,7 @@ body{
   position:relative;
 }
 
-
-/* =====================================================
-   HEADER
-===================================================== */
+/* ================= HEADER ================= */
 
 .header{
   text-align:center;
@@ -91,7 +88,6 @@ body{
   border:1px solid rgba(255,80,80,.3);
 
   color:#ff7272;
-
   font-size:10px;
   font-weight:900;
 }
@@ -99,28 +95,20 @@ body{
 .live-dot{
   width:7px;
   height:7px;
-
   border-radius:50%;
-
   background:#ff3030;
-
   box-shadow:0 0 9px #ff3030;
 
   animation:pulse 1s infinite;
 }
 
 @keyframes pulse{
-
   50%{
     opacity:.25;
   }
-
 }
 
-
-/* =====================================================
-   RULES
-===================================================== */
+/* ================= RULES ================= */
 
 .rules{
   margin:8px 20px 12px;
@@ -130,13 +118,11 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-
   gap:15px;
 
   padding:7px 10px;
 
   border:1px solid rgba(255,225,72,.5);
-
   border-radius:10px;
 
   background:rgba(0,0,0,.45);
@@ -144,9 +130,7 @@ body{
 
 .rule{
   font-size:clamp(9px,2.7vw,16px);
-
   font-weight:900;
-
   white-space:nowrap;
 }
 
@@ -154,10 +138,7 @@ body{
   color:#ffe13b;
 }
 
-
-/* =====================================================
-   TOP 3
-===================================================== */
+/* ================= TOP 3 COUNTRY ================= */
 
 .top-section{
   padding:3px 12px 10px;
@@ -165,39 +146,26 @@ body{
 
 .top-title{
   text-align:center;
-
   font-size:11px;
-
   font-weight:900;
-
   letter-spacing:1.5px;
-
   margin-bottom:8px;
 }
 
 .top-three{
-
   display:grid;
-
-  grid-template-columns:
-    1fr
-    1.15fr
-    1fr;
-
+  grid-template-columns:1fr 1.15fr 1fr;
   gap:7px;
-
   align-items:end;
 }
 
 .top-card{
-
   min-width:0;
-
   text-align:center;
 
   position:relative;
 
-  padding:7px 4px 9px;
+  padding:7px 4px 10px;
 
   border-radius:12px;
 
@@ -210,14 +178,11 @@ body{
 
   border:1px solid rgba(255,255,255,.12);
 
-  box-shadow:
-    0 7px 22px rgba(0,0,0,.4);
+  box-shadow:0 7px 22px rgba(0,0,0,.4);
 }
 
 .top-card.first{
-
   border-color:#ffd92e;
-
   box-shadow:
     0 0 18px rgba(255,211,36,.3);
 }
@@ -231,123 +196,95 @@ body{
 }
 
 .crown{
-
   height:25px;
-
   font-size:22px;
 }
 
 .rank{
-
   position:absolute;
-
   top:5px;
   right:5px;
 
-  width:21px;
-  height:21px;
+  width:23px;
+  height:23px;
 
   border-radius:50%;
 
   display:flex;
-
   align-items:center;
   justify-content:center;
 
   background:#ed2633;
-
   border:2px solid white;
 
-  font-size:9px;
-
+  font-size:8px;
   font-weight:1000;
 }
 
-.avatar{
+.country-flag-big{
+  width:65px;
+  height:65px;
 
-  width:60px;
-  height:60px;
-
-  margin:3px auto 5px;
+  margin:3px auto 6px;
 
   border-radius:13px;
 
   display:flex;
-
   align-items:center;
   justify-content:center;
-
-  font-size:28px;
 
   background:#171927;
 
   border:2px solid rgba(255,255,255,.5);
+
+  font-family:
+    "Noto Color Emoji",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    sans-serif;
+
+  font-size:38px;
+
+  line-height:1;
 }
 
-.top-card.first .avatar{
-
+.top-card.first
+.country-flag-big{
   border-color:#ffe338;
 
   box-shadow:
     0 0 14px rgba(255,220,50,.5);
 }
 
-.player-name{
-
+.country-top-name{
   max-width:100%;
 
   overflow:hidden;
-
   white-space:nowrap;
-
   text-overflow:ellipsis;
 
-  font-size:11px;
-
-  font-weight:900;
+  font-size:12px;
+  font-weight:1000;
 }
 
-.player-country{
-
-  margin-top:3px;
-
-  font-size:10px;
-
-  color:#bfc1cc;
-
-  white-space:nowrap;
-
-  overflow:hidden;
-
-  text-overflow:ellipsis;
-}
-
-.player-points{
-
-  margin-top:4px;
+.country-top-points{
+  margin-top:5px;
 
   color:#ffe02f;
 
   font-size:15px;
-
   font-weight:1000;
 }
 
-
-/* =====================================================
-   EVENT
-===================================================== */
+/* ================= EVENT ================= */
 
 .event-area{
-
-  min-height:52px;
+  min-height:54px;
 
   margin:3px 18px 9px;
 
   display:flex;
-
   align-items:center;
-
   justify-content:center;
 
   border-radius:9px;
@@ -360,7 +297,6 @@ body{
 }
 
 .event{
-
   width:100%;
 
   padding:8px;
@@ -368,7 +304,6 @@ body{
   text-align:center;
 
   font-size:12px;
-
   font-weight:900;
 }
 
@@ -377,82 +312,43 @@ body{
 }
 
 .event.superchat{
-
   color:#ffe02c;
 
   text-shadow:
     0 0 10px rgba(255,215,0,.35);
 }
 
-
-/* =====================================================
-   VOICE ACTIVE EFFECT
-===================================================== */
-
-.event.speaking{
-
-  animation:
-    voicePulse .5s ease-in-out infinite alternate;
-}
-
-@keyframes voicePulse{
-
-  from{
-    transform:scale(1);
-  }
-
-  to{
-    transform:scale(1.02);
-  }
-
-}
-
-
-/* =====================================================
-   COUNTRY LIST
-===================================================== */
+/* ================= COUNTRY LIST ================= */
 
 .country-section{
-  padding:0 12px 25px;
+  padding:0 12px 90px;
 }
 
 .country-header{
-
   display:grid;
-
-  grid-template-columns:
-    34px
-    1fr
-    70px;
+  grid-template-columns:34px 1fr 80px;
 
   padding:6px 8px;
 
   color:#777b91;
 
   font-size:8px;
-
   font-weight:900;
 }
 
 .country-list{
-
   display:flex;
-
   flex-direction:column;
-
   gap:3px;
 }
 
 .country-row{
-
   display:grid;
 
   grid-template-columns:
-    35px
-    1fr
-    70px;
+    35px 1fr 80px;
 
-  min-height:34px;
+  min-height:38px;
 
   align-items:center;
 
@@ -468,92 +364,80 @@ body{
     );
 
   border:1px solid rgba(255,255,255,.04);
+
+  transition:
+    transform .2s,
+    background .2s;
+}
+
+.country-row.top-country{
+  border-color:
+    rgba(255,218,49,.3);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(52,47,20,.75),
+      rgba(11,12,23,.9)
+    );
 }
 
 .country-rank{
-
-  font-size:8px;
-
+  font-size:9px;
   font-weight:900;
-
   color:#d5d6df;
 }
 
 .country-info{
-
   display:flex;
-
   align-items:center;
-
-  gap:7px;
+  gap:8px;
 
   min-width:0;
 }
 
 .flag{
+  font-family:
+    "Noto Color Emoji",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    sans-serif;
 
-  font-size:20px;
+  font-size:22px;
 
-  width:26px;
-
-  min-width:26px;
+  width:28px;
+  min-width:28px;
 
   text-align:center;
+
+  line-height:1;
 }
 
 .country-name{
-
   font-size:11px;
-
   font-weight:800;
 
   white-space:nowrap;
-
   overflow:hidden;
-
   text-overflow:ellipsis;
 }
 
 .country-points{
-
   text-align:right;
 
   color:white;
 
   font-size:13px;
-
   font-weight:1000;
 }
 
-.top-country{
-
-  border-color:
-    rgba(255,218,49,.22);
-}
-
 .top-country .country-points{
-
   color:#ffe13b;
 }
 
-.empty{
-
-  padding:18px;
-
-  text-align:center;
-
-  color:#6f7283;
-
-  font-size:12px;
-}
-
-
-/* =====================================================
-   CONTROLS
-===================================================== */
+/* ================= CONTROLS ================= */
 
 .controls{
-
   position:fixed;
 
   right:12px;
@@ -562,14 +446,11 @@ body{
   z-index:999;
 
   display:flex;
-
   flex-direction:column;
-
   gap:7px;
 }
 
 .control{
-
   border:none;
 
   padding:9px 13px;
@@ -577,13 +458,11 @@ body{
   border-radius:22px;
 
   background:#202337;
-
   color:white;
 
   border:1px solid rgba(255,255,255,.15);
 
   font-size:10px;
-
   font-weight:900;
 
   box-shadow:
@@ -593,17 +472,16 @@ body{
 }
 
 .control.on{
-
   background:#147b4d;
 }
 
+.control.voice-error{
+  background:#8b2020;
+}
 
-/* =====================================================
-   CONNECTION
-===================================================== */
+/* ================= CONNECTION ================= */
 
 .connection{
-
   position:fixed;
 
   left:12px;
@@ -620,32 +498,24 @@ body{
   border:1px solid rgba(255,255,255,.15);
 
   font-size:9px;
-
   font-weight:900;
 }
 
 .connection.connected{
-
   background:#147b4d;
 }
 
 .connection.error{
-
   background:#8b2020;
 }
 
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
+/* ================= RESPONSIVE ================= */
 
 @media(max-width:380px){
 
   .rules{
-
     margin-left:9px;
     margin-right:9px;
-
     gap:8px;
   }
 
@@ -653,28 +523,28 @@ body{
     font-size:9px;
   }
 
-  .avatar{
-
-    width:52px;
-    height:52px;
-
-    font-size:25px;
-  }
-
-  .player-name{
-    font-size:9px;
+  .country-flag-big{
+    width:55px;
+    height:55px;
+    font-size:32px;
   }
 
   .country-row{
-
     grid-template-columns:
-      30px
-      1fr
-      60px;
+      30px 1fr 65px;
+  }
+
+  .country-header{
+    grid-template-columns:
+      30px 1fr 65px;
   }
 
   .country-name{
     font-size:10px;
+  }
+
+  .country-points{
+    font-size:12px;
   }
 
 }
@@ -683,16 +553,11 @@ body{
 
 </head>
 
-
 <body>
-
 
 <div class="app">
 
-
-  <!-- =================================================
-       HEADER
-  ================================================== -->
+  <!-- HEADER -->
 
   <header class="header">
 
@@ -711,9 +576,7 @@ body{
   </header>
 
 
-  <!-- =================================================
-       RULES
-  ================================================== -->
+  <!-- RULES -->
 
   <div class="rules">
 
@@ -740,14 +603,12 @@ body{
   </div>
 
 
-  <!-- =================================================
-       TOP 3
-  ================================================== -->
+  <!-- TOP 3 COUNTRIES -->
 
   <section class="top-section">
 
     <div class="top-title">
-      🏆 TOP 3 PLAYERS
+      🏆 TOP 3 COUNTRIES
     </div>
 
     <div
@@ -758,9 +619,7 @@ body{
   </section>
 
 
-  <!-- =================================================
-       EVENT
-  ================================================== -->
+  <!-- LAST EVENT -->
 
   <div class="event-area">
 
@@ -775,9 +634,7 @@ body{
   </div>
 
 
-  <!-- =================================================
-       COUNTRY LIST
-  ================================================== -->
+  <!-- COUNTRY LIST -->
 
   <section class="country-section">
 
@@ -806,26 +663,22 @@ body{
 </div>
 
 
-<!-- =====================================================
-     CONTROLS
-===================================================== -->
+<!-- CONTROLS -->
 
 <div class="controls">
 
   <button
     id="voiceButton"
-    class="control on">
+    class="control">
 
-    🔊 VOICE ON
+    🔊 ENABLE VOICE
 
   </button>
 
 </div>
 
 
-<!-- =====================================================
-     CONNECTION
-===================================================== -->
+<!-- CONNECTION -->
 
 <div
   id="connection"
@@ -880,27 +733,18 @@ const connection =
 
 
 /* =====================================================
-   STATE
+   VOICE STATE
 ===================================================== */
 
-let voiceEnabled = true;
+let voiceEnabled = false;
 
-let lastEventId = "";
+let voiceReady = false;
 
 let firstStateLoaded = false;
 
+let lastEventId = "";
+
 let loading = false;
-
-
-/*
-  This flag is important for
-  Browser Source / streaming apps.
-
-  The browser may block speech until
-  the page has received a user gesture.
-*/
-
-let speechUnlocked = false;
 
 
 /* =====================================================
@@ -909,33 +753,35 @@ let speechUnlocked = false;
 
 function escapeHtml(value){
 
-  return String(value ?? "")
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
 
 /* =====================================================
-   FORMAT NUMBER
+   NUMBER
 ===================================================== */
 
 function formatNumber(value){
@@ -990,7 +836,7 @@ function getFlag(country){
 
 
 /* =====================================================
-   CONNECTION STATUS
+   CONNECTION
 ===================================================== */
 
 function setConnectionStatus(
@@ -1029,60 +875,174 @@ function setConnectionStatus(
 
 
 /* =====================================================
-   UNLOCK VOICE
+   VOICE SUPPORT
 ===================================================== */
 
-function unlockVoice(){
+function hasVoiceSupport(){
 
-  speechUnlocked = true;
-
-  if(
-    !("speechSynthesis" in window)
-  ){
-    return;
-  }
-
-  /*
-    Some browsers need a tiny speech
-    action before they allow later
-    automatic speech.
-  */
-
-  try{
-
-    speechSynthesis.cancel();
-
-  }catch(error){
-
-    console.log(
-      "Speech unlock error:",
-      error
-    );
-
-  }
+  return (
+    "speechSynthesis"
+    in window &&
+    "SpeechSynthesisUtterance"
+    in window
+  );
 
 }
 
 
 /* =====================================================
-   USER INTERACTION
+   GET BEST VOICE
 ===================================================== */
 
-document.addEventListener(
-  "click",
-  unlockVoice,
-  {
-    passive:true
-  }
-);
+function getBestVoice(){
 
-document.addEventListener(
-  "touchstart",
-  unlockVoice,
-  {
-    passive:true
+  if(!hasVoiceSupport()){
+    return null;
   }
-);
+
+  const voices =
+    speechSynthesis.getVoices();
+
+  if(!voices.length){
+    return null;
+  }
+
+  return (
+    voices.find(
+      v =>
+        v.lang &&
+        v.lang.toLowerCase()
+          .startsWith("en-us")
+    ) ||
+
+    voices.find(
+      v =>
+        v.lang &&
+        v.lang.toLowerCase()
+          .startsWith("en")
+    ) ||
+
+    voices[0]
+  );
+
+}
+
+
+/* =====================================================
+   VOICE STATUS
+===================================================== */
+
+function setVoiceButton(
+  text,
+  enabled,
+  error = false
+){
+
+  voiceButton.textContent =
+    text;
+
+  voiceButton.classList.toggle(
+    "on",
+    enabled
+  );
+
+  voiceButton.classList.toggle(
+    "voice-error",
+    error
+  );
+
+}
+
+
+/* =====================================================
+   UNLOCK VOICE
+===================================================== */
+
+function unlockVoice(){
+
+  if(!hasVoiceSupport()){
+
+    voiceReady = false;
+
+    setVoiceButton(
+      "❌ VOICE NOT SUPPORTED",
+      false,
+      true
+    );
+
+    console.error(
+      "Speech Synthesis is not supported by this browser."
+    );
+
+    return false;
+
+  }
+
+
+  try{
+
+    speechSynthesis.cancel();
+
+    const test =
+      new SpeechSynthesisUtterance(
+        "Voice enabled"
+      );
+
+    test.lang =
+      "en-US";
+
+    test.rate =
+      0.9;
+
+    test.pitch =
+      1;
+
+    test.volume =
+      1;
+
+    const voice =
+      getBestVoice();
+
+    if(voice){
+      test.voice = voice;
+    }
+
+    speechSynthesis.speak(
+      test
+    );
+
+    voiceEnabled = true;
+
+    voiceReady = true;
+
+    setVoiceButton(
+      "🔊 VOICE ON",
+      true,
+      false
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "VOICE UNLOCK ERROR:",
+      error
+    );
+
+    voiceReady = false;
+
+    setVoiceButton(
+      "❌ VOICE ERROR",
+      false,
+      true
+    );
+
+    return false;
+
+  }
+
+}
 
 
 /* =====================================================
@@ -1091,52 +1051,51 @@ document.addEventListener(
 
 voiceButton.addEventListener(
   "click",
-  function(){
-
-    unlockVoice();
-
-    voiceEnabled =
-      !voiceEnabled;
+  () => {
 
     if(!voiceEnabled){
 
-      if(
-        "speechSynthesis"
-        in window
-      ){
+      unlockVoice();
 
-        speechSynthesis.cancel();
-
-      }
-
-      voiceButton.textContent =
-        "🔇 VOICE OFF";
-
-      voiceButton.classList.remove(
-        "on"
-      );
-
-    }else{
-
-      voiceButton.textContent =
-        "🔊 VOICE ON";
-
-      voiceButton.classList.add(
-        "on"
-      );
-
-      /*
-        Small confirmation voice.
-      */
-
-      speak(
-        "Voice on"
-      );
+      return;
 
     }
 
+
+    voiceEnabled = false;
+
+    voiceReady = false;
+
+    if(hasVoiceSupport()){
+
+      speechSynthesis.cancel();
+
+    }
+
+    setVoiceButton(
+      "🔇 VOICE OFF",
+      false,
+      false
+    );
+
   }
 );
+
+
+/* =====================================================
+   LOAD VOICES
+===================================================== */
+
+if(hasVoiceSupport()){
+
+  speechSynthesis.onvoiceschanged =
+    () => {
+
+      getBestVoice();
+
+    };
+
+}
 
 
 /* =====================================================
@@ -1149,16 +1108,16 @@ function speak(text){
     return;
   }
 
-  if(
-    !("speechSynthesis" in window)
-  ){
-
-    console.error(
-      "Speech Synthesis is not supported."
-    );
-
+  if(!voiceReady){
     return;
+  }
 
+  if(!hasVoiceSupport()){
+    return;
+  }
+
+  if(!text){
+    return;
   }
 
 
@@ -1173,63 +1132,32 @@ function speak(text){
       );
 
 
-    /*
-      English voice.
-    */
-
     utterance.lang =
       "en-US";
-
-
-    /*
-      Natural speed.
-    */
 
     utterance.rate =
       0.88;
 
-
     utterance.pitch =
       1;
-
 
     utterance.volume =
       1;
 
 
-    eventElement.classList.add(
-      "speaking"
-    );
+    const voice =
+      getBestVoice();
 
-
-    utterance.onend =
-      function(){
-
-        eventElement.classList.remove(
-          "speaking"
-        );
-
-      };
-
-
-    utterance.onerror =
-      function(error){
-
-        console.error(
-          "VOICE ERROR:",
-          error
-        );
-
-        eventElement.classList.remove(
-          "speaking"
-        );
-
-      };
+    if(voice){
+      utterance.voice =
+        voice;
+    }
 
 
     speechSynthesis.speak(
       utterance
     );
+
 
   }catch(error){
 
@@ -1259,8 +1187,8 @@ function announceEvent(event){
 
 
   /*
-    Do not speak the existing event
-    when the page first opens.
+    First event after page load
+    will NOT be spoken.
   */
 
   if(!firstStateLoaded){
@@ -1268,14 +1196,12 @@ function announceEvent(event){
     lastEventId =
       event.id;
 
+    firstStateLoaded = true;
+
     return;
 
   }
 
-
-  /*
-    Same event = don't speak again.
-  */
 
   if(
     event.id ===
@@ -1289,20 +1215,6 @@ function announceEvent(event){
 
   lastEventId =
     event.id;
-
-
-  /*
-    Ignore events that don't contain
-    a country.
-  */
-
-  if(
-    event.hasCountry === false
-  ){
-
-    return;
-
-  }
 
 
   const name =
@@ -1322,9 +1234,9 @@ function announceEvent(event){
     );
 
 
-  /* =================================================
+  /* ===============================
      SUPER CHAT
-  ================================================= */
+  =============================== */
 
   if(
     event.type ===
@@ -1333,15 +1245,9 @@ function announceEvent(event){
 
     const amount =
       Number(
-        event.amount ??
-        (
-          Number(
-            event.amountMicros ||
-            0
-          ) /
-          1000000
-        )
-      );
+        event.amountMicros ||
+        0
+      ) / 1000000;
 
 
     const currency =
@@ -1349,9 +1255,16 @@ function announceEvent(event){
       "USD";
 
 
+    const amountText =
+      amount > 0
+        ? `${amount.toFixed(2)} ${currency}`
+        : "Super Chat";
+
+
     speak(
-      `Super Chat from ${name}. ` +
+      `${name}. ` +
       `${country}. ` +
+      `${amountText}. ` +
       `${formatNumber(points)} points.`
     );
 
@@ -1360,29 +1273,24 @@ function announceEvent(event){
   }
 
 
-  /* =================================================
+  /* ===============================
      NORMAL COMMENT
-  ================================================= */
+  =============================== */
 
   if(
     event.type ===
     "comment"
   ){
 
-    /*
-      EXACT VOICE FORMAT:
+    if(points > 0){
 
-      John. India. One point.
-    */
+      speak(
+        `${name}. ` +
+        `${country}. ` +
+        `${formatNumber(points)} point.`
+      );
 
-    speak(
-      `${name}. ` +
-      `${country}. ` +
-      `${points === 1
-        ? "One point."
-        : `${formatNumber(points)} points.`
-      }`
-    );
+    }
 
   }
 
@@ -1428,9 +1336,9 @@ function renderEvent(event){
     );
 
 
-  /* =================================================
+  /* ===============================
      SUPER CHAT
-  ================================================= */
+  =============================== */
 
   if(
     event.type ===
@@ -1439,15 +1347,9 @@ function renderEvent(event){
 
     const amount =
       Number(
-        event.amount ??
-        (
-          Number(
-            event.amountMicros ||
-            0
-          ) /
-          1000000
-        )
-      );
+        event.amountMicros ||
+        0
+      ) / 1000000;
 
 
     const currency =
@@ -1476,8 +1378,10 @@ function renderEvent(event){
 
       ·
 
-      ${formatNumber(points)}
-      POINTS
+      <strong>
+        ${formatNumber(points)}
+        POINTS
+      </strong>
 
       ·
 
@@ -1490,9 +1394,9 @@ function renderEvent(event){
   }
 
 
-  /* =================================================
+  /* ===============================
      COMMENT
-  ================================================= */
+  =============================== */
 
   eventElement.className =
     "event comment";
@@ -1541,36 +1445,40 @@ function renderEvent(event){
 
 
 /* =====================================================
-   RENDER TOP 3
+   RENDER TOP 3 COUNTRIES
 ===================================================== */
 
-function renderTop3(players){
+function renderTop3(countries){
 
   const list =
-    Array.isArray(players)
-      ? players
+    Array.isArray(countries)
+      ? countries
       : [];
 
 
   const sorted =
     [...list]
       .filter(Boolean)
+      .map(
+        country => ({
+
+          ...country,
+
+          score:
+            Number(
+              country.score ??
+              country.points ??
+              0
+            )
+
+        })
+      )
       .sort(
         (a,b) =>
-          Number(b.score || 0) -
-          Number(a.score || 0)
+          b.score -
+          a.score
       )
-      .slice(
-        0,
-        3
-      );
-
-
-  const positions = [
-    1,
-    0,
-    2
-  ];
+      .slice(0,3);
 
 
   const classes = [
@@ -1581,9 +1489,9 @@ function renderTop3(players){
 
 
   const crowns = [
-    "♛",
+    "🥈",
     "👑",
-    "♛"
+    "🥉"
   ];
 
 
@@ -1596,36 +1504,33 @@ function renderTop3(players){
     slot++
   ){
 
-    const player =
-      sorted[
-        positions[slot]
-      ];
+    const country =
+      sorted[slot];
 
 
-    if(!player){
+    if(!country){
 
       html += `
 
-        <div class="top-card ${classes[slot]}">
+        <div class="
+          top-card
+          ${classes[slot]}
+        ">
 
           <div class="crown">
             ${crowns[slot]}
           </div>
 
-          <div class="avatar">
-            👤
+          <div class="country-flag-big">
+            🌍
           </div>
 
-          <div class="player-name">
+          <div class="country-top-name">
             Waiting...
           </div>
 
-          <div class="player-country">
-            —
-          </div>
-
-          <div class="player-points">
-            0
+          <div class="country-top-points">
+            0 POINT
           </div>
 
         </div>
@@ -1638,50 +1543,47 @@ function renderTop3(players){
 
 
     const flag =
-      getFlag(player);
+      getFlag(country);
 
 
-    const country =
-      getCountryName(player);
+    const name =
+      getCountryName(country);
+
+
+    const score =
+      Number(
+        country.score ??
+        country.points ??
+        0
+      );
 
 
     html += `
 
-      <div class="top-card ${classes[slot]}">
+      <div class="
+        top-card
+        ${classes[slot]}
+      ">
 
         <div class="rank">
-          #${positions[slot] + 1}
+          #${slot + 1}
         </div>
 
         <div class="crown">
           ${crowns[slot]}
         </div>
 
-        <div class="avatar">
+        <div class="country-flag-big">
           ${escapeHtml(flag)}
         </div>
 
-        <div class="player-name">
-          ${escapeHtml(
-            player.displayName ||
-            "Player"
-          )}
+        <div class="country-top-name">
+          ${escapeHtml(name)}
         </div>
 
-        <div class="player-country">
-
-          ${escapeHtml(flag)}
-
-          ${escapeHtml(country)}
-
-        </div>
-
-        <div class="player-points">
-
-          ${formatNumber(
-            player.score
-          )}
-
+        <div class="country-top-points">
+          ${formatNumber(score)}
+          POINT${score === 1 ? "" : "S"}
         </div>
 
       </div>
@@ -1698,7 +1600,7 @@ function renderTop3(players){
 
 
 /* =====================================================
-   RENDER COUNTRIES
+   RENDER ALL 195 COUNTRIES
 ===================================================== */
 
 function renderCountries(
@@ -1756,7 +1658,7 @@ function renderCountries(
     countryList.innerHTML = `
 
       <div class="empty">
-        No countries available.
+        No countries received yet.
       </div>
 
     `;
@@ -1772,12 +1674,16 @@ function renderCountries(
   list.forEach(
     (country,index) => {
 
-      const flag =
-        getFlag(country);
-
-
       const name =
-        getCountryName(country);
+        getCountryName(
+          country
+        );
+
+
+      const flag =
+        getFlag(
+          country
+        );
 
 
       const score =
@@ -1786,23 +1692,23 @@ function renderCountries(
         );
 
 
+      const isTop =
+        index < 3 &&
+        score > 0;
+
+
       html += `
 
-        <div
-          class="country-row ${
-            score > 0 &&
-            index < 3
-              ? "top-country"
-              : ""
-          }"
-        >
+        <div class="
+          country-row
+          ${isTop ? "top-country" : ""}
+        ">
 
           <div class="country-rank">
 
             #${index + 1}
 
           </div>
-
 
           <div class="country-info">
 
@@ -1819,7 +1725,6 @@ function renderCountries(
             </div>
 
           </div>
-
 
           <div class="country-points">
 
@@ -1845,12 +1750,11 @@ function renderCountries(
    FETCH STATE
 ===================================================== */
 
-async function fetchState(){
+async function loadState(){
 
   if(loading){
     return;
   }
-
 
   loading = true;
 
@@ -1871,7 +1775,8 @@ async function fetchState(){
     if(!response.ok){
 
       throw new Error(
-        `HTTP ${response.status}`
+        "HTTP " +
+        response.status
       );
 
     }
@@ -1881,40 +1786,51 @@ async function fetchState(){
       await response.json();
 
 
-    setConnectionStatus(
-      Boolean(
-        data.liveChatConnected
+    /*
+      Server sends:
+      countries
+      players
+      lastEvent
+      connected
+    */
+
+
+    const countries =
+      Array.isArray(
+        data.countries
       )
+        ? data.countries
+        : [];
+
+
+    const event =
+      data.lastEvent ||
+      null;
+
+
+    renderTop3(
+      countries
     );
 
 
     renderCountries(
-      data.countries
-    );
-
-
-    renderTop3(
-      data.players
+      countries
     );
 
 
     renderEvent(
-      data.lastEvent
+      event
     );
 
-
-    /*
-      Speak ONLY when there is a
-      genuinely new event.
-    */
 
     announceEvent(
-      data.lastEvent
+      event
     );
 
 
-    firstStateLoaded =
-      true;
+    setConnectionStatus(
+      data.connected !== false
+    );
 
 
   }catch(error){
@@ -1942,28 +1858,29 @@ async function fetchState(){
    START
 ===================================================== */
 
-fetchState();
+loadState();
 
 
 setInterval(
-  fetchState,
+  loadState,
   POLL_INTERVAL
 );
 
 
 /* =====================================================
-   VISIBILITY CHANGE
+   MOBILE / BROWSER VOICE PREP
 ===================================================== */
 
 document.addEventListener(
   "visibilitychange",
-  function(){
+  () => {
 
     if(
-      !document.hidden
+      document.hidden &&
+      hasVoiceSupport()
     ){
 
-      fetchState();
+      speechSynthesis.cancel();
 
     }
 
@@ -1971,7 +1888,6 @@ document.addEventListener(
 );
 
 </script>
-
 
 </body>
 
