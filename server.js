@@ -15,7 +15,7 @@ const VIDEO_ID =
 const COMMENT_POINTS = 1;
 
 const SUPERCHAT_POINTS_PER_USD =
-  Number(process.env.SUPERCHAT_POINTS_PER_USD || 1000);
+  Number(process.env.SUPERCHAT_POINTS_PER_USD) || 1000;
 
 const POLL_FALLBACK_MS = 10000;
 
@@ -54,230 +54,228 @@ const youtube = google.youtube({
 
 
 /* =====================================================
-   COUNTRY DATA - 195
+   COUNTRY DATA - 195 COUNTRIES
 ===================================================== */
 
 const countryData = [
+  ["AF", "Afghanistan"],
+  ["AL", "Albania"],
+  ["DZ", "Algeria"],
+  ["AD", "Andorra"],
+  ["AO", "Angola"],
+  ["AG", "Antigua and Barbuda"],
+  ["AR", "Argentina"],
+  ["AM", "Armenia"],
+  ["AU", "Australia"],
+  ["AT", "Austria"],
+  ["AZ", "Azerbaijan"],
 
-  ["AF","Afghanistan"],
-  ["AL","Albania"],
-  ["DZ","Algeria"],
-  ["AD","Andorra"],
-  ["AO","Angola"],
-  ["AG","Antigua and Barbuda"],
-  ["AR","Argentina"],
-  ["AM","Armenia"],
-  ["AU","Australia"],
-  ["AT","Austria"],
-  ["AZ","Azerbaijan"],
+  ["BS", "Bahamas"],
+  ["BH", "Bahrain"],
+  ["BD", "Bangladesh"],
+  ["BB", "Barbados"],
+  ["BY", "Belarus"],
+  ["BE", "Belgium"],
+  ["BZ", "Belize"],
+  ["BJ", "Benin"],
+  ["BT", "Bhutan"],
+  ["BO", "Bolivia"],
+  ["BA", "Bosnia and Herzegovina"],
+  ["BW", "Botswana"],
+  ["BR", "Brazil"],
+  ["BN", "Brunei"],
+  ["BG", "Bulgaria"],
+  ["BF", "Burkina Faso"],
+  ["BI", "Burundi"],
 
-  ["BS","Bahamas"],
-  ["BH","Bahrain"],
-  ["BD","Bangladesh"],
-  ["BB","Barbados"],
-  ["BY","Belarus"],
-  ["BE","Belgium"],
-  ["BZ","Belize"],
-  ["BJ","Benin"],
-  ["BT","Bhutan"],
-  ["BO","Bolivia"],
-  ["BA","Bosnia and Herzegovina"],
-  ["BW","Botswana"],
-  ["BR","Brazil"],
-  ["BN","Brunei"],
-  ["BG","Bulgaria"],
-  ["BF","Burkina Faso"],
-  ["BI","Burundi"],
+  ["CV", "Cape Verde"],
+  ["KH", "Cambodia"],
+  ["CM", "Cameroon"],
+  ["CA", "Canada"],
+  ["CF", "Central African Republic"],
+  ["TD", "Chad"],
+  ["CL", "Chile"],
+  ["CN", "China"],
+  ["CO", "Colombia"],
+  ["KM", "Comoros"],
+  ["CG", "Congo"],
+  ["CD", "Democratic Republic of the Congo"],
+  ["CR", "Costa Rica"],
+  ["CI", "Cote d'Ivoire"],
+  ["HR", "Croatia"],
+  ["CU", "Cuba"],
+  ["CY", "Cyprus"],
+  ["CZ", "Czechia"],
 
-  ["CV","Cape Verde"],
-  ["KH","Cambodia"],
-  ["CM","Cameroon"],
-  ["CA","Canada"],
-  ["CF","Central African Republic"],
-  ["TD","Chad"],
-  ["CL","Chile"],
-  ["CN","China"],
-  ["CO","Colombia"],
-  ["KM","Comoros"],
-  ["CG","Congo"],
-  ["CD","Democratic Republic of the Congo"],
-  ["CR","Costa Rica"],
-  ["CI","Cote d'Ivoire"],
-  ["HR","Croatia"],
-  ["CU","Cuba"],
-  ["CY","Cyprus"],
-  ["CZ","Czechia"],
+  ["DK", "Denmark"],
+  ["DJ", "Djibouti"],
+  ["DM", "Dominica"],
+  ["DO", "Dominican Republic"],
 
-  ["DK","Denmark"],
-  ["DJ","Djibouti"],
-  ["DM","Dominica"],
-  ["DO","Dominican Republic"],
+  ["EC", "Ecuador"],
+  ["EG", "Egypt"],
+  ["SV", "El Salvador"],
+  ["GQ", "Equatorial Guinea"],
+  ["ER", "Eritrea"],
+  ["EE", "Estonia"],
+  ["SZ", "Eswatini"],
+  ["ET", "Ethiopia"],
 
-  ["EC","Ecuador"],
-  ["EG","Egypt"],
-  ["SV","El Salvador"],
-  ["GQ","Equatorial Guinea"],
-  ["ER","Eritrea"],
-  ["EE","Estonia"],
-  ["SZ","Eswatini"],
-  ["ET","Ethiopia"],
+  ["FJ", "Fiji"],
+  ["FI", "Finland"],
+  ["FR", "France"],
 
-  ["FJ","Fiji"],
-  ["FI","Finland"],
-  ["FR","France"],
+  ["GA", "Gabon"],
+  ["GM", "Gambia"],
+  ["GE", "Georgia"],
+  ["DE", "Germany"],
+  ["GH", "Ghana"],
+  ["GR", "Greece"],
+  ["GD", "Grenada"],
+  ["GT", "Guatemala"],
+  ["GN", "Guinea"],
+  ["GW", "Guinea-Bissau"],
+  ["GY", "Guyana"],
 
-  ["GA","Gabon"],
-  ["GM","Gambia"],
-  ["GE","Georgia"],
-  ["DE","Germany"],
-  ["GH","Ghana"],
-  ["GR","Greece"],
-  ["GD","Grenada"],
-  ["GT","Guatemala"],
-  ["GN","Guinea"],
-  ["GW","Guinea-Bissau"],
-  ["GY","Guyana"],
+  ["HT", "Haiti"],
+  ["HN", "Honduras"],
+  ["HU", "Hungary"],
 
-  ["HT","Haiti"],
-  ["HN","Honduras"],
-  ["HU","Hungary"],
+  ["IS", "Iceland"],
+  ["IN", "India"],
+  ["ID", "Indonesia"],
+  ["IR", "Iran"],
+  ["IQ", "Iraq"],
+  ["IE", "Ireland"],
+  ["IL", "Israel"],
+  ["IT", "Italy"],
 
-  ["IS","Iceland"],
-  ["IN","India"],
-  ["ID","Indonesia"],
-  ["IR","Iran"],
-  ["IQ","Iraq"],
-  ["IE","Ireland"],
-  ["IL","Israel"],
-  ["IT","Italy"],
+  ["JM", "Jamaica"],
+  ["JP", "Japan"],
+  ["JO", "Jordan"],
 
-  ["JM","Jamaica"],
-  ["JP","Japan"],
-  ["JO","Jordan"],
+  ["KZ", "Kazakhstan"],
+  ["KE", "Kenya"],
+  ["KI", "Kiribati"],
+  ["KW", "Kuwait"],
+  ["KG", "Kyrgyzstan"],
 
-  ["KZ","Kazakhstan"],
-  ["KE","Kenya"],
-  ["KI","Kiribati"],
-  ["KW","Kuwait"],
-  ["KG","Kyrgyzstan"],
+  ["LA", "Laos"],
+  ["LV", "Latvia"],
+  ["LB", "Lebanon"],
+  ["LS", "Lesotho"],
+  ["LR", "Liberia"],
+  ["LY", "Libya"],
+  ["LI", "Liechtenstein"],
+  ["LT", "Lithuania"],
+  ["LU", "Luxembourg"],
 
-  ["LA","Laos"],
-  ["LV","Latvia"],
-  ["LB","Lebanon"],
-  ["LS","Lesotho"],
-  ["LR","Liberia"],
-  ["LY","Libya"],
-  ["LI","Liechtenstein"],
-  ["LT","Lithuania"],
-  ["LU","Luxembourg"],
+  ["MG", "Madagascar"],
+  ["MW", "Malawi"],
+  ["MY", "Malaysia"],
+  ["MV", "Maldives"],
+  ["ML", "Mali"],
+  ["MT", "Malta"],
+  ["MH", "Marshall Islands"],
+  ["MR", "Mauritania"],
+  ["MU", "Mauritius"],
+  ["MX", "Mexico"],
+  ["FM", "Micronesia"],
+  ["MD", "Moldova"],
+  ["MC", "Monaco"],
+  ["MN", "Mongolia"],
+  ["ME", "Montenegro"],
+  ["MA", "Morocco"],
+  ["MZ", "Mozambique"],
+  ["MM", "Myanmar"],
 
-  ["MG","Madagascar"],
-  ["MW","Malawi"],
-  ["MY","Malaysia"],
-  ["MV","Maldives"],
-  ["ML","Mali"],
-  ["MT","Malta"],
-  ["MH","Marshall Islands"],
-  ["MR","Mauritania"],
-  ["MU","Mauritius"],
-  ["MX","Mexico"],
-  ["FM","Micronesia"],
-  ["MD","Moldova"],
-  ["MC","Monaco"],
-  ["MN","Mongolia"],
-  ["ME","Montenegro"],
-  ["MA","Morocco"],
-  ["MZ","Mozambique"],
-  ["MM","Myanmar"],
+  ["NA", "Namibia"],
+  ["NR", "Nauru"],
+  ["NP", "Nepal"],
+  ["NL", "Netherlands"],
+  ["NZ", "New Zealand"],
+  ["NI", "Nicaragua"],
+  ["NE", "Niger"],
+  ["NG", "Nigeria"],
+  ["KP", "North Korea"],
+  ["MK", "North Macedonia"],
+  ["NO", "Norway"],
 
-  ["NA","Namibia"],
-  ["NR","Nauru"],
-  ["NP","Nepal"],
-  ["NL","Netherlands"],
-  ["NZ","New Zealand"],
-  ["NI","Nicaragua"],
-  ["NE","Niger"],
-  ["NG","Nigeria"],
-  ["KP","North Korea"],
-  ["MK","North Macedonia"],
-  ["NO","Norway"],
+  ["OM", "Oman"],
 
-  ["OM","Oman"],
+  ["PK", "Pakistan"],
+  ["PW", "Palau"],
+  ["PS", "Palestine"],
+  ["PA", "Panama"],
+  ["PG", "Papua New Guinea"],
+  ["PY", "Paraguay"],
+  ["PE", "Peru"],
+  ["PH", "Philippines"],
+  ["PL", "Poland"],
+  ["PT", "Portugal"],
 
-  ["PK","Pakistan"],
-  ["PW","Palau"],
-  ["PS","Palestine"],
-  ["PA","Panama"],
-  ["PG","Papua New Guinea"],
-  ["PY","Paraguay"],
-  ["PE","Peru"],
-  ["PH","Philippines"],
-  ["PL","Poland"],
-  ["PT","Portugal"],
+  ["QA", "Qatar"],
 
-  ["QA","Qatar"],
+  ["RO", "Romania"],
+  ["RU", "Russia"],
+  ["RW", "Rwanda"],
 
-  ["RO","Romania"],
-  ["RU","Russia"],
-  ["RW","Rwanda"],
+  ["KN", "Saint Kitts and Nevis"],
+  ["LC", "Saint Lucia"],
+  ["VC", "Saint Vincent and the Grenadines"],
+  ["WS", "Samoa"],
+  ["SM", "San Marino"],
+  ["ST", "Sao Tome and Principe"],
+  ["SA", "Saudi Arabia"],
+  ["SN", "Senegal"],
+  ["RS", "Serbia"],
+  ["SC", "Seychelles"],
+  ["SL", "Sierra Leone"],
+  ["SG", "Singapore"],
+  ["SK", "Slovakia"],
+  ["SI", "Slovenia"],
+  ["SB", "Solomon Islands"],
+  ["SO", "Somalia"],
+  ["ZA", "South Africa"],
+  ["KR", "South Korea"],
+  ["SS", "South Sudan"],
+  ["ES", "Spain"],
+  ["LK", "Sri Lanka"],
+  ["SD", "Sudan"],
+  ["SR", "Suriname"],
+  ["SE", "Sweden"],
+  ["CH", "Switzerland"],
+  ["SY", "Syria"],
 
-  ["KN","Saint Kitts and Nevis"],
-  ["LC","Saint Lucia"],
-  ["VC","Saint Vincent and the Grenadines"],
-  ["WS","Samoa"],
-  ["SM","San Marino"],
-  ["ST","Sao Tome and Principe"],
-  ["SA","Saudi Arabia"],
-  ["SN","Senegal"],
-  ["RS","Serbia"],
-  ["SC","Seychelles"],
-  ["SL","Sierra Leone"],
-  ["SG","Singapore"],
-  ["SK","Slovakia"],
-  ["SI","Slovenia"],
-  ["SB","Solomon Islands"],
-  ["SO","Somalia"],
-  ["ZA","South Africa"],
-  ["KR","South Korea"],
-  ["SS","South Sudan"],
-  ["ES","Spain"],
-  ["LK","Sri Lanka"],
-  ["SD","Sudan"],
-  ["SR","Suriname"],
-  ["SE","Sweden"],
-  ["CH","Switzerland"],
-  ["SY","Syria"],
+  ["TJ", "Tajikistan"],
+  ["TZ", "Tanzania"],
+  ["TH", "Thailand"],
+  ["TL", "Timor-Leste"],
+  ["TG", "Togo"],
+  ["TO", "Tonga"],
+  ["TT", "Trinidad and Tobago"],
+  ["TN", "Tunisia"],
+  ["TR", "Türkiye"],
+  ["TM", "Turkmenistan"],
+  ["TV", "Tuvalu"],
 
-  ["TJ","Tajikistan"],
-  ["TZ","Tanzania"],
-  ["TH","Thailand"],
-  ["TL","Timor-Leste"],
-  ["TG","Togo"],
-  ["TO","Tonga"],
-  ["TT","Trinidad and Tobago"],
-  ["TN","Tunisia"],
-  ["TR","Türkiye"],
-  ["TM","Turkmenistan"],
-  ["TV","Tuvalu"],
+  ["UG", "Uganda"],
+  ["UA", "Ukraine"],
+  ["AE", "United Arab Emirates"],
+  ["GB", "United Kingdom"],
+  ["US", "United States"],
+  ["UY", "Uruguay"],
+  ["UZ", "Uzbekistan"],
 
-  ["UG","Uganda"],
-  ["UA","Ukraine"],
-  ["AE","United Arab Emirates"],
-  ["GB","United Kingdom"],
-  ["US","United States"],
-  ["UY","Uruguay"],
-  ["UZ","Uzbekistan"],
+  ["VU", "Vanuatu"],
+  ["VA", "Holy See"],
+  ["VE", "Venezuela"],
+  ["VN", "Vietnam"],
 
-  ["VU","Vanuatu"],
-  ["VA","Holy See"],
-  ["VE","Venezuela"],
-  ["VN","Vietnam"],
+  ["YE", "Yemen"],
 
-  ["YE","Yemen"],
-
-  ["ZM","Zambia"],
-  ["ZW","Zimbabwe"]
-
+  ["ZM", "Zambia"],
+  ["ZW", "Zimbabwe"]
 ];
 
 
@@ -286,15 +284,25 @@ const countryData = [
 ===================================================== */
 
 function countryCodeToFlag(code) {
-  return code
+  return String(code)
     .toUpperCase()
     .split("")
-    .map(char =>
-      String.fromCodePoint(
+    .map(function (char) {
+      return String.fromCodePoint(
         127397 + char.charCodeAt(0)
-      )
-    )
+      );
+    })
     .join("");
+}
+
+
+/* =====================================================
+   COUNTRY KEY
+===================================================== */
+
+function makeCountryKey(name) {
+  return String(name)
+    .replace(/[^a-zA-Z0-9]+/g, "");
 }
 
 
@@ -304,16 +312,14 @@ function countryCodeToFlag(code) {
 
 const info = {};
 
-for (const [code, name] of countryData) {
-
-  const key = name.replace(
-    /[^a-zA-Z0-9]+/g,
-    ""
-  );
+for (const item of countryData) {
+  const code = item[0];
+  const name = item[1];
+  const key = makeCountryKey(name);
 
   info[key] = {
-    code,
-    name,
+    code: code,
+    name: name,
     flag: countryCodeToFlag(code)
   };
 }
@@ -325,15 +331,22 @@ for (const [code, name] of countryData) {
 
 const aliases = {
 
-  Afghanistan: ["afghan"],
+  Afghanistan: [
+    "afghan"
+  ],
 
-  Bangladesh: ["bangla"],
+  Bangladesh: [
+    "bangla"
+  ],
 
-  Bhutan: ["bhutanese"],
+  Bhutan: [
+    "bhutanese"
+  ],
 
   BosniaandHerzegovina: [
     "bosnia",
-    "bosnia herzegovina"
+    "bosnia herzegovina",
+    "bosnia and herzegovina"
   ],
 
   Brunei: [
@@ -421,9 +434,9 @@ const aliases = {
 
   HolySee: [
     "vatican",
-    "vatican city"
+    "vatican city",
+    "holy see"
   ]
-
 };
 
 
@@ -432,7 +445,6 @@ const aliases = {
 ===================================================== */
 
 function normalize(text) {
-
   return String(text || "")
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -445,41 +457,48 @@ function normalize(text) {
 
 
 /* =====================================================
-   COUNTRY SEARCH
+   COUNTRY SEARCH LIST
 ===================================================== */
 
 const countrySearchList = [];
 
-for (const [code, name] of countryData) {
+for (const item of countryData) {
 
-  const key = name.replace(
-    /[^a-zA-Z0-9]+/g,
-    ""
-  );
+  const code = item[0];
+  const name = item[1];
+  const key = makeCountryKey(name);
 
   const terms = [name];
 
   if (aliases[key]) {
-    terms.push(...aliases[key]);
+    terms.push.apply(
+      terms,
+      aliases[key]
+    );
   }
 
   for (const term of terms) {
 
-    const normalized = normalize(term);
+    const normalizedTerm =
+      normalize(term);
 
-    if (!normalized) continue;
+    if (!normalizedTerm) {
+      continue;
+    }
 
     countrySearchList.push({
       country: key,
-      alias: normalized,
-      length: normalized.length
+      alias: normalizedTerm,
+      length: normalizedTerm.length,
+      code: code,
+      name: name
     });
   }
 }
 
-countrySearchList.sort(
-  (a, b) => b.length - a.length
-);
+countrySearchList.sort(function (a, b) {
+  return b.length - a.length;
+});
 
 
 /* =====================================================
@@ -488,12 +507,10 @@ countrySearchList.sort(
 
 const state = {};
 
-for (const [code, name] of countryData) {
+for (const item of countryData) {
 
-  const key = name.replace(
-    /[^a-zA-Z0-9]+/g,
-    ""
-  );
+  const name = item[1];
+  const key = makeCountryKey(name);
 
   state[key] = {
     score: 0,
@@ -544,21 +561,25 @@ function findCountryInText(message) {
 
   const text = normalize(message);
 
-  if (!text) return null;
+  if (!text) {
+    return null;
+  }
 
   for (const item of countrySearchList) {
 
-    const escaped = item.alias.replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
-    );
+    const escaped =
+      item.alias.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&"
+      );
 
-    const regex = new RegExp(
-      "(^|\\s)" +
-      escaped +
-      "(?=\\s|$)",
-      "i"
-    );
+    const regex =
+      new RegExp(
+        "(^|\\s)" +
+        escaped +
+        "(?=\\s|$)",
+        "i"
+      );
 
     if (regex.test(text)) {
       return item.country;
@@ -576,14 +597,17 @@ function findCountryInText(message) {
 function getPlayer(displayName) {
 
   const name =
-    String(displayName || "Anonymous").trim();
+    String(
+      displayName || "Anonymous"
+    ).trim();
 
-  const key = name.toLowerCase();
+  const key =
+    name.toLowerCase();
 
   if (!players[key]) {
 
     players[key] = {
-      key,
+      key: key,
       displayName: name,
       country: "",
       countryName: "",
@@ -599,7 +623,7 @@ function getPlayer(displayName) {
 
 
 /* =====================================================
-   EVENT
+   ADD EVENT
 ===================================================== */
 
 function addEvent(data) {
@@ -607,14 +631,54 @@ function addEvent(data) {
   eventCounter++;
 
   const event = {
-    id: `${Date.now()}-${eventCounter}`,
-    ...data,
-    time: Date.now()
+    id:
+      String(Date.now()) +
+      "-" +
+      String(eventCounter),
+
+    country:
+      data.country || "",
+
+    countryName:
+      data.countryName || "",
+
+    flag:
+      data.flag || "",
+
+    type:
+      data.type || "",
+
+    displayName:
+      data.displayName || "Anonymous",
+
+    points:
+      Number(data.points) || 0,
+
+    message:
+      data.message || "",
+
+    amount:
+      Number(data.amount) || 0,
+
+    amountMicros:
+      Number(data.amountMicros) || 0,
+
+    currency:
+      data.currency || "",
+
+    hasCountry:
+      Boolean(data.hasCountry),
+
+    time:
+      Date.now()
   };
 
   eventQueue.push(event);
 
-  while (eventQueue.length > MAX_EVENTS) {
+  while (
+    eventQueue.length >
+    MAX_EVENTS
+  ) {
     eventQueue.shift();
   }
 
@@ -639,11 +703,12 @@ let nextPageToken = null;
 
 let pollingTimer = null;
 
-const seenMessageIds = new Set();
+const seenMessageIds =
+  new Set();
 
 
 /* =====================================================
-   GET LIVE CHAT
+   GET LIVE CHAT ID
 ===================================================== */
 
 async function getLiveChatId() {
@@ -660,13 +725,16 @@ async function getLiveChatId() {
       id: [VIDEO_ID]
     });
 
+  const items =
+    response.data.items || [];
+
   const item =
-    response.data.items &&
-    response.data.items[0];
+    items[0];
 
   if (!item) {
     throw new Error(
-      `YouTube video not found: ${VIDEO_ID}`
+      "YouTube video not found: " +
+      VIDEO_ID
     );
   }
 
@@ -680,7 +748,8 @@ async function getLiveChatId() {
   }
 
   liveChatId =
-    details.activeLiveChatId || null;
+    details.activeLiveChatId ||
+    null;
 
   if (!liveChatId) {
     throw new Error(
@@ -707,9 +776,13 @@ function processMessage(item) {
 
   try {
 
-    if (!item || !item.id) return;
+    if (!item || !item.id) {
+      return;
+    }
 
-    if (seenMessageIds.has(item.id)) {
+    if (
+      seenMessageIds.has(item.id)
+    ) {
       return;
     }
 
@@ -720,13 +793,15 @@ function processMessage(item) {
       MAX_SEEN_MESSAGES
     ) {
 
-      const first =
+      const firstId =
         seenMessageIds
           .values()
           .next()
           .value;
 
-      seenMessageIds.delete(first);
+      seenMessageIds.delete(
+        firstId
+      );
     }
 
     const snippet =
@@ -749,25 +824,32 @@ function processMessage(item) {
     let currency = "";
 
 
-    /* COMMENT */
+    /* =================================================
+       NORMAL COMMENT
+    ================================================= */
 
     if (
-      type === "textMessageEvent"
+      type ===
+      "textMessageEvent"
     ) {
 
       message =
         snippet.displayMessage ||
-        snippet
-          .textMessageDetails
-          ?.messageText ||
+        (
+          snippet.textMessageDetails &&
+          snippet.textMessageDetails.messageText
+        ) ||
         "";
     }
 
 
-    /* SUPER CHAT */
+    /* =================================================
+       SUPER CHAT
+    ================================================= */
 
     else if (
-      type === "superChatEvent"
+      type ===
+      "superChatEvent"
     ) {
 
       const details =
@@ -775,7 +857,8 @@ function processMessage(item) {
         {};
 
       message =
-        details.userComment || "";
+        details.userComment ||
+        "";
 
       amountMicros =
         Number(
@@ -783,7 +866,8 @@ function processMessage(item) {
         );
 
       currency =
-        details.currency || "USD";
+        details.currency ||
+        "USD";
     }
 
     else {
@@ -791,40 +875,62 @@ function processMessage(item) {
     }
 
 
+    /* =================================================
+       FIND COUNTRY
+    ================================================= */
+
     const country =
       findCountryInText(message);
 
 
-    /* NO COUNTRY */
+    /* =================================================
+       NO COUNTRY
+    ================================================= */
 
     if (!country) {
 
       addEvent({
 
         country: "",
+
         countryName: "",
+
         flag: "",
 
         type:
-          type === "superChatEvent"
+          type ===
+          "superChatEvent"
             ? "superchat"
             : "comment",
 
-        displayName,
+        displayName:
+          displayName,
 
         points: 0,
 
-        message,
+        message:
+          message,
 
-        amountMicros,
+        amountMicros:
+          amountMicros,
 
         amount:
-          amountMicros / 1000000,
+          amountMicros /
+          1000000,
 
-        currency,
+        currency:
+          currency,
 
-        hasCountry: false
+        hasCountry:
+          false
       });
+
+      console.log(
+        "NO COUNTRY:",
+        displayName,
+        "=>",
+        message
+      );
 
       return;
     }
@@ -833,44 +939,58 @@ function processMessage(item) {
     const countryInfo =
       info[country];
 
-    if (!countryInfo) return;
+    if (!countryInfo) {
+      return;
+    }
 
 
     /* =================================================
-       COMMENT
+       NORMAL COMMENT
     ================================================= */
 
     if (
-      type === "textMessageEvent"
+      type ===
+      "textMessageEvent"
     ) {
 
       const points =
         COMMENT_POINTS;
 
-      state[country].score += points;
+      state[country].score +=
+        points;
 
-      state[country].commentCount++;
+      state[country].commentCount +=
+        1;
 
       state[country].latestCommenter =
         displayName;
 
 
       const player =
-        getPlayer(displayName);
+        getPlayer(
+          displayName
+        );
 
-      player.country = country;
+      player.country =
+        country;
+
       player.countryName =
         countryInfo.name;
+
       player.flag =
         countryInfo.flag;
 
-      player.score += points;
-      player.comments++;
+      player.score +=
+        points;
+
+      player.comments +=
+        1;
 
 
       addEvent({
 
-        country,
+        country:
+          country,
 
         countryName:
           countryInfo.name,
@@ -878,22 +998,40 @@ function processMessage(item) {
         flag:
           countryInfo.flag,
 
-        type: "comment",
+        type:
+          "comment",
 
-        displayName,
+        displayName:
+          displayName,
 
-        points,
+        points:
+          points,
 
-        message,
+        message:
+          message,
 
-        amount: 0,
+        amount:
+          0,
 
-        amountMicros: 0,
+        amountMicros:
+          0,
 
-        currency: "",
+        currency:
+          "",
 
-        hasCountry: true
+        hasCountry:
+          true
       });
+
+
+      console.log(
+        "COMMENT +" +
+        points +
+        " | " +
+        displayName +
+        " | " +
+        countryInfo.name
+      );
 
       return;
     }
@@ -904,11 +1042,13 @@ function processMessage(item) {
     ================================================= */
 
     if (
-      type === "superChatEvent"
+      type ===
+      "superChatEvent"
     ) {
 
       const amount =
-        amountMicros / 1000000;
+        amountMicros /
+        1000000;
 
       let points =
         Math.round(
@@ -917,21 +1057,29 @@ function processMessage(item) {
         );
 
       points =
-        Math.max(1, points);
+        Math.max(
+          1,
+          points
+        );
 
 
-      state[country].score += points;
+      state[country].score +=
+        points;
 
-      state[country].superChats++;
+      state[country].superChats +=
+        1;
 
       state[country].latestCommenter =
         displayName;
 
 
       const player =
-        getPlayer(displayName);
+        getPlayer(
+          displayName
+        );
 
-      player.country = country;
+      player.country =
+        country;
 
       player.countryName =
         countryInfo.name;
@@ -939,14 +1087,17 @@ function processMessage(item) {
       player.flag =
         countryInfo.flag;
 
-      player.score += points;
+      player.score +=
+        points;
 
-      player.superChats++;
+      player.superChats +=
+        1;
 
 
       addEvent({
 
-        country,
+        country:
+          country,
 
         countryName:
           countryInfo.name,
@@ -954,22 +1105,44 @@ function processMessage(item) {
         flag:
           countryInfo.flag,
 
-        type: "superchat",
+        type:
+          "superchat",
 
-        displayName,
+        displayName:
+          displayName,
 
-        points,
+        points:
+          points,
 
-        message,
+        message:
+          message,
 
-        amount,
+        amount:
+          amount,
 
-        amountMicros,
+        amountMicros:
+          amountMicros,
 
-        currency,
+        currency:
+          currency,
 
-        hasCountry: true
+        hasCountry:
+          true
       });
+
+
+      console.log(
+        "SUPER CHAT +" +
+        points +
+        " | " +
+        displayName +
+        " | " +
+        countryInfo.name +
+        " | " +
+        amount +
+        " " +
+        currency
+      );
     }
 
   } catch (error) {
@@ -983,7 +1156,7 @@ function processMessage(item) {
 
 
 /* =====================================================
-   POLL
+   POLL CHAT
 ===================================================== */
 
 async function pollChat() {
@@ -996,14 +1169,16 @@ async function pollChat() {
 
     const params = {
 
-      liveChatId,
+      liveChatId:
+        liveChatId,
 
       part: [
         "snippet",
         "authorDetails"
       ],
 
-      maxResults: 200
+      maxResults:
+        200
     };
 
     if (nextPageToken) {
@@ -1016,24 +1191,37 @@ async function pollChat() {
         .liveChatMessages
         .list(params);
 
+
     nextPageToken =
       response.data.nextPageToken ||
       null;
 
+
     const messages =
-      response.data.items || [];
+      response.data.items ||
+      [];
+
 
     console.log(
-      `YouTube messages received: ${messages.length}`
+      "YouTube messages received: " +
+      messages.length
     );
 
-    for (const item of messages) {
+
+    for (
+      const item
+      of messages
+    ) {
+
       processMessage(item);
     }
 
+
     const wait =
-      response.data.pollingIntervalMillis ||
+      response.data
+        .pollingIntervalMillis ||
       5000;
+
 
     schedulePoll(wait);
 
@@ -1041,13 +1229,17 @@ async function pollChat() {
 
     console.error(
       "YOUTUBE CHAT ERROR:",
-      error.response?.data ||
-      error.message
+      error.response &&
+      error.response.data
+        ? error.response.data
+        : error.message
     );
+
 
     liveChatId = null;
 
     nextPageToken = null;
+
 
     schedulePoll(
       POLL_FALLBACK_MS
@@ -1057,13 +1249,16 @@ async function pollChat() {
 
 
 /* =====================================================
-   SCHEDULE
+   SCHEDULE POLL
 ===================================================== */
 
 function schedulePoll(delay) {
 
   if (pollingTimer) {
-    clearTimeout(pollingTimer);
+
+    clearTimeout(
+      pollingTimer
+    );
   }
 
   pollingTimer =
@@ -1084,49 +1279,72 @@ function schedulePoll(delay) {
 function buildCountryList() {
 
   return countryData
-    .map(([code, name]) => {
+    .map(function (item) {
+
+      const code =
+        item[0];
+
+      const name =
+        item[1];
 
       const key =
-        name.replace(
-          /[^a-zA-Z0-9]+/g,
-          ""
-        );
+        makeCountryKey(name);
 
       return {
 
-        country: key,
+        country:
+          key,
 
-        countryName: name,
+        countryName:
+          name,
 
-        code,
+        code:
+          code,
 
         flag:
-          countryCodeToFlag(code),
+          countryCodeToFlag(
+            code
+          ),
 
         score:
-          state[key]?.score || 0,
+          state[key]
+            ? state[key].score
+            : 0,
 
         commentCount:
-          state[key]?.commentCount || 0,
+          state[key]
+            ? state[key].commentCount
+            : 0,
 
         superChats:
-          state[key]?.superChats || 0,
+          state[key]
+            ? state[key].superChats
+            : 0,
 
         latestCommenter:
-          state[key]?.latestCommenter || ""
-
+          state[key]
+            ? state[key].latestCommenter
+            : ""
       };
     })
-    .sort((a, b) => {
+    .sort(function (a, b) {
 
-      if (b.score !== a.score) {
-        return b.score - a.score;
+      if (
+        b.score !==
+        a.score
+      ) {
+
+        return (
+          b.score -
+          a.score
+        );
       }
 
       if (
         b.commentCount !==
         a.commentCount
       ) {
+
         return (
           b.commentCount -
           a.commentCount
@@ -1147,7 +1365,11 @@ function buildCountryList() {
 function buildTopThree() {
 
   return buildCountryList()
-    .filter(country => country.score > 0)
+    .filter(function (country) {
+
+      return country.score > 0;
+
+    })
     .slice(0, 3);
 }
 
@@ -1158,13 +1380,15 @@ function buildTopThree() {
 
 app.get(
   "/api/state",
-  (req, res) => {
+  function (req, res) {
 
     res.json({
 
-      success: true,
+      success:
+        true,
 
-      videoId: VIDEO_ID,
+      videoId:
+        VIDEO_ID,
 
       countries:
         buildCountryList(),
@@ -1174,17 +1398,21 @@ app.get(
 
       players:
         Object.values(players)
-          .sort(
-            (a, b) =>
-              b.score - a.score
-          )
+          .sort(function (a, b) {
+
+            return (
+              b.score -
+              a.score
+            );
+
+          })
           .slice(0, 100),
 
-      lastEvent,
+      lastEvent:
+        lastEvent,
 
       events:
         eventQueue.slice(-100)
-
     });
   }
 );
@@ -1196,11 +1424,15 @@ app.get(
 
 app.get(
   "/api/events",
-  (req, res) => {
+  function (req, res) {
 
     res.json({
-      success: true,
-      events: eventQueue
+
+      success:
+        true,
+
+      events:
+        eventQueue
     });
   }
 );
@@ -1212,15 +1444,207 @@ app.get(
 
 app.get(
   "/api/top3",
-  (req, res) => {
+  function (req, res) {
 
     res.json({
-      success: true,
-      top3: buildTopThree()
+
+      success:
+        true,
+
+      top3:
+        buildTopThree()
     });
   }
 );
 
 
 /* =====================================================
-   AP
+   API - HEALTH
+===================================================== */
+
+app.get(
+  "/api/health",
+  function (req, res) {
+
+    res.json({
+
+      success:
+        true,
+
+      server:
+        "online",
+
+      videoId:
+        VIDEO_ID,
+
+      liveChatConnected:
+        Boolean(liveChatId),
+
+      countries:
+        countryData.length,
+
+      events:
+        eventQueue.length
+    });
+  }
+);
+
+
+/* =====================================================
+   API - RESET
+===================================================== */
+
+app.post(
+  "/api/reset",
+  function (req, res) {
+
+    for (
+      const item
+      of countryData
+    ) {
+
+      const name =
+        item[1];
+
+      const key =
+        makeCountryKey(name);
+
+      state[key] = {
+
+        score:
+          0,
+
+        commentCount:
+          0,
+
+        superChats:
+          0,
+
+        latestCommenter:
+          ""
+      };
+    }
+
+
+    Object.keys(players)
+      .forEach(function (key) {
+
+        delete players[key];
+
+      });
+
+
+    eventQueue.length =
+      0;
+
+    eventCounter =
+      0;
+
+
+    lastEvent = {
+
+      id:
+        "",
+
+      country:
+        "",
+
+      countryName:
+        "",
+
+      flag:
+        "",
+
+      type:
+        "",
+
+      displayName:
+        "",
+
+      points:
+        0,
+
+      message:
+        "",
+
+      amount:
+        0,
+
+      amountMicros:
+        0,
+
+      currency:
+        "",
+
+      hasCountry:
+        false,
+
+      time:
+        0
+    };
+
+
+    res.json({
+
+      success:
+        true,
+
+      message:
+        "Game reset successfully"
+    });
+  }
+);
+
+
+/* =====================================================
+   START SERVER
+===================================================== */
+
+app.listen(
+  PORT,
+  function () {
+
+    console.log(
+      "======================================"
+    );
+
+    console.log(
+      "COUNTRY LIVE BATTLE SERVER"
+    );
+
+    console.log(
+      "======================================"
+    );
+
+    console.log(
+      "Server running on port: " +
+      PORT
+    );
+
+    console.log(
+      "Video ID: " +
+      VIDEO_ID
+    );
+
+    console.log(
+      "Countries loaded: " +
+      countryData.length
+    );
+
+    console.log(
+      "Comment points: " +
+      COMMENT_POINTS
+    );
+
+    console.log(
+      "SuperChat points/USD: " +
+      SUPERCHAT_POINTS_PER_USD
+    );
+
+    console.log(
+      "======================================"
+    );
+
+    pollChat();
+  }
+);
