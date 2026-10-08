@@ -1,1120 +1,1376 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
+<!DOCTYPE html>
+<html lang="en">
 
-«»
+<head>
 
-<title>Country Live Battle</title><style>
+<meta charset="UTF-8">
 
-* {
-  box-sizing: border-box;
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+>
+
+<title>Country Battle Live</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-body {
-  margin: 0;
+html,
+body{
+  width:100%;
+  min-height:100%;
+  background:#07080e;
+  color:white;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  overflow-x:hidden;
+}
+
+.app{
+  width:100%;
+  max-width:720px;
+  min-height:100vh;
+  margin:auto;
+
   background:
     radial-gradient(
-      circle at top,
-      #18233b,
-      #05070d 65%
+      circle at 50% 15%,
+      rgba(63,52,150,.38),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      #080910 0%,
+      #10132d 45%,
+      #080910 100%
     );
-  color: white;
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-  min-height: 100vh;
+
+  overflow:hidden;
+  position:relative;
 }
 
-.container {
-  width: 100%;
-  max-width: 900px;
-  margin: auto;
-  padding: 15px;
+/* ================= HEADER ================= */
+
+.header{
+  text-align:center;
+  padding:25px 12px 8px;
 }
 
+.title{
+  font-size:clamp(25px,6vw,47px);
+  font-weight:1000;
+  letter-spacing:1px;
+  color:#ffe75b;
 
-/* =====================================================
-   HEADER
-===================================================== */
-
-.header {
-  text-align: center;
-  margin-bottom: 15px;
+  text-shadow:
+    0 0 6px rgba(255,230,70,.8),
+    0 0 22px rgba(255,210,0,.35);
 }
 
-.header h1 {
-  margin: 5px 0;
-  font-size: 28px;
+.live{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  margin-top:7px;
+  padding:4px 12px;
+
+  border-radius:20px;
+
+  background:rgba(255,0,0,.12);
+  border:1px solid rgba(255,80,80,.3);
+
+  color:#ff7272;
+  font-size:10px;
+  font-weight:900;
 }
 
-.header p {
-  margin: 0;
-  opacity: .65;
+.live-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#ff3030;
+  box-shadow:0 0 9px #ff3030;
+
+  animation:pulse 1s infinite;
 }
 
-
-/* =====================================================
-   VOICE
-===================================================== */
-
-.voice-panel {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 15px 0;
-  flex-wrap: wrap;
+@keyframes pulse{
+  50%{
+    opacity:.25;
+  }
 }
 
-.voice-button {
-  border: 0;
-  padding: 12px 22px;
-  border-radius: 30px;
-  background: #1d8cff;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
+/* ================= RULES ================= */
+
+.rules{
+  margin:8px 20px 12px;
+
+  min-height:48px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+
+  padding:7px 10px;
+
+  border:1px solid rgba(255,225,72,.5);
+  border-radius:10px;
+
+  background:rgba(0,0,0,.45);
 }
 
-.voice-button.off {
-  background: #444;
+.rule{
+  font-size:clamp(9px,2.7vw,16px);
+  font-weight:900;
+  white-space:nowrap;
 }
 
-.voice-status {
-  text-align: center;
-  font-size: 13px;
-  opacity: .75;
-  min-height: 18px;
-  margin-top: -7px;
-  margin-bottom: 10px;
+.yellow{
+  color:#ffe13b;
 }
 
+/* ================= TOP 3 ================= */
 
-/* =====================================================
-   TOP 3
-===================================================== */
-
-.top-title {
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-  margin: 18px 0 10px;
+.top-section{
+  padding:3px 12px 10px;
 }
 
-.top3 {
-  display: grid;
-  grid-template-columns:
-    repeat(3, 1fr);
-  gap: 10px;
+.top-title{
+  text-align:center;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1.5px;
+  margin-bottom:8px;
 }
 
-.top-card {
+.top-three{
+  display:grid;
+  grid-template-columns:1fr 1.15fr 1fr;
+  gap:7px;
+  align-items:end;
+}
+
+.top-card{
+  min-width:0;
+  text-align:center;
+
+  position:relative;
+
+  padding:7px 4px 9px;
+
+  border-radius:12px;
+
   background:
     linear-gradient(
-      145deg,
-      rgba(255,255,255,.12),
-      rgba(255,255,255,.04)
+      180deg,
+      rgba(42,43,65,.94),
+      rgba(10,11,22,.97)
     );
-  border: 1px solid
-    rgba(255,255,255,.12);
-  border-radius: 16px;
-  padding: 15px 8px;
-  text-align: center;
-  min-height: 130px;
-  box-shadow:
-    0 10px 30px
-    rgba(0,0,0,.25);
+
+  border:1px solid rgba(255,255,255,.12);
+
+  box-shadow:0 7px 22px rgba(0,0,0,.4);
 }
 
-.top-card.first {
-  transform:
-    translateY(-8px);
+.top-card.first{
+  border-color:#ffd92e;
+  box-shadow:0 0 18px rgba(255,211,36,.3);
 }
 
-.rank {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
+.top-card.second{
+  border-color:#d5d8e3;
 }
 
-.flag {
-  font-size: 38px;
-  line-height: 1.1;
-  margin: 5px 0;
+.top-card.third{
+  border-color:#bd844b;
 }
 
-.country-name {
-  font-size: 15px;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.crown{
+  height:25px;
+  font-size:22px;
 }
 
-.points {
-  margin-top: 5px;
-  font-size: 20px;
-  font-weight: 900;
+.rank{
+  position:absolute;
+  top:5px;
+  right:5px;
+
+  width:21px;
+  height:21px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:#ed2633;
+  border:2px solid white;
+
+  font-size:9px;
+  font-weight:1000;
 }
 
+.avatar{
+  width:60px;
+  height:60px;
 
-/* =====================================================
-   LAST EVENT
-===================================================== */
+  margin:3px auto 5px;
 
-.event-box {
-  margin-top: 18px;
+  border-radius:13px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:34px;
+
+  background:#171927;
+
+  border:2px solid rgba(255,255,255,.5);
+}
+
+.top-card.first .avatar{
+  border-color:#ffe338;
+  box-shadow:0 0 14px rgba(255,220,50,.5);
+}
+
+.player-name{
+  max-width:100%;
+
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+
+  font-size:11px;
+  font-weight:900;
+}
+
+.player-country{
+  margin-top:3px;
+
+  font-size:10px;
+  color:#bfc1cc;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.player-points{
+  margin-top:4px;
+
+  color:#ffe02f;
+
+  font-size:15px;
+  font-weight:1000;
+}
+
+/* ================= EVENT ================= */
+
+.event-area{
+  min-height:48px;
+
+  margin:3px 18px 9px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:9px;
+
+  background:rgba(0,0,0,.3);
+  border:1px solid rgba(255,255,255,.1);
+
+  overflow:hidden;
+}
+
+.event{
+  width:100%;
+  padding:8px;
+
+  text-align:center;
+
+  font-size:12px;
+  font-weight:900;
+}
+
+.event.comment{
+  color:white;
+}
+
+.event.superchat{
+  color:#ffe02c;
+
+  text-shadow:
+    0 0 10px rgba(255,215,0,.35);
+}
+
+.event .name{
+  color:#6ee7ff;
+  font-weight:1000;
+}
+
+.event .country{
+  color:#ffe13b;
+  font-weight:1000;
+}
+
+.event .points{
+  color:#a8ff8a;
+  font-weight:1000;
+}
+
+/* ================= COUNTRY LIST ================= */
+
+.country-section{
+  padding:0 12px 25px;
+}
+
+.country-header{
+  display:grid;
+  grid-template-columns:34px 1fr 70px;
+
+  padding:6px 8px;
+
+  color:#777b91;
+
+  font-size:8px;
+  font-weight:900;
+}
+
+.country-list{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.country-row{
+  display:grid;
+  grid-template-columns:35px 1fr 70px;
+
+  min-height:34px;
+
+  align-items:center;
+
+  padding:3px 7px;
+
+  border-radius:6px;
+
   background:
-    rgba(255,255,255,.06);
-  border: 1px solid
-    rgba(255,255,255,.12);
-  border-radius: 15px;
-  padding: 15px;
-  text-align: center;
+    linear-gradient(
+      90deg,
+      rgba(24,25,45,.9),
+      rgba(11,12,23,.75)
+    );
+
+  border:1px solid rgba(255,255,255,.04);
 }
 
-.event-name {
-  font-size: 20px;
-  font-weight: bold;
+.country-rank{
+  font-size:8px;
+  font-weight:900;
+  color:#d5d6df;
 }
 
-.event-country {
-  margin-top: 7px;
-  font-size: 17px;
+.country-info{
+  display:flex;
+  align-items:center;
+  gap:7px;
+
+  min-width:0;
 }
 
-.event-points {
-  margin-top: 7px;
-  font-size: 22px;
-  font-weight: bold;
+.flag{
+  font-size:20px;
+  width:26px;
+  min-width:26px;
+  text-align:center;
 }
 
-.superchat {
-  border:
-    1px solid #ffd700;
-  box-shadow:
-    0 0 20px
-    rgba(255,215,0,.2);
+.country-name{
+  font-size:11px;
+  font-weight:800;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
+.country-points{
+  text-align:right;
 
-/* =====================================================
-   LEADERBOARD
-===================================================== */
+  color:white;
 
-.leaderboard {
-  margin-top: 20px;
+  font-size:13px;
+  font-weight:1000;
 }
 
-.leader-title {
-  font-size: 21px;
-  font-weight: bold;
-  margin-bottom: 10px;
+.top-country{
+  border-color:rgba(255,218,49,.22);
 }
 
-.country-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background:
-    rgba(255,255,255,.05);
-  border-radius: 10px;
-  padding: 9px 12px;
-  margin-bottom: 5px;
+.top-country .country-points{
+  color:#ffe13b;
 }
 
-.country-rank {
-  width: 35px;
-  font-weight: bold;
-  color: #aaa;
+.empty{
+  padding:18px;
+  text-align:center;
+  color:#6f7283;
+  font-size:12px;
 }
 
-.country-flag {
-  font-size: 25px;
-  width: 35px;
+/* ================= CONTROLS ================= */
+
+.controls{
+  position:fixed;
+  right:12px;
+  bottom:12px;
+
+  z-index:999;
+
+  display:flex;
+  flex-direction:column;
+  gap:7px;
 }
 
-.country-info {
-  flex: 1;
-  min-width: 0;
+.control{
+  border:none;
+
+  padding:9px 13px;
+
+  border-radius:22px;
+
+  background:#202337;
+  color:white;
+
+  border:1px solid rgba(255,255,255,.15);
+
+  font-size:10px;
+  font-weight:900;
+
+  box-shadow:0 5px 20px rgba(0,0,0,.4);
+
+  cursor:pointer;
 }
 
-.country-name-small {
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.control.on{
+  background:#147b4d;
 }
 
-.country-player {
-  font-size: 12px;
-  opacity: .6;
-  margin-top: 2px;
+/* ================= CONNECTION ================= */
+
+.connection{
+  position:fixed;
+  left:12px;
+  bottom:12px;
+
+  z-index:999;
+
+  padding:8px 12px;
+
+  border-radius:20px;
+
+  background:#202337;
+
+  border:1px solid rgba(255,255,255,.15);
+
+  font-size:9px;
+  font-weight:900;
 }
 
-.country-score {
-  font-size: 18px;
-  font-weight: bold;
+.connection.connected{
+  background:#147b4d;
 }
 
+.connection.error{
+  background:#8b2020;
+}
 
-/* =====================================================
-   MOBILE
-===================================================== */
+/* ================= RESPONSIVE ================= */
 
-@media(max-width:600px) {
+@media(max-width:380px){
 
-  .container {
-    padding: 10px;
+  .rules{
+    margin-left:9px;
+    margin-right:9px;
+    gap:8px;
   }
 
-  .header h1 {
-    font-size: 23px;
+  .rule{
+    font-size:9px;
   }
 
-  .top3 {
-    gap: 6px;
+  .avatar{
+    width:52px;
+    height:52px;
+    font-size:28px;
   }
 
-  .top-card {
-    padding: 10px 5px;
-    min-height: 115px;
+  .player-name{
+    font-size:9px;
   }
 
-  .flag {
-    font-size: 31px;
+  .country-row{
+    grid-template-columns:30px 1fr 60px;
   }
 
-  .country-name {
-    font-size: 12px;
-  }
-
-  .points {
-    font-size: 18px;
+  .country-name{
+    font-size:10px;
   }
 
 }
 
-</style></head><body><div class="container">  <div class="header"><h1>
-  🌍 COUNTRY LIVE BATTLE
-</h1>
+</style>
 
-<p>
-  Comment a country name to give it 1 point
-</p>
+</head>
 
-  </div>  <!-- =================================================
-       VOICE BUTTON
-  ================================================== -->  <div class="voice-panel"><button
-  id="voiceButton"
-  class="voice-button"
-  type="button"
->
-  🔊 ENABLE VOICE
-</button>
+<body>
 
-  </div>  <div
-    id="voiceStatus"
-    class="voice-status"
-  >
-    Voice is OFF
-  </div>  <!-- =================================================
-       TOP 3
-  ================================================== -->  <div class="top-title">
-    🏆 TOP 3 COUNTRIES
-  </div>  <div
-    id="top3"
-    class="top3"
-  ></div>  <!-- =================================================
-       LAST EVENT
-  ================================================== -->  <div
-    id="eventBox"
-    class="event-box"
-  ><div class="event-name">
-  Waiting for comments...
+<!-- ================= MAIN APP ================= -->
+
+<div class="app">
+
+  <header class="header">
+
+    <div class="title">
+      TYPE YOUR COUNTRY
+    </div>
+
+    <div class="live">
+
+      <span class="live-dot"></span>
+
+      LIVE COUNTRY BATTLE
+
+    </div>
+
+  </header>
+
+
+  <!-- RULES -->
+
+  <div class="rules">
+
+    <div class="rule">
+
+      💬 1 COMMENT =
+
+      <span class="yellow">
+        1 POINT
+      </span>
+
+    </div>
+
+    <div class="rule">
+
+      💎 $1 SUPERCHAT =
+
+      <span class="yellow">
+        1000 POINTS
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- TOP 3 COUNTRIES -->
+
+  <section class="top-section">
+
+    <div class="top-title">
+      🏆 TOP 3 COUNTRIES
+    </div>
+
+    <div
+      id="topThree"
+      class="top-three">
+    </div>
+
+  </section>
+
+
+  <!-- EVENT -->
+
+  <div class="event-area">
+
+    <div
+      id="event"
+      class="event">
+
+      Waiting for comments...
+
+    </div>
+
+  </div>
+
+
+  <!-- COUNTRY LIST -->
+
+  <section class="country-section">
+
+    <div class="country-header">
+
+      <span>#</span>
+
+      <span>COUNTRY</span>
+
+      <span>POINTS</span>
+
+    </div>
+
+    <div
+      id="countryList"
+      class="country-list">
+
+      <div class="empty">
+        Loading countries...
+      </div>
+
+    </div>
+
+  </section>
+
 </div>
 
-<div class="event-country">
-  🌍
+
+<!-- CONTROLS -->
+
+<div class="controls">
+
+  <button
+    id="musicButton"
+    class="control">
+
+    🎵 MUSIC OFF
+
+  </button>
+
+  <button
+    id="voiceButton"
+    class="control on">
+
+    🔊 VOICE ON
+
+  </button>
+
 </div>
 
-<div class="event-points">
-  0 POINTS
-</div>
 
-  </div>  <!-- =================================================
-       LEADERBOARD
-  ================================================== -->  <div class="leaderboard"><div class="leader-title">
-  🌎 ALL COUNTRIES
-</div>
+<!-- CONNECTION STATUS -->
 
 <div
-  id="leaderboard"
-></div>
+  id="connection"
+  class="connection">
 
-  </div></div><script>
+  🔄 CONNECTING...
 
-/* =====================================================
-   VOICE SYSTEM
-===================================================== */
+</div>
 
-let voiceEnabled = false;
 
-let voiceQueue = [];
+<!-- MUSIC -->
 
-let speaking = false;
+<audio
+  id="backgroundMusic"
+  src="/music/background.mp3"
+  loop
+  preload="auto">
+</audio>
 
-let lastSpokenEventId = "";
 
-let availableVoices = [];
-
-let voiceReady = false;
-
+<script>
 
 /* =====================================================
-   VOICE SUPPORT
+   CONFIG
 ===================================================== */
 
-function speechSupported() {
+const API_URL = "/api/state";
+
+const POLL_INTERVAL = 2000;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const music =
+  document.getElementById(
+    "backgroundMusic"
+  );
+
+const musicButton =
+  document.getElementById(
+    "musicButton"
+  );
+
+const voiceButton =
+  document.getElementById(
+    "voiceButton"
+  );
+
+const eventElement =
+  document.getElementById(
+    "event"
+  );
+
+const countryList =
+  document.getElementById(
+    "countryList"
+  );
+
+const topThree =
+  document.getElementById(
+    "topThree"
+  );
+
+const connection =
+  document.getElementById(
+    "connection"
+  );
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let musicEnabled = false;
+
+let voiceEnabled = true;
+
+let lastEventId = "";
+
+let firstStateLoaded = false;
+
+let loading = false;
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   FORMAT NUMBER
+===================================================== */
+
+function formatNumber(value){
+
+  return Number(value || 0)
+    .toLocaleString("en-US");
+
+}
+
+
+/* =====================================================
+   COUNTRY NAME
+===================================================== */
+
+function getCountryName(country){
+
+  if(!country){
+    return "Unknown country";
+  }
 
   return (
-    "speechSynthesis" in window &&
-    "SpeechSynthesisUtterance" in window
+    country.countryName ||
+    country.name ||
+    country.country ||
+    "Unknown country"
   );
 
 }
 
 
 /* =====================================================
-   STATUS
+   FLAG
 ===================================================== */
 
-function setVoiceStatus(text) {
+function getFlag(country){
 
-  const status =
-    document.getElementById(
-      "voiceStatus"
-    );
-
-  if (status) {
-    status.textContent = text;
+  if(!country){
+    return "🌍";
   }
 
-}
-
-
-/* =====================================================
-   LOAD VOICES
-===================================================== */
-
-function loadVoices() {
-
-  if (!speechSupported()) {
-
-    voiceReady = false;
-
-    setVoiceStatus(
-      "Voice is not available in this browser"
-    );
-
-    return;
-
-  }
-
-
-  availableVoices =
-    window.speechSynthesis
-      .getVoices();
-
-
-  if (
-    availableVoices &&
-    availableVoices.length
-  ) {
-
-    voiceReady = true;
-
-    if (!voiceEnabled) {
-
-      setVoiceStatus(
-        "Voice is ready — tap ENABLE VOICE"
-      );
-
-    }
-
-  }
-
-}
-
-
-/* =====================================================
-   VOICE CHANGED
-===================================================== */
-
-if (speechSupported()) {
-
-  window.speechSynthesis.onvoiceschanged =
-    function() {
-
-      loadVoices();
-
-    };
-
-}
-
-
-/* =====================================================
-   INITIAL VOICE LOAD
-===================================================== */
-
-loadVoices();
-
-
-/*
-   Android Chrome sometimes returns
-   an empty voice list at first.
-   Try again several times.
-*/
-
-let voiceLoadAttempts = 0;
-
-const voiceLoader =
-  setInterval(
-    function() {
-
-      loadVoices();
-
-      voiceLoadAttempts++;
-
-      if (
-        voiceReady ||
-        voiceLoadAttempts > 20
-      ) {
-
-        clearInterval(
-          voiceLoader
-        );
-
-      }
-
-    },
-    500
+  return (
+    country.flag ||
+    country.countryFlag ||
+    country.emoji ||
+    "🌍"
   );
 
+}
+
 
 /* =====================================================
-   BEST VOICE
+   CONNECTION STATUS
 ===================================================== */
 
-function getBestVoice() {
+function setConnectionStatus(
+  connected
+){
 
-  if (
-    !availableVoices ||
-    !availableVoices.length
-  ) {
+  if(connected){
 
-    loadVoices();
+    connection.textContent =
+      "🟢 YOUTUBE CONNECTED";
 
-  }
-
-
-  const voices =
-    availableVoices || [];
-
-
-  if (!voices.length) {
-    return null;
-  }
-
-
-  /*
-     Prefer natural English voices.
-  */
-
-  const preferredNames = [
-
-    "Google US English",
-
-    "Google UK English Female",
-
-    "Google UK English Male",
-
-    "Microsoft David",
-
-    "Microsoft Mark",
-
-    "Microsoft Zira",
-
-    "Samantha",
-
-    "Alex"
-
-  ];
-
-
-  for (
-    const preferred
-    of preferredNames
-  ) {
-
-    const found =
-      voices.find(
-        voice =>
-          voice.name
-            .toLowerCase()
-            .includes(
-              preferred.toLowerCase()
-            )
-      );
-
-    if (found) {
-      return found;
-    }
-
-  }
-
-
-  /*
-     Any English voice.
-  */
-
-  const english =
-    voices.find(
-      voice =>
-        voice.lang &&
-        voice.lang
-          .toLowerCase()
-          .startsWith("en")
+    connection.classList.add(
+      "connected"
     );
 
+    connection.classList.remove(
+      "error"
+    );
 
-  if (english) {
-    return english;
+  }else{
+
+    connection.textContent =
+      "🔴 YOUTUBE DISCONNECTED";
+
+    connection.classList.remove(
+      "connected"
+    );
+
+    connection.classList.add(
+      "error"
+    );
+
   }
-
-
-  return voices[0];
 
 }
 
 
 /* =====================================================
-   ENABLE VOICE
+   MUSIC
 ===================================================== */
 
-function enableVoice() {
+async function startMusic(){
 
-  if (!speechSupported()) {
+  try{
 
-    setVoiceStatus(
-      "❌ This browser does not support speech"
+    music.volume = 0.12;
+
+    await music.play();
+
+    musicEnabled = true;
+
+    musicButton.textContent =
+      "🎵 MUSIC ON";
+
+    musicButton.classList.add(
+      "on"
     );
 
-    return;
+    return true;
 
-  }
+  }catch(error){
 
-
-  voiceEnabled = true;
-
-
-  const button =
-    document.getElementById(
-      "voiceButton"
-    );
-
-
-  button.textContent =
-    "🔊 VOICE ON";
-
-
-  button.classList.remove(
-    "off"
-  );
-
-
-  setVoiceStatus(
-    "🔊 Voice enabled"
-  );
-
-
-  /*
-     IMPORTANT:
-     Speech is started directly
-     from the button click.
-     This is required by many
-     Android browsers.
-  */
-
-  try {
-
-    window.speechSynthesis.cancel();
-
-    loadVoices();
-
-
-    const unlock =
-      new SpeechSynthesisUtterance(
-        "Voice enabled"
-      );
-
-
-    unlock.lang = "en-US";
-
-    unlock.rate = 0.9;
-
-    unlock.pitch = 1;
-
-    unlock.volume = 1;
-
-
-    const voice =
-      getBestVoice();
-
-
-    if (voice) {
-
-      unlock.voice =
-        voice;
-
-    }
-
-
-    unlock.onend =
-      function() {
-
-        speaking = false;
-
-        setVoiceStatus(
-          "🔊 Voice ON — waiting for comments"
-        );
-
-        speakNext();
-
-      };
-
-
-    unlock.onerror =
-      function(error) {
-
-        console.warn(
-          "Voice unlock error:",
-          error
-        );
-
-        speaking = false;
-
-        /*
-           Do NOT disable voice.
-           Some Android browsers return
-           an error on the unlock speech
-           even though later speech works.
-        */
-
-        setVoiceStatus(
-          "🔊 Voice ON — waiting for comments"
-        );
-
-        speakNext();
-
-      };
-
-
-    speaking = true;
-
-
-    window.speechSynthesis
-      .speak(unlock);
-
-
-  } catch (error) {
-
-    console.error(
-      "VOICE ENABLE ERROR:",
+    console.log(
+      "Music autoplay blocked:",
       error
     );
 
+    musicEnabled = false;
 
-    speaking = false;
+    musicButton.textContent =
+      "🎵 MUSIC OFF";
 
-
-    setVoiceStatus(
-      "🔊 Voice ON — waiting for comments"
+    musicButton.classList.remove(
+      "on"
     );
+
+    return false;
 
   }
 
 }
 
 
-/* =====================================================
-   BUTTON CLICK
-===================================================== */
-
-document
-  .getElementById(
-    "voiceButton"
-  )
-  .addEventListener(
-    "click",
-    enableVoice
-  );
-
-
-/* =====================================================
-   QUEUE VOICE
-===================================================== */
-
-function queueVoice(text) {
-
-  if (!voiceEnabled) {
-    return;
-  }
-
-  if (!text) {
-    return;
-  }
-
-
-  voiceQueue.push(
-    String(text)
-  );
-
-
-  /*
-     Prevent an unlimited queue
-     during very busy live streams.
-  */
-
-  if (
-    voiceQueue.length >
-    30
-  ) {
-
-    voiceQueue =
-      voiceQueue.slice(-30);
-
-  }
-
-
-  speakNext();
-
-}
-
-
-/* =====================================================
-   SPEAK NEXT
-===================================================== */
-
-function speakNext() {
-
-  if (!voiceEnabled) {
-    return;
-  }
-
-
-  if (speaking) {
-    return;
-  }
-
-
-  if (!voiceQueue.length) {
-    return;
-  }
-
-
-  /*
-     Make sure voices have loaded.
-  */
-
-  loadVoices();
-
-
-  const text =
-    voiceQueue.shift();
-
-
-  if (!text) {
+window.addEventListener(
+  "load",
+  async () => {
 
     setTimeout(
-      speakNext,
-      100
-    );
+      async () => {
 
-    return;
+        await startMusic();
 
-  }
-
-
-  let utterance;
-
-
-  try {
-
-    utterance =
-      new SpeechSynthesisUtterance(
-        text
-      );
-
-  } catch (error) {
-
-    console.error(
-      "UTTERANCE ERROR:",
-      error
-    );
-
-    speaking = false;
-
-    setTimeout(
-      speakNext,
-      300
-    );
-
-    return;
-
-  }
-
-
-  utterance.lang =
-    "en-US";
-
-  utterance.rate =
-    0.82;
-
-  utterance.pitch =
-    1;
-
-  utterance.volume =
-    1;
-
-
-  const voice =
-    getBestVoice();
-
-
-  if (voice) {
-
-    utterance.voice =
-      voice;
-
-    utterance.lang =
-      voice.lang || "en-US";
-
-  }
-
-
-  speaking = true;
-
-
-  utterance.onstart =
-    function() {
-
-      setVoiceStatus(
-        "🔊 Speaking..."
-      );
-
-    };
-
-
-  utterance.onend =
-    function() {
-
-      speaking = false;
-
-      setVoiceStatus(
-        "🔊 Voice ON"
-      );
-
-
-      setTimeout(
-        speakNext,
-        200
-      );
-
-    };
-
-
-  utterance.onerror =
-    function(error) {
-
-      console.warn(
-        "SPEECH ERROR:",
-        error
-      );
-
-
-      speaking = false;
-
-
-      /*
-         Put the message back only
-         when appropriate.
-      */
-
-      if (
-        error &&
-        error.error !==
-        "canceled"
-      ) {
-
-        /*
-           If the browser temporarily
-           fails, try again.
-        */
-
-        voiceQueue.unshift(
-          text
-        );
-
-      }
-
-
-      setTimeout(
-        speakNext,
-        500
-      );
-
-    };
-
-
-  try {
-
-    window.speechSynthesis
-      .speak(utterance);
-
-  } catch (error) {
-
-    console.error(
-      "SPEAK ERROR:",
-      error
-    );
-
-    speaking = false;
-
-    voiceQueue.unshift(
-      text
-    );
-
-    setTimeout(
-      speakNext,
+      },
       500
     );
 
   }
+);
+
+
+/* =====================================================
+   MUSIC BUTTON
+===================================================== */
+
+musicButton.addEventListener(
+  "click",
+  async () => {
+
+    if(
+      music.paused ||
+      !musicEnabled
+    ){
+
+      await startMusic();
+
+    }else{
+
+      music.pause();
+
+      musicEnabled = false;
+
+      musicButton.textContent =
+        "🎵 MUSIC OFF";
+
+      musicButton.classList.remove(
+        "on"
+      );
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   VOICE BUTTON
+===================================================== */
+
+voiceButton.addEventListener(
+  "click",
+  () => {
+
+    voiceEnabled =
+      !voiceEnabled;
+
+
+    if(!voiceEnabled){
+
+      if(
+        "speechSynthesis"
+        in window
+      ){
+
+        speechSynthesis.cancel();
+
+      }
+
+      voiceButton.textContent =
+        "🔇 VOICE OFF";
+
+      voiceButton.classList.remove(
+        "on"
+      );
+
+    }else{
+
+      voiceButton.textContent =
+        "🔊 VOICE ON";
+
+      voiceButton.classList.add(
+        "on"
+      );
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   SPEAK
+===================================================== */
+
+function speak(text){
+
+  if(!voiceEnabled){
+    return;
+  }
+
+  if(
+    !("speechSynthesis" in window)
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    speechSynthesis.cancel();
+
+
+    if(
+      musicEnabled &&
+      !music.paused
+    ){
+
+      music.volume = 0.035;
+
+    }
+
+
+    const utterance =
+      new SpeechSynthesisUtterance(
+        text
+      );
+
+
+    utterance.lang =
+      "en-US";
+
+    utterance.rate =
+      0.95;
+
+    utterance.pitch =
+      1;
+
+    utterance.volume =
+      1;
+
+
+    utterance.onend =
+      () => {
+
+        if(
+          musicEnabled &&
+          !music.paused
+        ){
+
+          music.volume =
+            0.12;
+
+        }
+
+      };
+
+
+    utterance.onerror =
+      () => {
+
+        if(
+          musicEnabled &&
+          !music.paused
+        ){
+
+          music.volume =
+            0.12;
+
+        }
+
+      };
+
+
+    speechSynthesis.speak(
+      utterance
+    );
+
+  }catch(error){
+
+    console.error(
+      "VOICE ERROR:",
+      error
+    );
+
+  }
 
 }
 
 
 /* =====================================================
-   COUNTRY EVENT VOICE
+   EVENT ANNOUNCER
+   (commenter-এর নাম স্পষ্ট বলে)
 ===================================================== */
 
-function speakEvent(event) {
+function announceEvent(event){
 
-  if (!voiceEnabled) {
+  if(!event){
     return;
   }
 
-
-  if (!event) {
-    return;
-  }
-
-
-  if (!event.hasCountry) {
-    return;
-  }
-
-
-  if (!event.id) {
+  if(!event.id){
     return;
   }
 
 
   /*
-     Never speak the same event twice.
+    First event after page load
+    is NOT spoken.
   */
 
-  if (
-    event.id ===
-    lastSpokenEventId
-  ) {
+  if(!firstStateLoaded){
+
+    lastEventId =
+      event.id;
 
     return;
 
   }
 
 
-  lastSpokenEventId =
+  if(
+    event.id ===
+    lastEventId
+  ){
+
+    return;
+
+  }
+
+
+  lastEventId =
     event.id;
 
 
-  let text = "";
+  const name =
+    event.displayName ||
+    "Someone";
 
 
-  /* =================================================
-     NORMAL COMMENT
-  ================================================= */
-
-  if (
-    event.type ===
-    "comment"
-  ) {
-
-    text =
-      `${event.displayName}, ` +
-      `${event.countryName}, ` +
-      `${event.points} point`;
-
-  }
+  const country =
+    event.countryName ||
+    event.country ||
+    "";
 
 
-  /* =================================================
+  const points =
+    Number(
+      event.points || 0
+    );
+
+
+  /* ----------------------------
      SUPER CHAT
-  ================================================= */
+  ---------------------------- */
 
-  else if (
+  if(
     event.type ===
     "superchat"
-  ) {
+  ){
 
     const amount =
       Number(
-        event.amount || 0
+        event.amountMicros || 0
+      ) / 1000000;
+
+
+    const currency =
+      event.currency ||
+      "USD";
+
+
+    speak(
+      `Super Chat from ${name}. ` +
+      `${country}. ` +
+      `${amount.toFixed(2)} ${currency}. ` +
+      `${formatNumber(points)} points.`
+    );
+
+    return;
+
+  }
+
+
+  /* ----------------------------
+     COMMENT
+     (নাম + দেশ + পয়েন্ট)
+  ---------------------------- */
+
+  if(
+    event.type ===
+    "comment"
+  ){
+
+    if(points > 0){
+
+      speak(
+        `${name}. ` +
+        `${country}. ` +
+        `${formatNumber(points)} point.`
       );
 
+    }else{
 
-    let money = "";
+      /* দেশ detect হয়নি — শুধু নাম */
 
-
-    if (amount > 0) {
-
-      const currency =
-        event.currency ||
-        "USD";
-
-
-      money =
-        `${amount.toFixed(2)} ${currency}`;
+      speak(
+        `${name} commented.`
+      );
 
     }
 
+  }
 
-    text =
-      `${event.displayName}, ` +
-      `${event.countryName}, ` +
-      `${money}, ` +
-      `${event.points} points`;
+}
+
+
+/* =====================================================
+   RENDER EVENT
+   (কমেন্টে নাম + দেশ + পয়েন্ট)
+===================================================== */
+
+function renderEvent(event){
+
+  if(
+    !event ||
+    !event.id
+  ){
+
+    eventElement.className =
+      "event";
+
+    eventElement.textContent =
+      "Waiting for comments...";
+
+    return;
 
   }
 
 
-  if (text) {
+  const name =
+    event.displayName ||
+    "Someone";
 
-    queueVoice(
-      text
+
+  const country =
+    event.countryName ||
+    event.country ||
+    "";
+
+
+  const points =
+    Number(
+      event.points || 0
     );
+
+
+  /* SUPER CHAT */
+
+  if(
+    event.type ===
+    "superchat"
+  ){
+
+    const amount =
+      Number(
+        event.amountMicros || 0
+      ) / 1000000;
+
+
+    const currency =
+      event.currency ||
+      "USD";
+
+
+    eventElement.className =
+      "event superchat";
+
+
+    eventElement.innerHTML = `
+
+      💎
+
+      <span class="name">
+        ${escapeHtml(name)}
+      </span>
+
+      sent
+
+      <strong>
+        ${amount.toFixed(2)}
+        ${escapeHtml(currency)}
+      </strong>
+
+      ·
+
+      <span class="points">
+        ${formatNumber(points)}
+        POINTS
+      </span>
+
+      ${country
+        ? `· <span class="country">${escapeHtml(country)}</span>`
+        : ""
+      }
+
+    `;
+
+    return;
+
+  }
+
+
+  /* COMMENT */
+
+  eventElement.className =
+    "event comment";
+
+
+  if(points > 0){
+
+    eventElement.innerHTML = `
+
+      💬
+
+      <span class="name">
+        ${escapeHtml(name)}
+      </span>
+
+      ${country
+        ? `· <span class="country">${escapeHtml(country)}</span>`
+        : ""
+      }
+
+      ·
+
+      <span class="points">
+        +${formatNumber(points)}
+        POINT
+      </span>
+
+    `;
+
+  }else{
+
+    eventElement.innerHTML = `
+
+      💬
+
+      <span class="name">
+        ${escapeHtml(name)}
+      </span>
+
+      commented
+
+    `;
 
   }
 
@@ -1122,74 +1378,98 @@ function speakEvent(event) {
 
 
 /* =====================================================
-   FORMAT POINTS
+   RENDER TOP 3 COUNTRIES
+   (দেশ অনুযায়ী র‍্যাংক)
 ===================================================== */
 
-function formatPoints(points) {
+function renderTop3(countries){
 
-  return Number(
-    points || 0
-  ).toLocaleString();
-
-}
-
-
-/* =====================================================
-   TOP 3
-===================================================== */
-
-function renderTop3(top3) {
-
-  const container =
-    document.getElementById(
-      "top3"
-    );
+  const list =
+    Array.isArray(countries)
+      ? countries
+      : [];
 
 
-  const ranks = [
+  /* Only countries with points > 0 */
 
-    "🥇 1ST",
+  const sorted =
+    [...list]
+      .filter(Boolean)
+      .map(c => ({
 
-    "🥈 2ND",
+        ...c,
 
-    "🥉 3RD"
+        score:
+          Number(
+            c.score ??
+            c.points ??
+            0
+          )
 
+      }))
+      .filter(c => c.score > 0)
+      .sort(
+        (a,b) =>
+          b.score - a.score
+      )
+      .slice(0,3);
+
+
+  /* Visual layout: 2nd | 1st | 3rd */
+
+  const positions = [
+    1,
+    0,
+    2
+  ];
+
+
+  const classes = [
+    "second",
+    "first",
+    "third"
+  ];
+
+
+  const crowns = [
+    "♛",
+    "👑",
+    "♛"
   ];
 
 
   let html = "";
 
 
-  for (
-    let i = 0;
-    i < 3;
-    i++
-  ) {
+  for(
+    let slot = 0;
+    slot < 3;
+    slot++
+  ){
 
     const country =
-      top3 &&
-      top3[i];
+      sorted[positions[slot]];
 
 
-    if (!country) {
+    if(!country){
 
       html += `
 
-        <div class="top-card">
+        <div class="top-card ${classes[slot]}">
 
-          <div class="rank">
-            ${ranks[i]}
+          <div class="crown">
+            ${crowns[slot]}
           </div>
 
-          <div class="flag">
-            🌍
+          <div class="avatar">
+            🏳️
           </div>
 
-          <div class="country-name">
+          <div class="player-name">
             Waiting...
           </div>
 
-          <div class="points">
+          <div class="player-points">
             0
           </div>
 
@@ -1202,34 +1482,40 @@ function renderTop3(top3) {
     }
 
 
+    const flag =
+      getFlag(country);
+
+
+    const name =
+      getCountryName(country);
+
+
     html += `
 
-      <div
-        class="top-card ${
-          i === 0
-            ? "first"
-            : ""
-        }"
-      >
+      <div class="top-card ${classes[slot]}">
 
         <div class="rank">
-          ${ranks[i]}
+          #${positions[slot] + 1}
         </div>
 
-        <div class="flag">
-          ${country.flag || "🌍"}
+        <div class="crown">
+          ${crowns[slot]}
         </div>
 
-        <div class="country-name">
-          ${escapeHtml(
-            country.countryName
-          )}
+        <div class="avatar">
+          ${escapeHtml(flag)}
         </div>
 
-        <div class="points">
-          ${formatPoints(
+        <div class="player-name">
+          ${escapeHtml(name)}
+        </div>
+
+        <div class="player-points">
+
+          ${formatNumber(
             country.score
           )}
+
         </div>
 
       </div>
@@ -1239,232 +1525,14 @@ function renderTop3(top3) {
   }
 
 
-  container.innerHTML =
+  topThree.innerHTML =
     html;
 
 }
 
 
 /* =====================================================
-   LAST EVENT
+   RENDER COUNTRIES
 ===================================================== */
 
-function renderEvent(event) {
-
-  const box =
-    document.getElementById(
-      "eventBox"
-    );
-
-
-  if (
-    !event ||
-    !event.hasCountry
-  ) {
-
-    box.className =
-      "event-box";
-
-
-    box.innerHTML = `
-
-      <div class="event-name">
-        Waiting for a country comment...
-      </div>
-
-      <div class="event-country">
-        🌍
-      </div>
-
-      <div class="event-points">
-        0 POINTS
-      </div>
-
-    `;
-
-
-    return;
-
-  }
-
-
-  /* =================================================
-     SUPER CHAT
-  ================================================= */
-
-  if (
-    event.type ===
-    "superchat"
-  ) {
-
-    box.className =
-      "event-box superchat";
-
-
-    const amount =
-      Number(
-        event.amount || 0
-      );
-
-
-    const money =
-      amount > 0
-        ? `${amount.toFixed(2)} ${
-            event.currency ||
-            "USD"
-          }`
-        : "";
-
-
-    box.innerHTML = `
-
-      <div class="event-name">
-
-        💰 ${escapeHtml(
-          event.displayName
-        )}
-
-      </div>
-
-      <div class="event-country">
-
-        ${event.flag || "🌍"}
-
-        ${escapeHtml(
-          event.countryName
-        )}
-
-      </div>
-
-      <div class="event-points">
-
-        ${money}
-
-        +
-
-        ${formatPoints(
-          event.points
-        )}
-
-        POINTS
-
-      </div>
-
-    `;
-
-
-    return;
-
-  }
-
-
-  /* =================================================
-     NORMAL COMMENT
-  ================================================= */
-
-  box.className =
-    "event-box";
-
-
-  box.innerHTML = `
-
-    <div class="event-name">
-
-      ${escapeHtml(
-        event.displayName
-      )}
-
-    </div>
-
-    <div class="event-country">
-
-      ${event.flag || "🌍"}
-
-      ${escapeHtml(
-        event.countryName
-      )}
-
-    </div>
-
-    <div class="event-points">
-
-      +
-
-      ${formatPoints(
-        event.points
-      )}
-
-      POINT
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   LEADERBOARD
-===================================================== */
-
-function renderLeaderboard(
-  countries
-) {
-
-  const container =
-    document.getElementById(
-      "leaderboard"
-    );
-
-
-  let html = "";
-
-
-  countries.forEach(
-    (country, index) => {
-
-      html += `
-
-        <div class="country-row">
-
-          <div class="country-rank">
-            ${index + 1}
-          </div>
-
-          <div class="country-flag">
-            ${country.flag || "🌍"}
-          </div>
-
-          <div class="country-info">
-
-            <div
-              class="country-name-small"
-            >
-
-              ${escapeHtml(
-                country.countryName
-              )}
-
-            </div>
-
-            <div
-              class="country-player"
-            >
-
-              ${
-                country.latestCommenter
-                  ? "Last: " +
-                    escapeHtml(
-                      country.latestCommenter
-                    )
-                  : ""
-              }
-
-            </div>
-
-          </div>
-
-          <div class="country-score">
-
-            ${formatPoints(
-        
+function renderCountries(countri
