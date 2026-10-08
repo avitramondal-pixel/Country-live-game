@@ -29,7 +29,7 @@ body{overflow-x:hidden;}
     radial-gradient(circle at 50% 5%, rgba(70,50,160,.35), transparent 40%),
     linear-gradient(180deg,#07080f 0%,#0d1030 45%,#07080f 100%);
   position:relative;
-  padding-bottom:70px;
+  padding-bottom:80px;
 }
 
 /* ================= HEADER ================= */
@@ -53,7 +53,7 @@ body{overflow-x:hidden;}
 /* ================= RULES ================= */
 
 .rules{
-  margin:12px 20px 14px;
+  margin:12px 20px 16px;
   padding:9px 12px;
   display:flex;
   align-items:center;
@@ -75,17 +75,30 @@ body{overflow-x:hidden;}
 }
 
 .rule .icon{font-size:15px;}
-
 .yellow{color:#ffe13b;}
 
+/* ================= SECTION TITLE ================= */
+
+.section-title{
+  text-align:center;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2px;
+  color:#8a8fb0;
+  margin:0 0 8px;
+}
+
 /* ================= TOP 3 PLAYERS ================= */
+
+.top-players-wrap{
+  padding:0 12px 14px;
+}
 
 .top-players{
   display:grid;
   grid-template-columns:1fr 1.12fr 1fr;
   gap:8px;
   align-items:end;
-  padding:6px 12px 14px;
 }
 
 .player-card{
@@ -154,6 +167,7 @@ body{overflow-x:hidden;}
   background:linear-gradient(180deg,#2a2c44,#0e0f1c);
   border:2px solid rgba(255,255,255,.5);
   position:relative;
+  overflow:hidden;
 }
 
 .rank-1 .p-avatar-wrap{
@@ -182,8 +196,9 @@ body{overflow-x:hidden;}
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:26px;
+  font-size:30px;
   background:#171927;
+  color:#4a4d66;
 }
 
 .p-name{
@@ -221,16 +236,7 @@ body{overflow-x:hidden;}
 /* ================= TOP 3 COUNTRIES ================= */
 
 .top-countries-wrap{
-  padding:0 12px 12px;
-}
-
-.top-countries-title{
-  text-align:center;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:2px;
-  color:#8a8fb0;
-  margin-bottom:6px;
+  padding:0 12px 14px;
 }
 
 .top-countries{
@@ -298,7 +304,7 @@ body{overflow-x:hidden;}
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:28px;
+  font-size:26px;
   background:#10121f;
   border:2px solid rgba(255,255,255,.18);
   overflow:hidden;
@@ -319,7 +325,7 @@ body{overflow-x:hidden;}
 /* ================= EVENT / COMMENT TICKER ================= */
 
 .event-area{
-  margin:0 12px 12px;
+  margin:0 12px 14px;
   min-height:44px;
   display:flex;
   align-items:center;
@@ -487,21 +493,13 @@ body{overflow-x:hidden;}
   .cell-flag{font-size:19px;}
   .cell-points{font-size:9px;}
 
-  .p-avatar-wrap{
-    width:54px;height:54px;
-  }
-
-  .rank-1 .p-avatar-wrap{
-    width:60px;height:60px;
-  }
+  .p-avatar-wrap{width:54px;height:54px;}
+  .rank-1 .p-avatar-wrap{width:60px;height:60px;}
 
   .p-name{font-size:10px;}
   .p-amount{font-size:13px;}
 
-  .tc-flag-box{
-    width:44px;height:32px;font-size:24px;
-  }
-
+  .tc-flag-box{width:44px;height:32px;font-size:22px;}
   .tc-points{font-size:12px;}
 
   .rules{gap:8px;padding:7px 8px;}
@@ -521,33 +519,30 @@ body{overflow-x:hidden;}
   </header>
 
   <div class="rules">
-
     <div class="rule">
       <span class="icon">💬</span>
       1 COMMENT = <span class="yellow">1 POINT</span>
     </div>
-
     <div class="rule">
       <span class="icon">💎</span>
       $1 SUPERCHAT = <span class="yellow">1000 POINTS</span>
     </div>
-
   </div>
 
 
   <!-- TOP 3 PLAYERS -->
 
-  <section class="top-players" id="topPlayers"></section>
+  <div class="section-title">🏆 TOP 3 PLAYERS</div>
+  <section class="top-players-wrap">
+    <div class="top-players" id="topPlayers"></div>
+  </section>
 
 
   <!-- TOP 3 COUNTRIES -->
 
+  <div class="section-title">🏆 TOP 3 COUNTRIES</div>
   <section class="top-countries-wrap">
-
-    <div class="top-countries-title">🏆 TOP 3 COUNTRIES</div>
-
     <div class="top-countries" id="topCountries"></div>
-
   </section>
 
 
@@ -569,27 +564,121 @@ body{overflow-x:hidden;}
 </div>
 
 
-<!-- CONTROLS -->
-
 <div class="controls">
-
   <button id="musicButton" class="control">🎵 MUSIC OFF</button>
   <button id="voiceButton" class="control on">🔊 VOICE ON</button>
-
 </div>
 
-
-<!-- CONNECTION STATUS -->
-
 <div id="connection" class="connection">🔄 CONNECTING...</div>
-
-
-<!-- MUSIC -->
 
 <audio id="backgroundMusic" src="/music/background.mp3" loop preload="auto"></audio>
 
 
 <script>
+
+/* =====================================================
+   COUNTRY MASTER LIST (embedded, client-side)
+   195 countries — always pre-rendered
+===================================================== */
+
+const COUNTRY_DATA = [
+  ["AF","Afghanistan"],["AL","Albania"],["DZ","Algeria"],["AD","Andorra"],
+  ["AO","Angola"],["AG","Antigua and Barbuda"],["AR","Argentina"],
+  ["AM","Armenia"],["AU","Australia"],["AT","Austria"],["AZ","Azerbaijan"],
+  ["BS","Bahamas"],["BH","Bahrain"],["BD","Bangladesh"],["BB","Barbados"],
+  ["BY","Belarus"],["BE","Belgium"],["BZ","Belize"],["BJ","Benin"],
+  ["BT","Bhutan"],["BO","Bolivia"],["BA","Bosnia and Herzegovina"],
+  ["BW","Botswana"],["BR","Brazil"],["BN","Brunei"],["BG","Bulgaria"],
+  ["BF","Burkina Faso"],["BI","Burundi"],
+  ["CV","Cape Verde"],["KH","Cambodia"],["CM","Cameroon"],["CA","Canada"],
+  ["CF","Central African Republic"],["TD","Chad"],["CL","Chile"],["CN","China"],
+  ["CO","Colombia"],["KM","Comoros"],["CG","Congo"],
+  ["CD","Democratic Republic of the Congo"],["CR","Costa Rica"],
+  ["CI","Cote d'Ivoire"],["HR","Croatia"],["CU","Cuba"],["CY","Cyprus"],
+  ["CZ","Czechia"],
+  ["DK","Denmark"],["DJ","Djibouti"],["DM","Dominica"],["DO","Dominican Republic"],
+  ["EC","Ecuador"],["EG","Egypt"],["SV","El Salvador"],["GQ","Equatorial Guinea"],
+  ["ER","Eritrea"],["EE","Estonia"],["SZ","Eswatini"],["ET","Ethiopia"],
+  ["FJ","Fiji"],["FI","Finland"],["FR","France"],
+  ["GA","Gabon"],["GM","Gambia"],["GE","Georgia"],["DE","Germany"],["GH","Ghana"],
+  ["GR","Greece"],["GD","Grenada"],["GT","Guatemala"],["GN","Guinea"],
+  ["GW","Guinea-Bissau"],["GY","Guyana"],
+  ["HT","Haiti"],["HN","Honduras"],["HU","Hungary"],
+  ["IS","Iceland"],["IN","India"],["ID","Indonesia"],["IR","Iran"],["IQ","Iraq"],
+  ["IE","Ireland"],["IL","Israel"],["IT","Italy"],
+  ["JM","Jamaica"],["JP","Japan"],["JO","Jordan"],
+  ["KZ","Kazakhstan"],["KE","Kenya"],["KI","Kiribati"],["KW","Kuwait"],
+  ["KG","Kyrgyzstan"],
+  ["LA","Laos"],["LV","Latvia"],["LB","Lebanon"],["LS","Lesotho"],["LR","Liberia"],
+  ["LY","Libya"],["LI","Liechtenstein"],["LT","Lithuania"],["LU","Luxembourg"],
+  ["MG","Madagascar"],["MW","Malawi"],["MY","Malaysia"],["MV","Maldives"],
+  ["ML","Mali"],["MT","Malta"],["MH","Marshall Islands"],["MR","Mauritania"],
+  ["MU","Mauritius"],["MX","Mexico"],["FM","Micronesia"],["MD","Moldova"],
+  ["MC","Monaco"],["MN","Mongolia"],["ME","Montenegro"],["MA","Morocco"],
+  ["MZ","Mozambique"],["MM","Myanmar"],
+  ["NA","Namibia"],["NR","Nauru"],["NP","Nepal"],["NL","Netherlands"],
+  ["NZ","New Zealand"],["NI","Nicaragua"],["NE","Niger"],["NG","Nigeria"],
+  ["KP","North Korea"],["MK","North Macedonia"],["NO","Norway"],
+  ["OM","Oman"],
+  ["PK","Pakistan"],["PW","Palau"],["PS","Palestine"],["PA","Panama"],
+  ["PG","Papua New Guinea"],["PY","Paraguay"],["PE","Peru"],["PH","Philippines"],
+  ["PL","Poland"],["PT","Portugal"],
+  ["QA","Qatar"],
+  ["RO","Romania"],["RU","Russia"],["RW","Rwanda"],
+  ["KN","Saint Kitts and Nevis"],["LC","Saint Lucia"],
+  ["VC","Saint Vincent and the Grenadines"],["WS","Samoa"],["SM","San Marino"],
+  ["ST","Sao Tome and Principe"],["SA","Saudi Arabia"],["SN","Senegal"],
+  ["RS","Serbia"],["SC","Seychelles"],["SL","Sierra Leone"],["SG","Singapore"],
+  ["SK","Slovakia"],["SI","Slovenia"],["SB","Solomon Islands"],["SO","Somalia"],
+  ["ZA","South Africa"],["KR","South Korea"],["SS","South Sudan"],["ES","Spain"],
+  ["LK","Sri Lanka"],["SD","Sudan"],["SR","Suriname"],["SE","Sweden"],
+  ["CH","Switzerland"],["SY","Syria"],
+  ["TJ","Tajikistan"],["TZ","Tanzania"],["TH","Thailand"],["TL","Timor-Leste"],
+  ["TG","Togo"],["TO","Tonga"],["TT","Trinidad and Tobago"],["TN","Tunisia"],
+  ["TR","Türkiye"],["TM","Turkmenistan"],["TV","Tuvalu"],
+  ["UG","Uganda"],["UA","Ukraine"],["AE","United Arab Emirates"],
+  ["GB","United Kingdom"],["US","United States"],["UY","Uruguay"],
+  ["UZ","Uzbekistan"],
+  ["VU","Vanuatu"],["VA","Holy See"],["VE","Venezuela"],["VN","Vietnam"],
+  ["YE","Yemen"],
+  ["ZM","Zambia"],["ZW","Zimbabwe"]
+];
+
+
+/* =====================================================
+   FLAG FROM CODE
+===================================================== */
+
+function codeToFlag(code){
+  return code.toUpperCase().split("").map(
+    c => String.fromCodePoint(127397 + c.charCodeAt(0))
+  ).join("");
+}
+
+
+/* =====================================================
+   BUILD LOCAL COUNTRY MAP (code: score)
+===================================================== */
+
+const LOCAL_COUNTRY_MAP = {};
+
+COUNTRY_DATA.forEach(([code,name]) => {
+
+  const key = name.replace(/[^a-zA-Z0-9]+/g,"");
+
+  LOCAL_COUNTRY_MAP[key] = {
+    code,
+    country:key,
+    countryName:name,
+    flag:codeToFlag(code),
+    score:0,
+    commentCount:0,
+    superChats:0,
+    latestCommenter:""
+  };
+
+});
+
 
 /* =====================================================
    CONFIG
@@ -623,6 +712,21 @@ let lastEventId = "";
 let firstStateLoaded = false;
 let loading = false;
 
+let currentCountries = COUNTRY_DATA.map(([code,name]) => {
+  const key = name.replace(/[^a-zA-Z0-9]+/g,"");
+  return {
+    country:key,
+    countryName:name,
+    flag:codeToFlag(code),
+    score:0,
+    commentCount:0,
+    superChats:0,
+    latestCommenter:""
+  };
+});
+
+let currentPlayers = [];
+
 
 /* =====================================================
    HELPERS
@@ -655,21 +759,12 @@ function getFlag(c){
   return c.flag || c.countryFlag || c.emoji || "🌍";
 }
 
-function getAvatar(p){
-  return (
-    p.profileImageUrl ||
-    p.avatar ||
-    ""
-  );
-}
-
 
 /* =====================================================
    CONNECTION
 ===================================================== */
 
 function setConnectionStatus(ok){
-
   if(ok){
     connection.textContent = "🟢 YOUTUBE CONNECTED";
     connection.classList.add("connected");
@@ -679,7 +774,6 @@ function setConnectionStatus(ok){
     connection.classList.remove("connected");
     connection.classList.add("error");
   }
-
 }
 
 
@@ -688,7 +782,6 @@ function setConnectionStatus(ok){
 ===================================================== */
 
 async function startMusic(){
-
   try{
     music.volume = 0.12;
     await music.play();
@@ -702,7 +795,6 @@ async function startMusic(){
     musicButton.classList.remove("on");
     return false;
   }
-
 }
 
 window.addEventListener("load", () => {
@@ -726,9 +818,7 @@ musicButton.addEventListener("click", async () => {
 ===================================================== */
 
 voiceButton.addEventListener("click", () => {
-
   voiceEnabled = !voiceEnabled;
-
   if(!voiceEnabled){
     if("speechSynthesis" in window) speechSynthesis.cancel();
     voiceButton.textContent = "🔇 VOICE OFF";
@@ -737,11 +827,9 @@ voiceButton.addEventListener("click", () => {
     voiceButton.textContent = "🔊 VOICE ON";
     voiceButton.classList.add("on");
   }
-
 });
 
 function speak(text){
-
   if(!voiceEnabled) return;
   if(!("speechSynthesis" in window)) return;
 
@@ -765,11 +853,9 @@ function speak(text){
     };
 
     speechSynthesis.speak(u);
-
   }catch(e){
     console.error("VOICE ERROR:", e);
   }
-
 }
 
 
@@ -787,193 +873,4 @@ function announceEvent(event){
   }
 
   if(event.id === lastEventId) return;
-
-  lastEventId = event.id;
-
-  const name = event.displayName || "Someone";
-  const country = event.countryName || event.country || "";
-  const points = Number(event.points || 0);
-
-  if(event.type === "superchat"){
-
-    const amount = Number(event.amountMicros || 0) / 1000000;
-    const currency = event.currency || "USD";
-
-    speak(
-      `Super Chat from ${name}. ` +
-      `${country}. ` +
-      `${amount.toFixed(2)} ${currency}. ` +
-      `${formatNumber(points)} points.`
-    );
-
-    return;
-  }
-
-  if(event.type === "comment"){
-    if(points > 0){
-      speak(`${name}. ${country}. ${formatNumber(points)} point.`);
-    }else{
-      speak(`${name} commented.`);
-    }
-  }
-
-}
-
-
-/* =====================================================
-   RENDER EVENT (comment ticker)
-===================================================== */
-
-function renderEvent(event){
-
-  if(!event || !event.id){
-    eventElement.className = "event";
-    eventElement.textContent = "Waiting for comments...";
-    return;
-  }
-
-  const name = event.displayName || "Someone";
-  const country = event.countryName || event.country || "";
-  const points = Number(event.points || 0);
-  const avatar = event.profileImageUrl || "";
-
-  const avatarHTML = avatar
-    ? `<img class="avatar-mini" src="${escapeHtml(avatar)}" alt="" onerror="this.style.display='none'">`
-    : "";
-
-  if(event.type === "superchat"){
-
-    const amount = Number(event.amountMicros || 0) / 1000000;
-    const currency = event.currency || "USD";
-
-    eventElement.className = "event superchat";
-
-    eventElement.innerHTML = `
-      💎 ${avatarHTML}
-      <span class="name">${escapeHtml(name)}</span>
-      sent <strong>${amount.toFixed(2)} ${escapeHtml(currency)}</strong>
-      · <span class="points">${formatNumber(points)} POINTS</span>
-      ${country ? `· <span class="country">${escapeHtml(country)}</span>` : ""}
-    `;
-
-    return;
-  }
-
-  eventElement.className = "event comment";
-
-  if(points > 0){
-
-    eventElement.innerHTML = `
-      💬 ${avatarHTML}
-      <span class="name">${escapeHtml(name)}</span>
-      ${country ? `· <span class="country">${escapeHtml(country)}</span>` : ""}
-      · <span class="points">+${formatNumber(points)} POINT</span>
-    `;
-
-  }else{
-
-    eventElement.innerHTML = `
-      💬 ${avatarHTML}
-      <span class="name">${escapeHtml(name)}</span>
-      commented
-    `;
-
-  }
-
-}
-
-
-/* =====================================================
-   RENDER TOP 3 PLAYERS
-   Layout: [2nd] [1st] [3rd]
-===================================================== */
-
-function renderTopPlayers(players){
-
-  const list = Array.isArray(players) ? players : [];
-
-  const sorted = [...list]
-    .filter(p => p && (Number(p.amount || 0) > 0 || Number(p.score || 0) > 0))
-    .sort((a,b) => {
-      const da = Number(a.amount || 0);
-      const db = Number(b.amount || 0);
-      if(db !== da) return db - da;
-      return Number(b.score || 0) - Number(a.score || 0);
-    })
-    .slice(0,3);
-
-  const positions = [1,0,2];
-  const classes   = ["rank-2","rank-1","rank-3"];
-  const crowns    = ["♛","👑","♛"];
-  const rankNums  = [2,1,3];
-
-  let html = "";
-
-  for(let slot=0; slot<3; slot++){
-
-    const p = sorted[positions[slot]];
-    const cls = classes[slot];
-    const crn = crowns[slot];
-    const rn  = rankNums[slot];
-
-    if(!p){
-      html += `
-        <div class="player-card ${cls}">
-          <div class="p-rank-badge">${rn}</div>
-          <div class="p-crown">${crn}</div>
-          <div class="p-avatar-wrap">
-            <div class="p-avatar-fallback">👤</div>
-          </div>
-          <div class="p-name">Waiting...</div>
-          <div class="p-amount">$0.00</div>
-          <div class="p-country">—</div>
-        </div>
-      `;
-      continue;
-    }
-
-    const avatar = getAvatar(p);
-    const name = p.displayName || "Player";
-    const amount = Number(p.amount || 0);
-    const flag = getFlag(p);
-    const countryName = getCountryName(p);
-
-    const avatarHTML = avatar
-      ? `<img class="p-avatar" src="${escapeHtml(avatar)}" alt="" onerror="this.outerHTML='<div class=\\'p-avatar-fallback\\'>👤</div>'">`
-      : `<div class="p-avatar-fallback">👤</div>`;
-
-    html += `
-      <div class="player-card ${cls}">
-        <div class="p-rank-badge">${rn}</div>
-        <div class="p-crown">${crn}</div>
-        <div class="p-avatar-wrap">
-          ${avatarHTML}
-        </div>
-        <div class="p-name">${escapeHtml(name)}</div>
-        <div class="p-amount">${formatUSD(amount)}</div>
-        <div class="p-country">
-          <span class="flag-mini">${escapeHtml(flag)}</span>
-          <span>${escapeHtml(countryName)}</span>
-        </div>
-      </div>
-    `;
-  }
-
-  topPlayersEl.innerHTML = html;
-
-}
-
-
-/* =====================================================
-   RENDER TOP 3 COUNTRIES
-   Layout: [2nd] [1st] [3rd]
-===================================================== */
-
-function renderTopCountries(countries){
-
-  const list = Array.isArray(countries) ? countries : [];
-
-  const sorted = [...list]
-    .map(c => ({
-      ...c,
-      score:Number(c.score ?? c.po
+  las
