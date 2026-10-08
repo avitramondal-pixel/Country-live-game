@@ -66,7 +66,7 @@ const youtube =
 
 
 /* =====================================================
-   COUNTRY DATA
+   COUNTRY DATA (195 countries)
 ===================================================== */
 
 const countryData = [
@@ -203,7 +203,9 @@ const aliases = {
   Afghanistan:["afghan"],
   Bangladesh:["bangla"],
   Bhutan:["bhutanese"],
-  BosniaandHerzegovina:["bosnia","bosnia herzegovina","bosnia and herzegovina"],
+  BosniaandHerzegovina:[
+    "bosnia","bosnia herzegovina","bosnia and herzegovina"
+  ],
   Brunei:["brunei darussalam"],
   CapeVerde:["cabo verde"],
   Congo:["republic of congo","republic of the congo"],
@@ -277,9 +279,7 @@ for(const [code,name] of countryData){
 
 }
 
-countrySearchList.sort(
-  (a,b) => b.length - a.length
-);
+countrySearchList.sort((a,b) => b.length - a.length);
 
 
 /* =====================================================
@@ -337,7 +337,7 @@ let lastEvent = {
 
 
 /* =====================================================
-   FIND COUNTRY
+   FIND COUNTRY IN TEXT
 ===================================================== */
 
 function findCountryInText(message){
@@ -424,10 +424,7 @@ function addEvent(data){
 
   lastEvent = event;
 
-  console.log(
-    "EVENT:",
-    JSON.stringify(event)
-  );
+  console.log("EVENT:", JSON.stringify(event));
 
   return event;
 }
@@ -438,9 +435,7 @@ function addEvent(data){
 ===================================================== */
 
 let liveChatId = null;
-
 let nextPageToken = null;
-
 let pollingTimer = null;
 
 const seenMessageIds = new Set();
@@ -479,8 +474,7 @@ async function getLiveChatId(){
     );
   }
 
-  liveChatId =
-    details.activeLiveChatId || null;
+  liveChatId = details.activeLiveChatId || null;
 
   if(!liveChatId){
     throw new Error(
@@ -490,10 +484,7 @@ async function getLiveChatId(){
 
   nextPageToken = null;
 
-  console.log(
-    "LIVE CHAT CONNECTED:",
-    liveChatId
-  );
+  console.log("LIVE CHAT CONNECTED:", liveChatId);
 
   return liveChatId;
 }
@@ -514,12 +505,9 @@ function processMessage(item){
     seenMessageIds.add(item.id);
 
     if(seenMessageIds.size > MAX_SEEN_MESSAGES){
-
       const firstId =
         seenMessageIds.values().next().value;
-
       seenMessageIds.delete(firstId);
-
     }
 
     const snippet = item.snippet || {};
@@ -556,10 +544,7 @@ function processMessage(item){
         snippet.superChatDetails || {};
 
       message = details.userComment || "";
-
-      amountMicros =
-        Number(details.amountMicros || 0);
-
+      amountMicros = Number(details.amountMicros || 0);
       currency = details.currency || "USD";
 
     }
@@ -570,8 +555,9 @@ function processMessage(item){
 
     const country = findCountryInText(message);
 
+
     /* =================================================
-       NO COUNTRY
+       NO COUNTRY — still push event so ticker shows
     ================================================= */
 
     if(!country){
@@ -607,6 +593,7 @@ function processMessage(item){
     const countryInfo = info[country];
 
     if(!countryInfo) return;
+
 
     /* =================================================
        COMMENT
@@ -650,6 +637,7 @@ function processMessage(item){
 
       return;
     }
+
 
     /* =================================================
        SUPER CHAT
@@ -795,7 +783,8 @@ function buildCountryList(){
   return countryData
     .map(([code,name]) => {
 
-      const key = name.replace(/[^a-zA-Z0-9]+/g,"");
+      const key =
+        name.replace(/[^a-zA-Z0-9]+/g,"");
 
       return {
         country:key,
@@ -822,7 +811,7 @@ function buildCountryList(){
 
 
 /* =====================================================
-   PLAYER LIST (sorted by amount then score)
+   PLAYER LIST (sorted by amount, then score)
 ===================================================== */
 
 function buildPlayerList(){
@@ -880,6 +869,24 @@ app.get("/api/state", (req,res) => {
 
   }
 
+});
+
+
+/* =====================================================
+   API — PLAYERS
+===================================================== */
+
+app.get("/api/players", (req,res) => {
+  res.json(buildPlayerList());
+});
+
+
+/* =====================================================
+   API — EVENTS
+===================================================== */
+
+app.get("/api/events", (req,res) => {
+  res.json(eventQueue);
 });
 
 
