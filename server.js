@@ -450,7 +450,7 @@ function schedulePoll(delay){
 }
 
 /* =====================================================
-   COUNTRY LIST (sorted)
+   COUNTRY LIST
 ===================================================== */
 
 function buildCountryList(){
@@ -474,7 +474,7 @@ function buildCountryList(){
 }
 
 /* =====================================================
-   PLAYER LIST (sorted)
+   PLAYER LIST
 ===================================================== */
 
 function buildPlayerList(){
@@ -511,24 +511,11 @@ app.get("/api/state", (req,res) => {
 });
 
 /* =====================================================
-   API — PLAYERS
+   API — PLAYERS / EVENTS / HEALTH
 ===================================================== */
 
-app.get("/api/players", (req,res) => {
-  res.json(buildPlayerList());
-});
-
-/* =====================================================
-   API — EVENTS
-===================================================== */
-
-app.get("/api/events", (req,res) => {
-  res.json(eventQueue);
-});
-
-/* =====================================================
-   API — HEALTH
-===================================================== */
+app.get("/api/players", (req,res) => res.json(buildPlayerList()));
+app.get("/api/events", (req,res) => res.json(eventQueue));
 
 app.get("/api/health", (req,res) => {
   res.json({
