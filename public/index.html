@@ -17,15 +17,16 @@ body{overflow-x:hidden;}
   background:radial-gradient(circle at 50% 5%,rgba(70,50,160,.35),transparent 40%),
              linear-gradient(180deg,#07080f 0%,#0d1030 45%,#07080f 100%);
   padding-bottom:90px;
+  padding-top:20px;
 }
-.header{text-align:center;padding:22px 12px 4px;}
+.header{text-align:center;padding:12px 12px 4px;}
 .title{
   font-size:clamp(26px,7vw,50px);font-weight:1000;letter-spacing:2px;
   color:#ffe75b;
   text-shadow:0 0 6px rgba(255,230,70,.85),0 0 22px rgba(255,200,0,.4);
 }
 .rules{
-  margin:12px 20px 16px;padding:9px 12px;
+  margin:12px 20px 20px;padding:9px 12px;
   display:flex;align-items:center;justify-content:center;gap:16px;
   border:1.5px solid rgba(255,225,72,.55);border-radius:11px;
   background:rgba(0,0,0,.55);
@@ -35,49 +36,190 @@ body{overflow-x:hidden;}
 
 .section-title{
   text-align:center;font-size:11px;font-weight:900;letter-spacing:2px;
-  color:#8a8fb0;margin:14px 0 8px;
+  color:#8a8fb0;margin:20px 0 32px;
 }
 
-/* TOP 3 PLAYERS */
-.top-players-wrap{padding:0 12px;}
+/* ================= TOP 3 PLAYERS (Royal Crown Frames) ================= */
+
+.top-players-wrap{padding:0 8px;}
 .top-players{
-  display:grid;grid-template-columns:1fr 1.12fr 1fr;gap:8px;align-items:end;
+  display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:4px;align-items:end;
 }
+
 .player-card{
-  position:relative;text-align:center;padding:10px 6px 12px;border-radius:14px;
-  background:linear-gradient(180deg,rgba(40,42,68,.96),rgba(8,9,18,.98));
-  border:2px solid rgba(255,255,255,.14);
-  box-shadow:0 8px 22px rgba(0,0,0,.55);
+  position:relative;text-align:center;
+  padding:34px 6px 40px;
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(20,22,40,.98),rgba(6,7,15,.98));
+  border:3px solid;
   min-width:0;
+  transition:transform .3s;
 }
+
 .player-card.rank-1{
-  border-color:#ffd92e;
-  box-shadow:0 0 22px rgba(255,211,36,.5),0 8px 22px rgba(0,0,0,.55);
-  transform:translateY(-6px);
+  border-color:#ffd32e;
+  background:
+    linear-gradient(180deg,rgba(60,45,10,.65),rgba(20,14,4,.98)),
+    linear-gradient(180deg,rgba(20,22,40,.9),rgba(6,7,15,.98));
+  box-shadow:
+    0 0 30px rgba(255,200,20,.7),
+    0 0 60px rgba(255,150,0,.3),
+    0 8px 24px rgba(0,0,0,.6),
+    inset 0 0 25px rgba(255,200,20,.18);
+  transform:translateY(-10px) scale(1.02);
 }
-.player-card.rank-2{border-color:#d5d8e3;}
-.player-card.rank-3{border-color:#c48246;}
-.p-crown{font-size:22px;height:24px;line-height:24px;}
+
+.player-card.rank-2{
+  border-color:#d8dbe6;
+  background:
+    linear-gradient(180deg,rgba(50,55,80,.55),rgba(14,16,28,.98)),
+    linear-gradient(180deg,rgba(20,22,40,.9),rgba(6,7,15,.98));
+  box-shadow:
+    0 0 22px rgba(220,225,240,.55),
+    0 0 45px rgba(150,170,255,.25),
+    0 8px 24px rgba(0,0,0,.6),
+    inset 0 0 20px rgba(200,215,255,.12);
+}
+
+.player-card.rank-3{
+  border-color:#d08a4a;
+  background:
+    linear-gradient(180deg,rgba(60,32,10,.55),rgba(20,10,4,.98)),
+    linear-gradient(180deg,rgba(20,22,40,.9),rgba(6,7,15,.98));
+  box-shadow:
+    0 0 22px rgba(210,130,60,.55),
+    0 0 45px rgba(255,120,20,.22),
+    0 8px 24px rgba(0,0,0,.6),
+    inset 0 0 20px rgba(255,150,60,.12);
+}
+
+.p-crown{
+  position:absolute;
+  top:-26px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:36px;
+  line-height:1;
+  filter:drop-shadow(0 0 10px rgba(255,220,60,.85));
+  z-index:3;
+}
+.rank-2 .p-crown{
+  filter:drop-shadow(0 0 10px rgba(200,220,255,.85));
+  font-size:30px;
+  top:-22px;
+}
+.rank-3 .p-crown{
+  filter:drop-shadow(0 0 10px rgba(255,160,80,.85));
+  font-size:28px;
+  top:-20px;
+}
+
 .p-rank-badge{
-  position:absolute;top:6px;right:6px;width:22px;height:22px;
-  border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:1000;border:2px solid #fff;color:#fff;
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:1000;
+  border:2px solid #fff;
+  color:#fff;
+  z-index:4;
 }
-.rank-1 .p-rank-badge{background:#ed2633;}
-.rank-2 .p-rank-badge{background:#9aa0b4;}
-.rank-3 .p-rank-badge{background:#b06a30;}
+.rank-1 .p-rank-badge{
+  background:linear-gradient(180deg,#ffd93a,#b47d00);
+  color:#2a1a00;
+  border-color:#fff5b0;
+  box-shadow:0 0 10px rgba(255,200,20,.8);
+}
+.rank-2 .p-rank-badge{
+  background:linear-gradient(180deg,#e8eaf2,#8a8fa5);
+  color:#111;
+  box-shadow:0 0 8px rgba(200,220,255,.6);
+}
+.rank-3 .p-rank-badge{
+  background:linear-gradient(180deg,#e29a54,#8a4d15);
+  color:#fff;
+  box-shadow:0 0 8px rgba(255,150,60,.6);
+}
+
+/* Side laurel ornaments */
+.player-card::before,
+.player-card::after{
+  content:"";
+  position:absolute;
+  top:20%;
+  bottom:22%;
+  width:14px;
+  color:rgba(255,210,40,.55);
+  pointer-events:none;
+  opacity:.85;
+}
+.rank-2::before,
+.rank-2::after{color:rgba(210,225,255,.5);}
+.rank-3::before,
+.rank-3::after{color:rgba(255,160,80,.55);}
+
+.player-card::before{
+  left:-2px;
+  background:
+    radial-gradient(circle at 50% 10%, currentColor 18%, transparent 20%),
+    radial-gradient(circle at 50% 30%, currentColor 18%, transparent 20%),
+    radial-gradient(circle at 50% 50%, currentColor 18%, transparent 20%),
+    radial-gradient(circle at 50% 70%, currentColor 18%, transparent 20%),
+    radial-gradient(circle at 50% 90%, currentColor 18%, transparent 20%);
+  background-size:100% 20%;
+  background-repeat:no-repeat;
+}
+.player-card::after{
+  right:-2px;
+  background:
+    radial-gradient(circle at 50% 10%, currentColor 18%, transparent 20%),
+    radial-gradient(circle at 50% 30%, currentColor 18%, transparent 20%),
+    radial-gradient(circle at 50% 50%, currentColor 18%, transparent 20%),
+    radial-gradient(circle at 50% 70%, currentColor 18%, transparent 20%),
+    radial-gradient(circle at 50% 90%, currentColor 18%, transparent 20%);
+  background-size:100% 20%;
+  background-repeat:no-repeat;
+}
+
 .p-avatar-wrap{
-  width:62px;height:62px;margin:4px auto 6px;border-radius:50%;
-  padding:3px;background:linear-gradient(180deg,#2a2c44,#0e0f1c);
-  border:2px solid rgba(255,255,255,.5);
-  overflow:hidden;position:relative;
+  width:78px;
+  height:78px;
+  margin:6px auto 8px;
+  border-radius:50%;
+  padding:4px;
+  background:radial-gradient(circle at 50% 30%, #3a3d5a, #0a0b18);
+  border:3px solid;
+  overflow:hidden;
+  position:relative;
 }
 .rank-1 .p-avatar-wrap{
-  border-color:#ffe338;box-shadow:0 0 16px rgba(255,220,50,.65);
-  width:68px;height:68px;
+  border-color:#ffd93a;
+  box-shadow:
+    0 0 18px rgba(255,210,40,.85),
+    0 0 32px rgba(255,180,0,.45),
+    inset 0 0 8px rgba(255,210,40,.4);
+  width:86px;
+  height:86px;
 }
-.rank-2 .p-avatar-wrap{border-color:#d5d8e3;}
-.rank-3 .p-avatar-wrap{border-color:#c48246;}
+.rank-2 .p-avatar-wrap{
+  border-color:#dfe2ec;
+  box-shadow:
+    0 0 14px rgba(220,230,255,.7),
+    inset 0 0 6px rgba(200,220,255,.35);
+}
+.rank-3 .p-avatar-wrap{
+  border-color:#dd9655;
+  box-shadow:
+    0 0 14px rgba(255,150,70,.7),
+    inset 0 0 6px rgba(255,150,70,.35);
+}
+
 .p-avatar{
   width:100%;height:100%;border-radius:50%;object-fit:cover;
   background:#171927;display:block;
@@ -85,58 +227,212 @@ body{overflow-x:hidden;}
 .p-avatar-fallback{
   width:100%;height:100%;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:30px;background:#171927;color:#4a4d66;
+  font-size:34px;
+  background:linear-gradient(180deg,#1e2038,#0a0b18);
+  color:#4a4d66;
 }
+
 .p-name{
-  margin-top:2px;font-size:11px;font-weight:900;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-top:6px;
+  font-size:11.5px;
+  font-weight:1000;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  letter-spacing:.3px;
+  text-shadow:0 1px 2px rgba(0,0,0,.7);
 }
 .p-amount{
-  margin-top:3px;color:#ffe02f;font-size:15px;font-weight:1000;
+  margin-top:4px;
+  font-size:16px;
+  font-weight:1000;
+  letter-spacing:.3px;
 }
+.rank-1 .p-amount{
+  color:#ffe23a;
+  text-shadow:0 0 10px rgba(255,210,40,.85),0 0 20px rgba(255,180,0,.4);
+}
+.rank-2 .p-amount{
+  color:#e6ecff;
+  text-shadow:0 0 10px rgba(200,220,255,.7);
+}
+.rank-3 .p-amount{
+  color:#ffb877;
+  text-shadow:0 0 10px rgba(255,150,70,.7);
+}
+
 .p-country{
-  margin-top:5px;font-size:10px;color:#d6d8e2;
-  display:flex;align-items:center;justify-content:center;gap:4px;
-  white-space:nowrap;overflow:hidden;
+  margin-top:6px;
+  font-size:9.5px;
+  color:#d6d8e2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  white-space:nowrap;
+  overflow:hidden;
+  padding:3px 6px;
+  border-radius:10px;
+  background:rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.12);
+  margin-left:auto;
+  margin-right:auto;
+  max-width:90%;
 }
-.p-country .flag-mini{font-size:14px;}
+.p-country .flag-mini{font-size:13px;}
 
-/* TOP 3 COUNTRIES */
-.top-countries-wrap{padding:0 12px;}
+
+/* ================= TOP 3 COUNTRIES (Royal Crown Frames) ================= */
+
+.top-countries-wrap{padding:0 8px;}
 .top-countries{
-  display:grid;grid-template-columns:1fr 1.12fr 1fr;gap:8px;align-items:end;
+  display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:4px;align-items:end;
 }
-.tc-card{
-  position:relative;text-align:center;padding:8px 4px 10px;border-radius:10px;
-  background:linear-gradient(180deg,rgba(30,32,54,.95),rgba(8,9,18,.95));
-  border:2px solid rgba(255,255,255,.12);
-}
-.tc-card.rank-1{
-  border-color:#ffd92e;
-  box-shadow:0 0 18px rgba(255,211,36,.55);
-  transform:translateY(-6px);
-}
-.tc-card.rank-2{border-color:#d5d8e3;}
-.tc-card.rank-3{border-color:#c48246;}
-.tc-crown{font-size:16px;height:18px;line-height:18px;}
-.tc-rank-badge{
-  position:absolute;top:4px;left:4px;padding:2px 6px;border-radius:6px;
-  font-size:9px;font-weight:1000;background:rgba(0,0,0,.6);
-  border:1px solid rgba(255,255,255,.25);
-}
-.rank-1 .tc-rank-badge{background:#ffd92e;color:#111;border-color:#fff5b0;}
-.tc-flag-box{
-  width:52px;height:38px;margin:4px auto 5px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:26px;background:#10121f;
-  border:2px solid rgba(255,255,255,.18);overflow:hidden;
-}
-.rank-1 .tc-flag-box{border-color:#ffe338;box-shadow:0 0 10px rgba(255,220,50,.5);}
-.tc-points{font-size:14px;font-weight:1000;color:#ffe02f;}
 
-/* EVENT */
+.tc-card{
+  position:relative;text-align:center;
+  padding:28px 6px 32px;
+  border-radius:10px;
+  background:linear-gradient(180deg,rgba(20,22,40,.98),rgba(6,7,15,.98));
+  border:3px solid;
+  min-width:0;
+}
+
+.tc-card.rank-1{
+  border-color:#ffd32e;
+  background:
+    linear-gradient(180deg,rgba(60,45,10,.6),rgba(20,14,4,.98)),
+    linear-gradient(180deg,rgba(20,22,40,.9),rgba(6,7,15,.98));
+  box-shadow:
+    0 0 26px rgba(255,200,20,.65),
+    0 0 50px rgba(255,150,0,.28),
+    inset 0 0 20px rgba(255,200,20,.18);
+  transform:translateY(-8px);
+}
+.tc-card.rank-2{
+  border-color:#d8dbe6;
+  background:
+    linear-gradient(180deg,rgba(50,55,80,.5),rgba(14,16,28,.98)),
+    linear-gradient(180deg,rgba(20,22,40,.9),rgba(6,7,15,.98));
+  box-shadow:
+    0 0 20px rgba(220,225,240,.5),
+    inset 0 0 15px rgba(200,215,255,.12);
+}
+.tc-card.rank-3{
+  border-color:#d08a4a;
+  background:
+    linear-gradient(180deg,rgba(60,32,10,.5),rgba(20,10,4,.98)),
+    linear-gradient(180deg,rgba(20,22,40,.9),rgba(6,7,15,.98));
+  box-shadow:
+    0 0 20px rgba(210,130,60,.5),
+    inset 0 0 15px rgba(255,150,60,.12);
+}
+
+.tc-crown{
+  position:absolute;
+  top:-22px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:30px;
+  line-height:1;
+  filter:drop-shadow(0 0 8px rgba(255,220,60,.85));
+  z-index:3;
+}
+.rank-2 .tc-crown{
+  font-size:26px;
+  top:-19px;
+  filter:drop-shadow(0 0 8px rgba(200,220,255,.85));
+}
+.rank-3 .tc-crown{
+  font-size:24px;
+  top:-17px;
+  filter:drop-shadow(0 0 8px rgba(255,160,80,.85));
+}
+
+.tc-rank-badge{
+  position:absolute;
+  top:6px;
+  left:6px;
+  padding:2px 7px;
+  border-radius:6px;
+  font-size:9px;
+  font-weight:1000;
+  background:rgba(0,0,0,.7);
+  border:1px solid rgba(255,255,255,.25);
+  color:#fff;
+}
+.rank-1 .tc-rank-badge{
+  background:linear-gradient(180deg,#ffd93a,#b47d00);
+  color:#2a1a00;
+  border-color:#fff5b0;
+  box-shadow:0 0 8px rgba(255,200,20,.8);
+}
+.rank-2 .tc-rank-badge{
+  background:linear-gradient(180deg,#e8eaf2,#8a8fa5);
+  color:#111;
+}
+.rank-3 .tc-rank-badge{
+  background:linear-gradient(180deg,#e29a54,#8a4d15);
+  color:#fff;
+}
+
+.tc-flag-box{
+  width:64px;
+  height:46px;
+  margin:6px auto 8px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:32px;
+  background:radial-gradient(circle at 50% 30%, #232642, #05060e);
+  border:2px solid;
+  overflow:hidden;
+}
+.rank-1 .tc-flag-box{
+  border-color:#ffd93a;
+  box-shadow:
+    0 0 14px rgba(255,210,40,.85),
+    inset 0 0 8px rgba(255,210,40,.35);
+}
+.rank-2 .tc-flag-box{
+  border-color:#dfe2ec;
+  box-shadow:0 0 12px rgba(220,230,255,.65);
+}
+.rank-3 .tc-flag-box{
+  border-color:#dd9655;
+  box-shadow:0 0 12px rgba(255,150,70,.65);
+}
+
+.tc-points{
+  font-size:16px;
+  font-weight:1000;
+  letter-spacing:.5px;
+  padding:3px 8px;
+  border-radius:8px;
+  display:inline-block;
+  background:rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.12);
+}
+.rank-1 .tc-points{
+  color:#ffe23a;
+  text-shadow:0 0 10px rgba(255,210,40,.8);
+  border-color:rgba(255,200,40,.4);
+}
+.rank-2 .tc-points{
+  color:#e6ecff;
+  text-shadow:0 0 8px rgba(200,220,255,.6);
+}
+.rank-3 .tc-points{
+  color:#ffb877;
+  text-shadow:0 0 8px rgba(255,150,70,.6);
+}
+
+
+/* ================= EVENT TICKER ================= */
+
 .event-area{
-  margin:14px 12px;min-height:44px;
+  margin:24px 12px 14px;min-height:44px;
   display:flex;align-items:center;justify-content:center;
   padding:8px 10px;border-radius:9px;
   background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);
@@ -152,7 +448,9 @@ body{overflow-x:hidden;}
   object-fit:cover;
 }
 
-/* COUNTRY GRID */
+
+/* ================= COUNTRY GRID ================= */
+
 .grid-section{padding:4px 12px 20px;}
 .country-grid{
   display:grid;grid-template-columns:repeat(8,1fr);gap:5px;
@@ -178,7 +476,9 @@ body{overflow-x:hidden;}
 .cell.rank-2 .cell-points,
 .cell.rank-3 .cell-points{color:#ffe02f;}
 
-/* CONTROLS */
+
+/* ================= CONTROLS ================= */
+
 .controls{
   position:fixed;right:12px;bottom:12px;z-index:999;
   display:flex;flex-direction:column;gap:7px;
@@ -199,14 +499,33 @@ body{overflow-x:hidden;}
 .connection.connected{background:#147b4d;}
 .connection.error{background:#8b2020;}
 
+
+/* ================= RESPONSIVE ================= */
+
 @media(max-width:400px){
   .country-grid{grid-template-columns:repeat(7,1fr);}
   .cell-flag{font-size:19px;}
   .cell-points{font-size:9px;}
-  .p-avatar-wrap{width:54px;height:54px;}
-  .rank-1 .p-avatar-wrap{width:60px;height:60px;}
-  .tc-flag-box{width:44px;height:32px;font-size:22px;}
+
+  .p-avatar-wrap{width:62px;height:62px;padding:3px;}
+  .rank-1 .p-avatar-wrap{width:70px;height:70px;}
+  .p-crown{font-size:30px;top:-22px;}
+  .rank-2 .p-crown{font-size:26px;top:-19px;}
+  .rank-3 .p-crown{font-size:24px;top:-17px;}
+  .p-name{font-size:10px;}
+  .p-amount{font-size:14px;}
+  .player-card{padding:28px 4px 34px;}
+
+  .tc-flag-box{width:52px;height:38px;font-size:26px;}
+  .tc-points{font-size:14px;}
+  .tc-crown{font-size:24px;top:-18px;}
+  .rank-2 .tc-crown{font-size:21px;top:-16px;}
+  .rank-3 .tc-crown{font-size:20px;top:-15px;}
+  .tc-card{padding:24px 4px 28px;}
+
+  .section-title{margin:16px 0 26px;}
 }
+
 </style>
 </head>
 <body>
@@ -255,7 +574,9 @@ body{overflow-x:hidden;}
 (function(){
 "use strict";
 
-/* ============ COUNTRY LIST (195) ============ */
+/* =====================================================
+   COUNTRY LIST (195)
+===================================================== */
 
 var COUNTRY_DATA = [
   ["AF","Afghanistan"],["AL","Albania"],["DZ","Algeria"],["AD","Andorra"],
@@ -336,7 +657,9 @@ for(var i = 0; i < COUNTRY_DATA.length; i++){
   });
 }
 
-/* ============ ELEMENTS ============ */
+/* =====================================================
+   ELEMENTS
+===================================================== */
 
 var music          = document.getElementById("backgroundMusic");
 var musicButton    = document.getElementById("musicButton");
@@ -354,7 +677,9 @@ var firstStateLoaded = false;
 var loading = false;
 var currentCountries = masterCountries.slice();
 
-/* ============ HELPERS ============ */
+/* =====================================================
+   HELPERS
+===================================================== */
 
 function escapeHtml(v){
   return String(v == null ? "" : v)
@@ -366,7 +691,9 @@ function formatUSD(v){ return "$" + Number(v || 0).toFixed(2); }
 function getCountryName(c){ if(!c) return "Unknown"; return c.countryName || "Unknown"; }
 function getFlag(c){ if(!c) return "🌍"; return c.flag || "🌍"; }
 
-/* ============ CONNECTION ============ */
+/* =====================================================
+   CONNECTION
+===================================================== */
 
 function setConnectionStatus(ok){
   if(ok){
@@ -380,7 +707,9 @@ function setConnectionStatus(ok){
   }
 }
 
-/* ============ MUSIC ============ */
+/* =====================================================
+   MUSIC
+===================================================== */
 
 function startMusic(){
   try{
@@ -411,7 +740,9 @@ musicButton.addEventListener("click", function(){
   }
 });
 
-/* ============ VOICE ============ */
+/* =====================================================
+   VOICE
+===================================================== */
 
 voiceButton.addEventListener("click", function(){
   voiceEnabled = !voiceEnabled;
@@ -440,7 +771,9 @@ function speak(text){
   }catch(e){ console.error("VOICE ERROR:", e); }
 }
 
-/* ============ ANNOUNCE ============ */
+/* =====================================================
+   ANNOUNCE
+===================================================== */
 
 function announceEvent(event){
   if(!event || !event.id) return;
@@ -466,7 +799,9 @@ function announceEvent(event){
   }
 }
 
-/* ============ RENDER EVENT ============ */
+/* =====================================================
+   RENDER EVENT
+===================================================== */
 
 function renderEvent(event){
   if(!event || !event.id){
@@ -503,7 +838,9 @@ function renderEvent(event){
   }
 }
 
-/* ============ TOP 3 PLAYERS ============ */
+/* =====================================================
+   TOP 3 PLAYERS
+===================================================== */
 
 function renderTopPlayers(players){
   var list = (players && players.length) ? players.slice() : [];
@@ -518,7 +855,7 @@ function renderTopPlayers(players){
 
   var positions = [1,0,2];
   var classes   = ["rank-2","rank-1","rank-3"];
-  var crowns    = ["♛","👑","♛"];
+  var crowns    = ["👑","👑","👑"];
   var rankNums  = [2,1,3];
   var html = "";
 
@@ -528,8 +865,8 @@ function renderTopPlayers(players){
 
     if(!p){
       html += '<div class="player-card ' + cls + '">' +
-        '<div class="p-rank-badge">' + rn + '</div>' +
         '<div class="p-crown">' + crn + '</div>' +
+        '<div class="p-rank-badge">' + rn + '</div>' +
         '<div class="p-avatar-wrap"><div class="p-avatar-fallback">👤</div></div>' +
         '<div class="p-name">Waiting...</div>' +
         '<div class="p-amount">$0.00</div>' +
@@ -543,8 +880,8 @@ function renderTopPlayers(players){
       : '<div class="p-avatar-fallback">👤</div>';
 
     html += '<div class="player-card ' + cls + '">' +
-      '<div class="p-rank-badge">' + rn + '</div>' +
       '<div class="p-crown">' + crn + '</div>' +
+      '<div class="p-rank-badge">' + rn + '</div>' +
       '<div class="p-avatar-wrap">' + avatarHTML + '</div>' +
       '<div class="p-name">' + escapeHtml(p.displayName || "Player") + '</div>' +
       '<div class="p-amount">' + formatUSD(p.amount || 0) + '</div>' +
@@ -556,7 +893,9 @@ function renderTopPlayers(players){
   topPlayersEl.innerHTML = html;
 }
 
-/* ============ TOP 3 COUNTRIES ============ */
+/* =====================================================
+   TOP 3 COUNTRIES
+===================================================== */
 
 function renderTopCountries(countries){
   var list = (countries && countries.length) ? countries.slice() : [];
@@ -568,7 +907,7 @@ function renderTopCountries(countries){
 
   var positions = [1,0,2];
   var classes   = ["rank-2","rank-1","rank-3"];
-  var crowns    = ["♛","👑","♛"];
+  var crowns    = ["👑","👑","👑"];
   var rankNums  = [2,1,3];
   var html = "";
 
@@ -578,22 +917,24 @@ function renderTopCountries(countries){
 
     if(!c){
       html += '<div class="tc-card ' + cls + '">' +
-        '<div class="tc-rank-badge">#' + rn + '</div>' +
         '<div class="tc-crown">' + crn + '</div>' +
+        '<div class="tc-rank-badge">#' + rn + '</div>' +
         '<div class="tc-flag-box">🏳️</div>' +
         '<div class="tc-points">0</div></div>';
       continue;
     }
     html += '<div class="tc-card ' + cls + '">' +
-      '<div class="tc-rank-badge">#' + rn + '</div>' +
       '<div class="tc-crown">' + crn + '</div>' +
+      '<div class="tc-rank-badge">#' + rn + '</div>' +
       '<div class="tc-flag-box">' + escapeHtml(getFlag(c)) + '</div>' +
       '<div class="tc-points">' + formatNumber(c.score) + '</div></div>';
   }
   topCountriesEl.innerHTML = html;
 }
 
-/* ============ COUNTRY GRID ============ */
+/* =====================================================
+   COUNTRY GRID
+===================================================== */
 
 function renderCountryGrid(countries){
   var list = (countries && countries.length) ? countries.slice() : currentCountries.slice();
@@ -616,14 +957,18 @@ function renderCountryGrid(countries){
   countryGrid.innerHTML = html;
 }
 
-/* ============ INITIAL PRE-RENDER ============ */
+/* =====================================================
+   INITIAL PRE-RENDER
+===================================================== */
 
 try { renderTopPlayers([]); } catch(e){}
 try { renderTopCountries([]); } catch(e){}
 try { renderCountryGrid([]); } catch(e){}
 try { renderEvent(null); } catch(e){}
 
-/* ============ FETCH STATE ============ */
+/* =====================================================
+   FETCH STATE
+===================================================== */
 
 function fetchState(){
   if(loading) return;
