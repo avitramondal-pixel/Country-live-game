@@ -249,7 +249,10 @@ function getPlayer(displayName){
 
 function addEvent(data){
   eventCounter++;
-  const event = { id:`${Date.now()}-${eventCounter}`, ...data, time:Date.now() };
+  const event = Object.assign(
+    { id: Date.now() + "-" + eventCounter, time: Date.now() },
+    data
+  );
   eventQueue.push(event);
   while(eventQueue.length > MAX_EVENTS) eventQueue.shift();
   lastEvent = event;
@@ -279,7 +282,7 @@ async function getLiveChatId(){
   });
 
   const item = response.data.items && response.data.items[0];
-  if(!item) throw new Error(`YouTube video not found: ${VIDEO_ID}`);
+  if(!item) throw new Error("YouTube video not found: " + VIDEO_ID);
 
   const details = item.liveStreamingDetails;
   if(!details) throw new Error("The selected YouTube video is not a live stream.");
@@ -336,9 +339,11 @@ function processMessage(item){
       addEvent({
         country:"", countryName:"", flag:"",
         type: type === "superChatEvent" ? "superchat" : "comment",
-        displayName, profileImageUrl, points:0, message,
-        amountMicros, amount: amountMicros / 1000000,
-        currency, hasCountry:false
+        displayName: displayName, profileImageUrl: profileImageUrl,
+        points:0, message: message,
+        amountMicros: amountMicros,
+        amount: amountMicros / 1000000,
+        currency: currency, hasCountry:false
       });
       console.log("COMMENT WITHOUT COUNTRY:", displayName, "=>", message);
       return;
@@ -363,13 +368,14 @@ function processMessage(item){
       player.comments += 1;
 
       addEvent({
-        country, countryName:countryInfo.name, flag:countryInfo.flag,
-        type:"comment", displayName, profileImageUrl,
-        points, message, amount:0, amountMicros:0, currency:"",
+        country: country, countryName: countryInfo.name, flag: countryInfo.flag,
+        type:"comment", displayName: displayName, profileImageUrl: profileImageUrl,
+        points: points, message: message,
+        amount:0, amountMicros:0, currency:"",
         hasCountry:true
       });
 
-      console.log(`COMMENT +${points} | ${displayName} | ${countryInfo.name}`);
+      console.log("COMMENT +" + points + " | " + displayName + " | " + countryInfo.name);
       return;
     }
 
@@ -393,13 +399,14 @@ function processMessage(item){
       player.amount += amount;
 
       addEvent({
-        country, countryName:countryInfo.name, flag:countryInfo.flag,
-        type:"superchat", displayName, profileImageUrl,
-        points, message, amount, amountMicros, currency,
+        country: country, countryName: countryInfo.name, flag: countryInfo.flag,
+        type:"superchat", displayName: displayName, profileImageUrl: profileImageUrl,
+        points: points, message: message,
+        amount: amount, amountMicros: amountMicros, currency: currency,
         hasCountry:true
       });
 
-      console.log(`SUPER CHAT +${points} | ${displayName} | ${countryInfo.name} | ${amount} ${currency}`);
+      console.log("SUPER CHAT +" + points + " | " + displayName + " | " + countryInfo.name);
     }
   }catch(error){
     console.error("PROCESS MESSAGE ERROR:", error);
@@ -415,7 +422,7 @@ async function pollChat(){
     if(!liveChatId) await getLiveChatId();
 
     const params = {
-      liveChatId,
+      liveChatId: liveChatId,
       part:["snippet","authorDetails"],
       maxResults:200
     };
@@ -425,7 +432,7 @@ async function pollChat(){
     nextPageToken = response.data.nextPageToken || null;
 
     const messages = response.data.items || [];
-    console.log(`YouTube messages received: ${messages.length}`);
+    console.log("YouTube messages received: " + messages.length);
 
     for(const item of messages) processMessage(item);
 
@@ -433,7 +440,9 @@ async function pollChat(){
     schedulePoll(wait);
 
   }catch(error){
-    console.error("YOUTUBE CHAT ERROR:", error.response?.data || error.message);
+    console.error("YOUTUBE CHAT ERROR:",
+      (error.response && error.response.data) || error.message
+    );
     liveChatId = null;
     nextPageToken = null;
     schedulePoll(POLL_FALLBACK_MS);
@@ -455,19 +464,22 @@ function schedulePoll(delay){
 
 function buildCountryList(){
   return countryData
-    .map(([code,name]) => {
+    .map(function(entry){
+      const code = entry[0];
+      const name = entry[1];
       const key = name.replace(/[^a-zA-Z0-9]+/g,"");
+      const s = state[key] || {};
       return {
-        country:key,
-        countryName:name,
-        flag:countryCodeToFlag(code),
-        score: state[key] ? state[key].score : 0,
-        commentCount: state[key] ? state[key].commentCount : 0,
-        superChats: state[key] ? state[key].superChats : 0,
-        latestCommenter: state[key] ? state[key].latestCommenter : ""
+        country: key,
+        countryName: name,
+        flag: countryCodeToFlag(code),
+        score: s.score || 0,
+        commentCount: s.commentCount || 0,
+        superChats: s.superChats || 0,
+        latestCommenter: s.latestCommenter || ""
       };
     })
-    .sort((a,b) => {
+    .sort(function(a,b){
       if(b.score !== a.score) return b.score - a.score;
       return a.countryName.localeCompare(b.countryName);
     });
@@ -478,7 +490,7 @@ function buildCountryList(){
 ===================================================== */
 
 function buildPlayerList(){
-  return Object.values(players).sort((a,b) => {
+  return Object.values(players).sort(function(a,b){
     if(b.amount !== a.amount) return b.amount - a.amount;
     return b.score - a.score;
   });
@@ -488,7 +500,7 @@ function buildPlayerList(){
    API — STATE
 ===================================================== */
 
-app.get("/api/state", (req,res) => {
+app.get("/api/state", function(req,res){
   try{
     res.json({
       connected: Boolean(liveChatId),
@@ -514,10 +526,10 @@ app.get("/api/state", (req,res) => {
    API — PLAYERS / EVENTS / HEALTH
 ===================================================== */
 
-app.get("/api/players", (req,res) => res.json(buildPlayerList()));
-app.get("/api/events", (req,res) => res.json(eventQueue));
+app.get("/api/players", function(req,res){ res.json(buildPlayerList()); });
+app.get("/api/events", function(req,res){ res.json(eventQueue); });
 
-app.get("/api/health", (req,res) => {
+app.get("/api/health", function(req,res){
   res.json({
     ok:true,
     connected: Boolean(liveChatId),
@@ -532,8 +544,15 @@ app.get("/api/health", (req,res) => {
    START
 ===================================================== */
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Watching YouTube video: ${VIDEO_ID}`);
+app.listen(PORT, function(){
+  console.log("=====================================");
+  console.log("  COUNTRY BATTLE LIVE SERVER");
+  console.log("=====================================");
+  console.log("Server running on port " + PORT);
+  console.log("Watching YouTube video: " + VIDEO_ID);
+  console.log("Comment points: " + COMMENT_POINTS);
+  console.log("Super Chat points per USD: " + SUPERCHAT_POINTS_PER_USD);
+  console.log("=====================================");
+
   pollChat();
 });
