@@ -319,7 +319,7 @@ function processMessage(item){
 
     if(type === "textMessageEvent"){
       message = snippet.displayMessage ||
-        snippet.textMessageDetails?.messageText || "";
+        (snippet.textMessageDetails && snippet.textMessageDetails.messageText) || "";
     }
     else if(type === "superChatEvent"){
       const details = snippet.superChatDetails || {};
@@ -461,10 +461,10 @@ function buildCountryList(){
         country:key,
         countryName:name,
         flag:countryCodeToFlag(code),
-        score:state[key]?.score || 0,
-        commentCount:state[key]?.commentCount || 0,
-        superChats:state[key]?.superChats || 0,
-        latestCommenter:state[key]?.latestCommenter || ""
+        score: state[key] ? state[key].score : 0,
+        commentCount: state[key] ? state[key].commentCount : 0,
+        superChats: state[key] ? state[key].superChats : 0,
+        latestCommenter: state[key] ? state[key].latestCommenter : ""
       };
     })
     .sort((a,b) => {
