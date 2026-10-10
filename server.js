@@ -1,5 +1,5 @@
 /* ============================================================
-   COUNTRY BATTLE LIVE — SERVER
+   COUNTRY BATTLE LIVE — SERVER (JSON storage, no native deps)
 ============================================================ */
 
 require("dotenv").config();
@@ -7,7 +7,6 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const Database = require("better-sqlite3");
 const { google } = require("googleapis");
 
 /* ============================================================
@@ -21,69 +20,75 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "";
 const COMMENT_POINTS = Number(process.env.COMMENT_POINTS || 1);
 const SUPERCHAT_POINTS_PER_USD = Number(process.env.SUPERCHAT_POINTS_PER_USD || 1000);
 const VOICE_LANG = process.env.VOICE_LANG || "en-US";
-const DB_PATH = process.env.DB_PATH || path.join(__dirname, "data", "battle.db");
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, "data", "battle.json");
 
 const POLL_FALLBACK_MS = 10000;
 const MAX_EVENTS_KEPT = 200;
 const MAX_MESSAGES_KEPT = 10000;
 
 /* ============================================================
-   DATABASE
+   JSON STORAGE
 ============================================================ */
 
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-const db = new Database(DB_PATH);
-db.pragma("journal_mode = WAL");
 
-db.exec(`
-CREATE TABLE IF NOT EXISTS country_scores (
-  country_key TEXT PRIMARY KEY,
-  score INTEGER NOT NULL DEFAULT 0,
-  comments INTEGER NOT NULL DEFAULT 0,
-  superchats INTEGER NOT NULL DEFAULT 0,
-  latest_commenter TEXT DEFAULT '',
-  updated_at INTEGER NOT NULL DEFAULT 0
-);
+let store = {
+  country_scores: {},   // key → { score, comments, superchats, latest_commenter }
+  players: {},          // key → { displayName, profileImageUrl, country, countryName, flag, score, comments, superChats, amount }
+  events: [],           // array of event objects (newest first)
+  processed: {},        // message_id → timestamp
+};
 
-CREATE TABLE IF NOT EXISTS players (
-  player_key TEXT PRIMARY KEY,
-  display_name TEXT NOT NULL,
-  profile_image_url TEXT DEFAULT '',
-  country_key TEXT DEFAULT '',
-  country_name TEXT DEFAULT '',
-  flag TEXT DEFAULT '',
-  score INTEGER NOT NULL DEFAULT 0,
-  comments INTEGER NOT NULL DEFAULT 0,
-  superchats INTEGER NOT NULL DEFAULT 0,
-  amount_usd REAL NOT NULL DEFAULT 0,
-  updated_at INTEGER NOT NULL DEFAULT 0
-);
+function loadStore(){
+  try{
+    if(fs.existsSync(DB_PATH)){
+      const raw = fs.readFileSync(DB_PATH, "utf8");
+      const parsed = JSON.parse(raw);
+      store.country_scores = parsed.country_scores || {};
+      store.players = parsed.players || {};
+      store.events = parsed.events || [];
+      store.processed = parsed.processed || {};
+      console.log("Loaded storage: " +
+        Object.keys(store.country_scores).length + " countries, " +
+        Object.keys(store.players).length + " players, " +
+        store.events.length + " events, " +
+        Object.keys(store.processed).length + " processed IDs");
+    } else {
+      console.log("No existing storage file — starting fresh");
+    }
+  }catch(e){
+    console.error("loadStore error:", e.message);
+  }
+}
 
-CREATE TABLE IF NOT EXISTS events (
-  id TEXT PRIMARY KEY,
-  type TEXT NOT NULL,
-  country_key TEXT DEFAULT '',
-  country_name TEXT DEFAULT '',
-  flag TEXT DEFAULT '',
-  display_name TEXT DEFAULT '',
-  profile_image_url TEXT DEFAULT '',
-  points INTEGER NOT NULL DEFAULT 0,
-  message TEXT DEFAULT '',
-  amount_micros INTEGER DEFAULT 0,
-  amount_usd REAL DEFAULT 0,
-  currency TEXT DEFAULT '',
-  created_at INTEGER NOT NULL
-);
+let saveScheduled = false;
+function saveStore(){
+  if(saveScheduled) return;
+  saveScheduled = true;
+  setTimeout(function(){
+    saveScheduled = false;
+    try{
+      /* Trim processed to last MAX_MESSAGES_KEPT */
+      const ids = Object.keys(store.processed);
+      if(ids.length > MAX_MESSAGES_KEPT){
+        ids.sort(function(a, b){ return store.processed[a] - store.processed[b]; });
+        const toRemove = ids.slice(0, ids.length - MAX_MESSAGES_KEPT);
+        for(const id of toRemove) delete store.processed[id];
+      }
 
-CREATE TABLE IF NOT EXISTS processed_messages (
-  message_id TEXT PRIMARY KEY,
-  created_at INTEGER NOT NULL
-);
+      /* Trim events */
+      if(store.events.length > MAX_EVENTS_KEPT){
+        store.events = store.events.slice(0, MAX_EVENTS_KEPT);
+      }
 
-CREATE INDEX IF NOT EXISTS idx_country_score ON country_scores(score DESC);
-CREATE INDEX IF NOT EXISTS idx_player_amount ON players(amount_usd DESC);
-CREATE INDEX IF NOT EXISTS idx_events_time ON events(created_at DESC);
-`);
+      fs.writeFileSync(DB_PATH, JSON.stringify(store), "utf8");
+    }catch(e){
+      console.error("saveStore error:", e.message);
+    }
+  }, 500);
+}
+
+loadStore();
 
 /* ============================================================
    COUNTRY DATA
@@ -209,7 +214,7 @@ for(const alias in ALIASES){
 SEARCH_TERMS.sort((a, b) => b.len - a.len);
 
 /* ============================================================
-   NORMALIZE
+   NORMALIZE + DETECT
 ============================================================ */
 
 function normalize(text){
@@ -223,18 +228,14 @@ function normalize(text){
     .toLowerCase();
 }
 
-/* ============================================================
-   DETECT COUNTRY
-============================================================ */
-
 function detectCountry(message){
   const text = normalize(message);
   if(!text) return null;
 
   for(const item of SEARCH_TERMS){
     const term = item.term;
-    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const re = new RegExp("(^|\\s)" + esc + "(?=\\s|$)", "i");
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp("(^|\\s)" + escaped + "(?=\\s|$)", "i");
     if(re.test(text)) return item.key;
   }
   return null;
@@ -286,109 +287,72 @@ let nextPageToken = null;
 let pollingTimer = null;
 let lastPollAt = 0;
 let lastError = "";
-const seenMessageIds = new Set();
 
-(function loadSeenMessages(){
-  try{
-    const rows = db.prepare("SELECT message_id FROM processed_messages ORDER BY created_at DESC LIMIT ?")
-      .all(MAX_MESSAGES_KEPT);
-    for(const r of rows) seenMessageIds.add(r.message_id);
-    console.log("Loaded " + seenMessageIds.size + " processed message IDs");
-  }catch(e){
-    console.error("loadSeenMessages:", e.message);
+/* ============================================================
+   UPSERT HELPERS
+============================================================ */
+
+function upsertCountry(key, points, isComment, isSuperChat, latestCommenter){
+  if(!store.country_scores[key]){
+    store.country_scores[key] = {
+      score: 0, comments: 0, superchats: 0, latest_commenter: ""
+    };
   }
-})();
+  const c = store.country_scores[key];
+  c.score += points;
+  if(isComment) c.comments += 1;
+  if(isSuperChat) c.superchats += 1;
+  if(latestCommenter) c.latest_commenter = latestCommenter;
+}
 
-/* ============================================================
-   DB WRITES
-============================================================ */
+function upsertPlayer(displayName, profileImageUrl, countryKey, countryName, flag, points, isComment, isSuperChat, usd){
+  const key = String(displayName || "anonymous").toLowerCase();
 
-const stmtUpsertCountry = db.prepare(`
-INSERT INTO country_scores (country_key, score, comments, superchats, latest_commenter, updated_at)
-VALUES (@k, @score, @comments, @sc, @lc, @now)
-ON CONFLICT(country_key) DO UPDATE SET
-  score = score + @score,
-  comments = comments + @comments,
-  superchats = superchats + @sc,
-  latest_commenter = CASE WHEN @lc <> '' THEN @lc ELSE latest_commenter END,
-  updated_at = @now
-`);
+  if(!store.players[key]){
+    store.players[key] = {
+      displayName: displayName || "Anonymous",
+      profileImageUrl: "",
+      country: "",
+      countryName: "",
+      flag: "",
+      score: 0,
+      comments: 0,
+      superChats: 0,
+      amount: 0
+    };
+  }
 
-const stmtUpsertPlayer = db.prepare(`
-INSERT INTO players (player_key, display_name, profile_image_url, country_key, country_name, flag, score, comments, superchats, amount_usd, updated_at)
-VALUES (@pk, @dn, @img, @ck, @cn, @fl, @score, @comments, @sc, @amt, @now)
-ON CONFLICT(player_key) DO UPDATE SET
-  display_name = @dn,
-  profile_image_url = CASE WHEN @img <> '' THEN @img ELSE profile_image_url END,
-  country_key = CASE WHEN @ck <> '' THEN @ck ELSE country_key END,
-  country_name = CASE WHEN @cn <> '' THEN @cn ELSE country_name END,
-  flag = CASE WHEN @fl <> '' THEN @fl ELSE flag END,
-  score = score + @score,
-  comments = comments + @comments,
-  superchats = superchats + @sc,
-  amount_usd = amount_usd + @amt,
-  updated_at = @now
-`);
-
-const stmtInsertEvent = db.prepare(`
-INSERT OR IGNORE INTO events (id, type, country_key, country_name, flag, display_name, profile_image_url, points, message, amount_micros, amount_usd, currency, created_at)
-VALUES (@id, @type, @ck, @cn, @fl, @dn, @img, @pts, @msg, @micros, @usd, @cur, @now)
-`);
-
-const stmtInsertProcessed = db.prepare(`
-INSERT OR IGNORE INTO processed_messages (message_id, created_at) VALUES (?, ?)
-`);
-
-const stmtTrimEvents = db.prepare(`
-DELETE FROM events WHERE id NOT IN (
-  SELECT id FROM events ORDER BY created_at DESC LIMIT ?
-)
-`);
-
-const stmtTrimProcessed = db.prepare(`
-DELETE FROM processed_messages WHERE message_id NOT IN (
-  SELECT message_id FROM processed_messages ORDER BY created_at DESC LIMIT ?
-)
-`);
-
-/* ============================================================
-   EVENT LOG
-============================================================ */
+  const p = store.players[key];
+  p.displayName = displayName || p.displayName;
+  if(profileImageUrl) p.profileImageUrl = profileImageUrl;
+  if(countryKey){
+    p.country = countryKey;
+    p.countryName = countryName;
+    p.flag = flag;
+  }
+  p.score += points;
+  if(isComment) p.comments += 1;
+  if(isSuperChat) p.superChats += 1;
+  if(usd) p.amount += usd;
+}
 
 function recordEvent(ev){
-  try{
-    stmtInsertEvent.run({
-      id: ev.id,
-      type: ev.type,
-      ck: ev.country || "",
-      cn: ev.countryName || "",
-      fl: ev.flag || "",
-      dn: ev.displayName || "",
-      img: ev.profileImageUrl || "",
-      pts: ev.points || 0,
-      msg: (ev.message || "").slice(0, 500),
-      micros: ev.amountMicros || 0,
-      usd: ev.amount || 0,
-      cur: ev.currency || "",
-      now: Date.now()
-    });
-    stmtTrimEvents.run(MAX_EVENTS_KEPT);
-  }catch(e){
-    console.error("recordEvent:", e.message);
+  store.events.unshift(ev);
+  if(store.events.length > MAX_EVENTS_KEPT){
+    store.events = store.events.slice(0, MAX_EVENTS_KEPT);
   }
 }
 
 /* ============================================================
-   PROCESS YOUTUBE MESSAGE
+   PROCESS MESSAGE
 ============================================================ */
 
 function processMessage(item){
   try{
     if(!item || !item.id) return;
-    if(seenMessageIds.has(item.id)) return;
+    if(store.processed[item.id]) return;
 
-    seenMessageIds.add(item.id);
-    stmtInsertProcessed.run(item.id, Date.now());
+    store.processed[item.id] = Date.now();
 
     const snippet = item.snippet || {};
     const author = item.authorDetails || {};
@@ -428,37 +392,21 @@ function processMessage(item){
         points: 0, message: message,
         amountMicros: amountMicros,
         amount: toUSD(amountMicros, currency),
-        currency: currency
+        currency: currency,
+        time: Date.now()
       });
+      saveStore();
       return;
     }
 
     const info = COUNTRY_BY_KEY[countryKey];
     if(!info) return;
 
-    const now = Date.now();
-
     if(type === "textMessageEvent"){
       const points = COMMENT_POINTS;
 
-      stmtUpsertCountry.run({
-        k: countryKey, score: points, comments: 1, sc: 0,
-        lc: displayName, now: now
-      });
-
-      stmtUpsertPlayer.run({
-        pk: displayName.toLowerCase(),
-        dn: displayName,
-        img: profileImageUrl,
-        ck: countryKey,
-        cn: info.name,
-        fl: info.flag,
-        score: points,
-        comments: 1,
-        sc: 0,
-        amt: 0,
-        now: now
-      });
+      upsertCountry(countryKey, points, true, false, displayName);
+      upsertPlayer(displayName, profileImageUrl, countryKey, info.name, info.flag, points, true, false, 0);
 
       recordEvent({
         id: item.id,
@@ -472,10 +420,12 @@ function processMessage(item){
         message: message,
         amountMicros: 0,
         amount: 0,
-        currency: ""
+        currency: "",
+        time: Date.now()
       });
 
       console.log("COMMENT +" + points + " | " + displayName + " | " + info.name);
+      saveStore();
       return;
     }
 
@@ -484,24 +434,8 @@ function processMessage(item){
       let points = Math.round(usd * SUPERCHAT_POINTS_PER_USD);
       if(points < 1) points = 1;
 
-      stmtUpsertCountry.run({
-        k: countryKey, score: points, comments: 0, sc: 1,
-        lc: displayName, now: now
-      });
-
-      stmtUpsertPlayer.run({
-        pk: displayName.toLowerCase(),
-        dn: displayName,
-        img: profileImageUrl,
-        ck: countryKey,
-        cn: info.name,
-        fl: info.flag,
-        score: points,
-        comments: 0,
-        sc: 1,
-        amt: usd,
-        now: now
-      });
+      upsertCountry(countryKey, points, false, true, displayName);
+      upsertPlayer(displayName, profileImageUrl, countryKey, info.name, info.flag, points, false, true, usd);
 
       recordEvent({
         id: item.id,
@@ -515,10 +449,12 @@ function processMessage(item){
         message: message,
         amountMicros: amountMicros,
         amount: usd,
-        currency: currency
+        currency: currency,
+        time: Date.now()
       });
 
       console.log("SUPER CHAT +" + points + " | " + displayName + " | " + info.name + " | " + usd.toFixed(2) + " USD");
+      saveStore();
     }
   }catch(e){
     console.error("processMessage:", e.message);
@@ -573,8 +509,6 @@ async function pollChat(){
 
     for(const item of items) processMessage(item);
 
-    stmtTrimProcessed.run(MAX_MESSAGES_KEPT);
-
     const wait = res.data.pollingIntervalMillis || 5000;
     schedulePoll(Math.max(1500, wait));
   }catch(err){
@@ -598,13 +532,11 @@ function schedulePoll(delay){
 ============================================================ */
 
 function buildCountryList(){
-  const rows = db.prepare("SELECT country_key, score, comments, superchats, latest_commenter FROM country_scores").all();
-  const map = {};
-  for(const r of rows) map[r.country_key] = r;
-
-  const list = COUNTRIES.map(([code, name]) => {
+  const list = COUNTRIES.map(function(entry){
+    const code = entry[0];
+    const name = entry[1];
     const key = makeKey(name);
-    const r = map[key] || { score: 0, comments: 0, superchats: 0, latest_commenter: "" };
+    const r = store.country_scores[key] || { score: 0, comments: 0, superchats: 0, latest_commenter: "" };
     return {
       country: key,
       countryName: name,
@@ -612,171 +544,4 @@ function buildCountryList(){
       score: r.score || 0,
       commentCount: r.comments || 0,
       superChats: r.superchats || 0,
-      latestCommenter: r.latest_commenter || ""
-    };
-  });
-
-  list.sort((a, b) => {
-    if(b.score !== a.score) return b.score - a.score;
-    return a.countryName.localeCompare(b.countryName);
-  });
-  return list;
-}
-
-function buildPlayerList(){
-  const rows = db.prepare(`
-    SELECT player_key, display_name, profile_image_url, country_key, country_name, flag,
-           score, comments, superchats, amount_usd
-    FROM players
-    WHERE score > 0 OR amount_usd > 0
-    ORDER BY amount_usd DESC, score DESC
-    LIMIT 500
-  `).all();
-
-  return rows.map(r => ({
-    key: r.player_key,
-    displayName: r.display_name,
-    profileImageUrl: r.profile_image_url,
-    country: r.country_key,
-    countryName: r.country_name,
-    flag: r.flag,
-    score: r.score,
-    comments: r.comments,
-    superChats: r.superchats,
-    amount: r.amount_usd
-  }));
-}
-
-function buildEvents(){
-  const rows = db.prepare(`
-    SELECT id, type, country_key, country_name, flag, display_name, profile_image_url,
-           points, message, amount_micros, amount_usd, currency, created_at
-    FROM events
-    ORDER BY created_at DESC
-    LIMIT 30
-  `).all();
-
-  return rows.map(r => ({
-    id: r.id,
-    type: r.type,
-    country: r.country_key,
-    countryName: r.country_name,
-    flag: r.flag,
-    displayName: r.display_name,
-    profileImageUrl: r.profile_image_url,
-    points: r.points,
-    message: r.message,
-    amountMicros: r.amount_micros,
-    amount: r.amount_usd,
-    currency: r.currency,
-    time: r.created_at
-  }));
-}
-
-/* ============================================================
-   API ROUTES
-============================================================ */
-
-app.get("/api/state", (req, res) => {
-  try{
-    const countries = buildCountryList();
-    const players = buildPlayerList();
-    const events = buildEvents();
-
-    const topPlayers = players.slice(0, 3);
-    const topCountries = countries.filter(c => c.score > 0).slice(0, 3);
-
-    res.json({
-      connected: Boolean(liveChatId),
-      videoId: VIDEO_ID,
-      commentPoints: COMMENT_POINTS,
-      superChatPointsPerUsd: SUPERCHAT_POINTS_PER_USD,
-      voiceLang: VOICE_LANG,
-      countries: countries,
-      players: players,
-      topPlayers: topPlayers,
-      topCountries: topCountries,
-      events: events,
-      lastEvent: events.length ? events[0] : null,
-      lastPollAt: lastPollAt,
-      lastError: lastError,
-      totalEvents: events.length,
-      totalPlayers: players.length,
-      uptimeSeconds: Math.floor(process.uptime())
-    });
-  }catch(e){
-    console.error("GET /api/state:", e.message);
-    res.status(500).json({ error: "state_failed", message: e.message });
-  }
-});
-
-app.get("/api/health", (req, res) => {
-  res.json({
-    ok: true,
-    connected: Boolean(liveChatId),
-    videoId: VIDEO_ID,
-    hasApiKey: Boolean(API_KEY),
-    lastPollAt: lastPollAt,
-    lastError: lastError,
-    uptimeSeconds: Math.floor(process.uptime())
-  });
-});
-
-app.post("/api/admin/reset", (req, res) => {
-  const token = req.headers["x-admin-token"] || (req.body && req.body.token);
-  if(!ADMIN_TOKEN){
-    return res.status(500).json({ error: "admin_token_not_configured" });
-  }
-  if(token !== ADMIN_TOKEN){
-    return res.status(401).json({ error: "unauthorized" });
-  }
-
-  try{
-    db.exec(`
-      DELETE FROM country_scores;
-      DELETE FROM players;
-      DELETE FROM events;
-      DELETE FROM processed_messages;
-    `);
-    seenMessageIds.clear();
-    console.log("ADMIN RESET executed at " + new Date().toISOString());
-    res.json({ ok: true, resetAt: Date.now() });
-  }catch(e){
-    res.status(500).json({ error: "reset_failed", message: e.message });
-  }
-});
-
-/* ============================================================
-   START
-============================================================ */
-
-app.listen(PORT, () => {
-  console.log("=============================================");
-  console.log("  COUNTRY BATTLE LIVE — SERVER");
-  console.log("=============================================");
-  console.log("Port        : " + PORT);
-  console.log("Video ID    : " + (VIDEO_ID || "(not set)"));
-  console.log("API key     : " + (API_KEY ? "set" : "MISSING"));
-  console.log("Comment pts : " + COMMENT_POINTS);
-  console.log("SC per USD  : " + SUPERCHAT_POINTS_PER_USD);
-  console.log("Voice lang  : " + VOICE_LANG);
-  console.log("=============================================");
-
-  if(!API_KEY) console.error("ERROR: YOUTUBE_API_KEY missing in .env");
-  if(!VIDEO_ID) console.error("ERROR: YOUTUBE_VIDEO_ID missing in .env");
-
-  pollChat();
-});
-
-/* ============================================================
-   GRACEFUL SHUTDOWN
-============================================================ */
-
-function shutdown(sig){
-  console.log("Shutting down (" + sig + ")...");
-  if(pollingTimer) clearTimeout(pollingTimer);
-  try { db.close(); } catch(e){}
-  process.exit(0);
-}
-process.on("SIGINT", () => shutdown("SIGINT"));
-process.on("SIGTERM", () => shutdown("SIGTERM"));
+      latestCommenter
