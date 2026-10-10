@@ -39,7 +39,7 @@ body{overflow-x:hidden;}
   color:#8a8fb0;margin:20px 0 32px;
 }
 
-/* ================= TOP 3 PLAYERS (Royal Crown Frames) ================= */
+/* ================= TOP 3 PLAYERS ================= */
 
 .top-players-wrap{padding:0 8px;}
 .top-players{
@@ -147,46 +147,6 @@ body{overflow-x:hidden;}
   box-shadow:0 0 8px rgba(255,150,60,.6);
 }
 
-/* Side laurel ornaments */
-.player-card::before,
-.player-card::after{
-  content:"";
-  position:absolute;
-  top:20%;
-  bottom:22%;
-  width:14px;
-  color:rgba(255,210,40,.55);
-  pointer-events:none;
-  opacity:.85;
-}
-.rank-2::before,
-.rank-2::after{color:rgba(210,225,255,.5);}
-.rank-3::before,
-.rank-3::after{color:rgba(255,160,80,.55);}
-
-.player-card::before{
-  left:-2px;
-  background:
-    radial-gradient(circle at 50% 10%, currentColor 18%, transparent 20%),
-    radial-gradient(circle at 50% 30%, currentColor 18%, transparent 20%),
-    radial-gradient(circle at 50% 50%, currentColor 18%, transparent 20%),
-    radial-gradient(circle at 50% 70%, currentColor 18%, transparent 20%),
-    radial-gradient(circle at 50% 90%, currentColor 18%, transparent 20%);
-  background-size:100% 20%;
-  background-repeat:no-repeat;
-}
-.player-card::after{
-  right:-2px;
-  background:
-    radial-gradient(circle at 50% 10%, currentColor 18%, transparent 20%),
-    radial-gradient(circle at 50% 30%, currentColor 18%, transparent 20%),
-    radial-gradient(circle at 50% 50%, currentColor 18%, transparent 20%),
-    radial-gradient(circle at 50% 70%, currentColor 18%, transparent 20%),
-    radial-gradient(circle at 50% 90%, currentColor 18%, transparent 20%);
-  background-size:100% 20%;
-  background-repeat:no-repeat;
-}
-
 .p-avatar-wrap{
   width:78px;
   height:78px;
@@ -282,7 +242,7 @@ body{overflow-x:hidden;}
 .p-country .flag-mini{font-size:13px;}
 
 
-/* ================= TOP 3 COUNTRIES (Royal Crown Frames) ================= */
+/* ================= TOP 3 COUNTRIES ================= */
 
 .top-countries-wrap{padding:0 8px;}
 .top-countries{
@@ -574,10 +534,6 @@ body{overflow-x:hidden;}
 (function(){
 "use strict";
 
-/* =====================================================
-   COUNTRY LIST (195)
-===================================================== */
-
 var COUNTRY_DATA = [
   ["AF","Afghanistan"],["AL","Albania"],["DZ","Algeria"],["AD","Andorra"],
   ["AO","Angola"],["AG","Antigua and Barbuda"],["AR","Argentina"],
@@ -657,10 +613,6 @@ for(var i = 0; i < COUNTRY_DATA.length; i++){
   });
 }
 
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
 var music          = document.getElementById("backgroundMusic");
 var musicButton    = document.getElementById("musicButton");
 var voiceButton    = document.getElementById("voiceButton");
@@ -668,4 +620,56 @@ var eventElement   = document.getElementById("event");
 var topPlayersEl   = document.getElementById("topPlayers");
 var topCountriesEl = document.getElementById("topCountries");
 var countryGrid    = document.getElementById("countryGrid");
-var connectionEl   = document.getElementById("co
+var connectionEl   = document.getElementById("connection");
+
+var musicEnabled = false;
+var voiceEnabled = true;
+var lastEventId = "";
+var firstStateLoaded = false;
+var loading = false;
+var currentCountries = masterCountries.slice();
+
+function escapeHtml(v){
+  return String(v == null ? "" : v)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function formatNumber(v){ return Number(v || 0).toLocaleString("en-US"); }
+function formatUSD(v){ return "$" + Number(v || 0).toFixed(2); }
+function getCountryName(c){ if(!c) return "Unknown"; return c.countryName || "Unknown"; }
+function getFlag(c){ if(!c) return "🌍"; return c.flag || "🌍"; }
+
+function setConnectionStatus(ok){
+  if(ok){
+    connectionEl.textContent = "🟢 YOUTUBE CONNECTED";
+    connectionEl.classList.add("connected");
+    connectionEl.classList.remove("error");
+  }else{
+    connectionEl.textContent = "🔴 YOUTUBE DISCONNECTED";
+    connectionEl.classList.remove("connected");
+    connectionEl.classList.add("error");
+  }
+}
+
+function startMusic(){
+  try{
+    music.volume = 0.12;
+    var p = music.play();
+    if(p && p.then){
+      p.then(function(){
+        musicEnabled = true;
+        musicButton.textContent = "🎵 MUSIC ON";
+        musicButton.classList.add("on");
+      }).catch(function(){
+        musicEnabled = false;
+        musicButton.textContent = "🎵 MUSIC OFF";
+        musicButton.classList.remove("on");
+      });
+    }
+  }catch(e){ musicEnabled = false; }
+}
+
+window.addEventListener("load", function(){ setTimeout(startMusic, 500); });
+
+musicButton.addEventListener("click", function(){
+  if(music.paused
