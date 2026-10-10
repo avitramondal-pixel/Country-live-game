@@ -1,14 +1,19 @@
 {
-  "name": "country-live-game",
+  "name": "country-battle-live",
   "version": "1.0.0",
-  "description": "YouTube Live Country Battle Game",
+  "description": "Real-time YouTube Live Country Battle with points, Super Chats, and English voice announcements.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
+    "better-sqlite3": "^11.3.0",
     "dotenv": "^16.4.5",
-    "express": "^4.21.0",
-    "googleapis": "^144.0.0"
+    "express": "^4.19.2",
+    "googleapis": "^140.0.1"
   }
 }
