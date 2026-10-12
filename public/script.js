@@ -31,7 +31,6 @@ window.onerror = function(msg, url, line){
   var firstLoadDone = false;
   var fetching = false;
   var voiceLang = "en-US";
-  var masterCountries = [];
 
   /* ---------- Helpers ---------- */
 
@@ -136,19 +135,22 @@ window.onerror = function(msg, url, line){
     u.onend = function(){
       speaking = false;
       if(musicEnabled && !bgMusic.paused) bgMusic.volume = 0.15;
-      setTimeout(pumpVoice, 250);
+      setTimeout(pumpVoice, 200);
     };
     u.onerror = function(){
       speaking = false;
       if(musicEnabled && !bgMusic.paused) bgMusic.volume = 0.15;
-      setTimeout(pumpVoice, 250);
+      setTimeout(pumpVoice, 200);
     };
 
     try { speechSynthesis.speak(u); }
     catch(e){ speaking = false; }
   }
 
-  /* ---------- Announce (English) ---------- */
+  /* ---------- Announce ----------
+     Comment:   "Name, 1 point, from Country"
+     SuperChat: "Super Chat! Name, 5000 points, from Country. Sent 5.00 USD"
+  ------------------------------- */
 
   function announceEvent(ev){
     if(!ev || !ev.id) return;
@@ -164,18 +166,19 @@ window.onerror = function(msg, url, line){
       var usd = Number(ev.amount || 0);
       var cur = ev.currency || "USD";
       enqueueVoice(
-        "Super Chat! " + name + " from " + country +
-        " sent " + usd.toFixed(2) + " " + cur +
-        " and scored " + fmtNumber(points) + " points!"
+        "Super Chat! " + name + ", " +
+        fmtNumber(points) + " " + (points === 1 ? "point" : "points") +
+        ", from " + country +
+        ". Sent " + usd.toFixed(2) + " " + cur + "."
       );
       return;
     }
 
     if(ev.type === "comment" && points > 0){
       enqueueVoice(
-        name + " from " + country +
-        " just scored " + fmtNumber(points) + " " +
-        (points === 1 ? "point" : "points") + "!"
+        name + ", " +
+        fmtNumber(points) + " " + (points === 1 ? "point" : "points") +
+        ", from " + country
       );
       return;
     }
@@ -296,9 +299,9 @@ window.onerror = function(msg, url, line){
 
   function renderCountryGrid(countries){
     if(!countryGridEl) return;
-    var list = countries && countries.length ? countries.slice() : masterCountries.slice();
+    if(!countries || !countries.length) return;
 
-    var sorted = list.map(function(c){
+    var sorted = countries.slice().map(function(c){
       return { name: c.countryName, flag: c.flag, score: Number(c.score || 0) };
     }).sort(function(a, b){
       if(b.score !== a.score) return b.score - a.score;
@@ -385,23 +388,6 @@ window.onerror = function(msg, url, line){
     }
   }
 
-  /* ---------- Placeholder for initial render ---------- */
-
-  function buildPlaceholderCountries(){
-    var placeholder = [];
-    for(var i = 0; i < 195; i++){
-      placeholder.push({ countryName: "Country " + (i + 1), flag: "🏳️", score: 0 });
-    }
-    return placeholder;
-  }
-
-  function initialRender(){
-    renderTopPlayers([]);
-    renderTopCountries([]);
-    renderCountryGrid(buildPlaceholderCountries());
-    renderEventBanner(null);
-  }
-
   /* ---------- Fetch state ---------- */
 
   function fetchState(){
@@ -428,7 +414,6 @@ window.onerror = function(msg, url, line){
         renderConnection(data.connected === true);
 
         if(data.countries && data.countries.length){
-          masterCountries = data.countries;
           renderCountryGrid(data.countries);
           renderTopCountries(data.topCountries || data.countries);
         }
@@ -439,8 +424,6 @@ window.onerror = function(msg, url, line){
         if(ev){
           renderEventBanner(ev);
           announceEvent(ev);
-        } else {
-          renderEventBanner(null);
         }
 
         firstLoadDone = true;
@@ -461,8 +444,6 @@ window.onerror = function(msg, url, line){
   function boot(){
     try{
       console.log("BOOT starting");
-      initialRender();
-      console.log("BOOT: initial render done");
 
       window.addEventListener("load", function(){
         setTimeout(startMusic, 600);
