@@ -1,5 +1,5 @@
 /* ============================================================
-   COUNTRY BATTLE LIVE — SERVER (JSON storage, no native deps)
+   COUNTRY BATTLE LIVE — SERVER
 ============================================================ */
 
 require("dotenv").config();
@@ -33,10 +33,10 @@ const MAX_MESSAGES_KEPT = 10000;
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
 let store = {
-  country_scores: {},   // key → { score, comments, superchats, latest_commenter }
-  players: {},          // key → { displayName, profileImageUrl, country, countryName, flag, score, comments, superChats, amount }
-  events: [],           // array of event objects (newest first)
-  processed: {},        // message_id → timestamp
+  country_scores: {},
+  players: {},
+  events: [],
+  processed: {},
 };
 
 function loadStore(){
@@ -51,8 +51,7 @@ function loadStore(){
       console.log("Loaded storage: " +
         Object.keys(store.country_scores).length + " countries, " +
         Object.keys(store.players).length + " players, " +
-        store.events.length + " events, " +
-        Object.keys(store.processed).length + " processed IDs");
+        store.events.length + " events");
     } else {
       console.log("No existing storage file — starting fresh");
     }
@@ -68,19 +67,15 @@ function saveStore(){
   setTimeout(function(){
     saveScheduled = false;
     try{
-      /* Trim processed to last MAX_MESSAGES_KEPT */
       const ids = Object.keys(store.processed);
       if(ids.length > MAX_MESSAGES_KEPT){
         ids.sort(function(a, b){ return store.processed[a] - store.processed[b]; });
         const toRemove = ids.slice(0, ids.length - MAX_MESSAGES_KEPT);
         for(const id of toRemove) delete store.processed[id];
       }
-
-      /* Trim events */
       if(store.events.length > MAX_EVENTS_KEPT){
         store.events = store.events.slice(0, MAX_EVENTS_KEPT);
       }
-
       fs.writeFileSync(DB_PATH, JSON.stringify(store), "utf8");
     }catch(e){
       console.error("saveStore error:", e.message);
@@ -165,7 +160,6 @@ const ALIASES = {
   "dr congo":"Democratic Republic of the Congo","drc":"Democratic Republic of the Congo",
   "republic of congo":"Congo","republic of the congo":"Congo",
   "bangla":"Bangladesh","bharat":"India","hindustan":"India",
-  "south sudan":"South Sudan","sudan":"Sudan",
   "saudi arabia":"Saudi Arabia","ksa":"Saudi Arabia",
   "bosnia":"Bosnia and Herzegovina","bosnia and herzegovina":"Bosnia and Herzegovina",
   "trinidad":"Trinidad and Tobago","tobago":"Trinidad and Tobago",
@@ -544,4 +538,129 @@ function buildCountryList(){
       score: r.score || 0,
       commentCount: r.comments || 0,
       superChats: r.superchats || 0,
-      latestCommenter
+      latestCommenter: r.latest_commenter || ""
+    };
+  });
+
+  list.sort(function(a, b){
+    if(b.score !== a.score) return b.score - a.score;
+    return a.countryName.localeCompare(b.countryName);
+  });
+  return list;
+}
+
+function buildPlayerList(){
+  return Object.keys(store.players)
+    .map(function(k){ return store.players[k]; })
+    .filter(function(p){ return p.score > 0 || p.amount > 0; })
+    .sort(function(a, b){
+      if(b.amount !== a.amount) return b.amount - a.amount;
+      return b.score - a.score;
+    })
+    .slice(0, 500);
+}
+
+/* ============================================================
+   API ROUTES
+============================================================ */
+
+app.get("/api/state", function(req, res){
+  try{
+    const countries = buildCountryList();
+    const players = buildPlayerList();
+
+    const topPlayers = players.slice(0, 3);
+    const topCountries = countries.filter(function(c){ return c.score > 0; }).slice(0, 3);
+
+    res.json({
+      connected: Boolean(liveChatId),
+      videoId: VIDEO_ID,
+      commentPoints: COMMENT_POINTS,
+      superChatPointsPerUsd: SUPERCHAT_POINTS_PER_USD,
+      voiceLang: VOICE_LANG,
+      countries: countries,
+      players: players,
+      topPlayers: topPlayers,
+      topCountries: topCountries,
+      events: store.events.slice(0, 30),
+      lastEvent: store.events.length ? store.events[0] : null,
+      lastPollAt: lastPollAt,
+      lastError: lastError,
+      totalEvents: store.events.length,
+      totalPlayers: players.length,
+      uptimeSeconds: Math.floor(process.uptime())
+    });
+  }catch(e){
+    console.error("GET /api/state:", e.message);
+    res.status(500).json({ error: "state_failed", message: e.message });
+  }
+});
+
+app.get("/api/health", function(req, res){
+  res.json({
+    ok: true,
+    connected: Boolean(liveChatId),
+    videoId: VIDEO_ID,
+    hasApiKey: Boolean(API_KEY),
+    lastPollAt: lastPollAt,
+    lastError: lastError,
+    uptimeSeconds: Math.floor(process.uptime())
+  });
+});
+
+app.post("/api/admin/reset", function(req, res){
+  const token = req.headers["x-admin-token"] || (req.body && req.body.token);
+  if(!ADMIN_TOKEN){
+    return res.status(500).json({ error: "admin_token_not_configured" });
+  }
+  if(token !== ADMIN_TOKEN){
+    return res.status(401).json({ error: "unauthorized" });
+  }
+
+  store.country_scores = {};
+  store.players = {};
+  store.events = [];
+  store.processed = {};
+  saveStore();
+
+  console.log("ADMIN RESET executed at " + new Date().toISOString());
+  res.json({ ok: true, resetAt: Date.now() });
+});
+
+/* ============================================================
+   START
+============================================================ */
+
+app.listen(PORT, function(){
+  console.log("=============================================");
+  console.log("  COUNTRY BATTLE LIVE — SERVER");
+  console.log("=============================================");
+  console.log("Port        : " + PORT);
+  console.log("Video ID    : " + (VIDEO_ID || "(not set)"));
+  console.log("API key     : " + (API_KEY ? "set" : "MISSING"));
+  console.log("Comment pts : " + COMMENT_POINTS);
+  console.log("SC per USD  : " + SUPERCHAT_POINTS_PER_USD);
+  console.log("Voice lang  : " + VOICE_LANG);
+  console.log("Storage     : " + DB_PATH);
+  console.log("=============================================");
+
+  if(!API_KEY) console.error("ERROR: YOUTUBE_API_KEY missing in .env");
+  if(!VIDEO_ID) console.error("ERROR: YOUTUBE_VIDEO_ID missing in .env");
+
+  pollChat();
+});
+
+/* ============================================================
+   GRACEFUL SHUTDOWN
+============================================================ */
+
+function shutdown(sig){
+  console.log("Shutting down (" + sig + ")...");
+  if(pollingTimer) clearTimeout(pollingTimer);
+  try{
+    fs.writeFileSync(DB_PATH, JSON.stringify(store), "utf8");
+  }catch(e){}
+  process.exit(0);
+}
+process.on("SIGINT", function(){ shutdown("SIGINT"); });
+process.on("SIGTERM", function(){ shutdown("SIGTERM"); });
