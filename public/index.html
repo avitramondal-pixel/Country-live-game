@@ -1,37 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Country Battle Live</title>
-  <link rel="stylesheet" href="style.css">   ← এখানে CSS আসে
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Country Battle Live</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Title -->
-  <h1>TYPE YOUR COUNTRY</h1>
+<div id="errorBanner" class="error-banner"></div>
 
-  <!-- Rules -->
-  💬 1 COMMENT = 1 POINT
-  💎 $1 SUPERCHAT = 1000 POINTS
+<div class="app">
 
-  <!-- Top 3 Players container -->
-  <div id="topPlayers"></div>       ← JS এখানে কার্ড বসাবে
+  <header class="header">
+    <h1 class="title">TYPE YOUR COUNTRY</h1>
+  </header>
 
-  <!-- Top 3 Countries container -->
-  <div id="topCountries"></div>     ← JS এখানে কার্ড বসাবে
+  <div class="rules">
+    <div class="rule">💬 1 COMMENT = <span class="accent">1 POINT</span></div>
+    <div class="rule">💎 $1 SUPERCHAT = <span class="accent">1000 POINTS</span></div>
+  </div>
 
-  <!-- Event banner -->
-  <div id="eventBanner">Waiting...</div>
+  <h2 class="section-title">🏆 TOP 3 PLAYERS</h2>
+  <div class="top-players" id="topPlayers">
 
-  <!-- Country grid container -->
-  <div id="countryGrid"></div>      ← JS এখানে ১৯৫ দেশ বসাবে
+    <div class="player-card rank-2" data-slot="2">
+      <div class="p-crown">👑</div>
+      <div class="p-rank-badge">2</div>
+      <div class="p-avatar-wrap"><div class="p-avatar-fallback">👤</div></div>
+      <div class="p-name">Waiting...</div>
+      <div class="p-amount">$0.00</div>
+      <div class="p-country">— — —</div>
+    </div>
 
-  <!-- Buttons -->
-  <button>🎵 MUSIC OFF</button>
-  <button>🔊 VOICE ON</button>
+    <div class="player-card rank-1" data-slot="1">
+      <div class="p-crown">👑</div>
+      <div class="p-rank-badge">1</div>
+      <div class="p-avatar-wrap"><div class="p-avatar-fallback">👤</div></div>
+      <div class="p-name">Waiting...</div>
+      <div class="p-amount">$0.00</div>
+      <div class="p-country">— — —</div>
+    </div>
 
-  <!-- Connection status -->
-  <div id="connectionBadge">🔄 CONNECTING...</div>
+    <div class="player-card rank-3" data-slot="3">
+      <div class="p-crown">👑</div>
+      <div class="p-rank-badge">3</div>
+      <div class="p-avatar-wrap"><div class="p-avatar-fallback">👤</div></div>
+      <div class="p-name">Waiting...</div>
+      <div class="p-amount">$0.00</div>
+      <div class="p-country">— — —</div>
+    </div>
 
-  <script src="script.js"></script>   ← এখানে JS আসে
+  </div>
+
+  <h2 class="section-title">🏆 TOP 3 COUNTRIES</h2>
+  <div class="top-countries" id="topCountries">
+
+    <div class="tc-card rank-2" data-slot="2">
+      <div class="tc-crown">👑</div>
+      <div class="tc-rank-badge">#2</div>
+      <div class="tc-flag-box">🏳️</div>
+      <div class="tc-points">0</div>
+    </div>
+
+    <div class="tc-card rank-1" data-slot="1">
+      <div class="tc-crown">👑</div>
+      <div class="tc-rank-badge">#1</div>
+      <div class="tc-flag-box">🏳️</div>
+      <div class="tc-points">0</div>
+    </div>
+
+    <div class="tc-card rank-3" data-slot="3">
+      <div class="tc-crown">👑</div>
+      <div class="tc-rank-badge">#3</div>
+      <div class="tc-flag-box">🏳️</div>
+      <div class="tc-points">0</div>
+    </div>
+
+  </div>
+
+  <div class="event-banner" id="eventBanner">
+    <span class="event-empty">Waiting for comments...</span>
+  </div>
+
+  <section class="grid-section">
+    <div class="country-grid" id="countryGrid">
+      <div class="cell rank-1"><div class="cell-rank">#1</div><div class="cell-flag">🏳️</div><div class="cell-points">0</div></div>
+      <div class="cell rank-2"><div class="cell-rank">#2</div><div class="cell-flag">🏳️</div><div class="cell-points">0</div></div>
+      <div class="cell rank-3"><div class="cell-rank">#3</div><div class="cell-flag">🏳️</div><div class="cell-points">0</div></div>
+      <div class="cell"><div class="cell-rank">#4</div><div class="cell-flag">🏳️</div><div class="cell-points">0</div></div>
+      <div class="cell"><div class="cell-rank">#5</div><div class="cell-flag">🏳️</div><div class="cell-points">0</div></div>
+      <div class="cell"><div class="cell-rank">#6</div><div class="cell-flag">🏳️</div><div class="cell-points">0</div></div>
+      <div class="cell"><div class="cell-rank">#7</div><div class="cell-flag">🏳️</div><div class="cell-points">0</div></div>
+      <div class="cell"><div class="cell-rank">#8</div><div class="cell-flag">🏳️</div><div class="cell-points">0</div></div>
+    </div>
+  </section>
+
+</div>
+
+<div class="controls">
+  <button id="musicButton" class="control">🎵 MUSIC OFF</button>
+  <button id="voiceButton" class="control on">🔊 VOICE ON</button>
+</div>
+
+<div id="connectionBadge" class="connection-badge">🔄 CONNECTING...</div>
+
+<audio id="bgMusic" src="/background.mp3" loop preload="auto"></audio>
+
+<script src="script.js"></script>
 </body>
 </html>
