@@ -4,11 +4,10 @@
 # Dependencies
 node_modules/
 
-# Database
+# Database / storage
 data/
-*.db
-*.db-shm
-*.db-wal
+*.json
+!package.json
 
 # Logs
 *.log
